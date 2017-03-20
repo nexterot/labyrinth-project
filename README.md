@@ -6,3 +6,5 @@
 - front-end; веб-интерфейс js+phaser
 
 - game-mechanics; клиент python+pygame
+
+- sprites; основные спрайты
