@@ -1,1 +1,2 @@
-# labyrinth-project
+# Игра Лабиринт 
+: game-mechanics ветка (разработка переносимого ПК клиента с использованием Python и Pygame)
