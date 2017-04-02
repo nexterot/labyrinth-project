@@ -32,3 +32,7 @@
 - Game-mechanics: клиент Python + PyGame
 
 - Sprites: основные спрайты
+
+- Server-game: игровой сервер asyncio
+
+- Server-http: основной сервер aiohttp + asyncio
