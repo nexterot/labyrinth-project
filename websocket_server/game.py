@@ -4,7 +4,12 @@ import random
 import json
 from functools import wraps
 
-import levels
+from websocket_server import levels
+
+
+BOMB = 0
+CONCRETE = 1
+AID = 2
 
 
 def to_json(func):
@@ -12,14 +17,22 @@ def to_json(func):
     def inner(*args, **kwargs):
         result = func(*args, **kwargs)
         if isinstance(result, dict):
-            result = json.dumps(result, indent=4, sort_keys=True)
+            result = json.dumps(result)
         return result
     return inner
 
 
+def create_packet():
+    return {
+        "type": "turn", "type_of_turn": "go", "error": 0, "coordinates": [None, None],
+        "wall": False, "mine": False, "river": [None, None, None], "aid": None, "arm": False, "bear": False,
+        "treasure": False, "metro": [None, None, None], "exit": [None, None]
+    }
+
+
 class Player:
     """ player for the game """
-    MAX_HEALTH = 3
+    MAX_HEALTH = 4
 
     def __init__(self, game, name):
         self.game = game
@@ -27,8 +40,9 @@ class Player:
         self.location = None
         self.vector = (0, 0)
         self.health = Player.MAX_HEALTH
-        self.visible_fields = [False for _ in game.level]
-        self.inventory = {}
+        self.visible_fields = [False] * (len(game.level) * len(game.level[0]))
+        self.inventory = [0, 0, 0]
+        self.has_treasure = False
 
     def __vector_to(self, obj):
         """ calculates vector distance to object """
@@ -40,28 +54,100 @@ class Player:
 
     def go(self, field):
         """ player movement logic """
+
+        # создаем пустой пакет для отправки клиенту
+        result = create_packet()
+
+        # помещаем коориданты клетки, на которую перейдем
+        result["coordinates"] = field.coordinates
+
         self.visible_fields[field.id] = True
+
+        # если стена
         if isinstance(field, Wall):
             self.vector = (0, 0)
-            return
+            result["wall"] = True
+            result["error"] = 1
+            return result, False
+
+        # передвинуть игрока
+        self.move(field)
+
+        # если на клетке стоит медведь
         if self.game.bear.location == field:
             self.vector = self.__vector_to(field)
             self.game.bear.attack(self)
-            return
-        self.move(field)
+            if self.health == 0:
+                result["bear"] = 1
+            elif self.health == 2:
+                result["bear"] = 2
+            elif self.health == 1:
+                result["bear"] = 3
+            return result, True
+
+        # если обычная клетка
         if isinstance(field, Grass):
-            if field.obj == "hospital":
-                self.heal()
+
+            # если клетка - выход из лабиринта
+            if field.exit:
+                result["exit"][0] = 1
+                if self.has_treasure:
+                    result["exit"][1] = 1  # выиграл
+                    self.game.end(self)    # закончить игру
+                else:
+                    result["exit"][1] = 0  # нужно откинуть
+
+            # если на этой клетке лежит аптечка
+            elif field.obj == "hospital":
+                if self.health == 0:
+                    result["aid"] = 1
+                    self.heal()
+                elif self.health < Player.MAX_HEALTH:
+                    result["aid"] = 2
+                    self.heal()
+                else:
+                    result["aid"] = 3
+                    self.inventory[AID] += 1
+
+            # если на этой клетке лежит вооружение
+            elif field.obj == "ammo":
+                if random.randrange(1, 3) == 1:  # +1 цемент
+                    self.inventory[CONCRETE] += 1
+                    result["arm"] = 1
+                else:  # +1 бомба
+                    self.inventory[BOMB] += 1
+                    result["arm"] = 2
+
+            # сокровище :)
+            elif field.obj == "treasure":
+                self.has_treasure = True
+                result["treasure"] = 1
+                # todo уведомить остальных игроков, что клад найден мною
+                print("Игрок {} нашел клад!".format(self.name))
+
+            # если мина
             elif field.obj == "mine":
-                self.get_damage(3)
+                self.get_damage(2)
+                if self.health == 0:
+                    result["mine"] = 1
+                elif self.health == 2:
+                    result["mine"] = 2
+                elif self.health == 1:
+                    result["mine"] = 3
                 field.delete_object()
-            elif field.obj in ("tp1", "tp2", "tp3"):
+
+            # если телепорт
+            elif field.obj in {"tp1", "tp2", "tp3"}:
+                result["metro"] = [1, *field.pair.location]
                 self.visible_fields[field.pair.id] = True
                 self.teleport_from(field)
+
         # flow down (and left) the river
         elif isinstance(field, Water):
+            river_info = [1, []]
             vector = self.vector
             washed_away = False
+
             while not washed_away:
                 next_water_down = self.game.fields.at((field.coordinates[0] + 1, field.coordinates[1]))
                 next_water_left = self.game.fields.at((field.coordinates[0], field.coordinates[1] - 1))
@@ -76,7 +162,12 @@ class Player:
                 else:
                     washed_away = True
                     self.visible_fields[field.id] = True
+                river_info[1].append(self.location.coordinates.copy())
+
+            result["river"] = river_info
             self.vector = vector
+
+        return result, True
 
     def move(self, field):
         """ make a move """
@@ -133,6 +224,7 @@ class Grass(Field):
         Field.__init__(self, game, identity, coordinates)
         self.obj = obj
         self.pair = None  # for teleports
+        self.exit = False
 
     def update(self):
         pass
@@ -200,18 +292,44 @@ class Bear:
 class Game:
     """ class representing the game """
     def __init__(self, players_names):
+        self.fields = FieldGroup()
+        self.level = levels.get_random_level()
         self.num_players = len(players_names)
         self.players_names = players_names
         self.players = [Player(self, name) for name in players_names]
-        self.active_player = None
+        self.active_player = self.players[0]
         self.bear = Bear(self)
-        self.fields = FieldGroup()
-        self.level = levels.get_random_level()
+        self.initialize_level()
 
-    def add_player(self, player_name):
+    """
+    def add_player(self, player_name, equipment):
         self.players_names.append(player_name)
         self.num_players += 1
-        self.players.append(Player(self, player_name))
+        p = Player(self, player_name)
+        p.inventory = equipment
+        self.players.append(p)
+    """
+
+    def accept(self, player, turn):
+        if turn[0] == "go":
+            print("{}: go".format(player.name))
+            result, was_error = player.go(self.fields.at(turn[1:]))
+            return was_error, result
+
+        elif turn[0] == "knife":
+            ...
+        elif turn[0] == "concrete":
+            ...
+        elif turn[0] == "bomb":
+            ...
+        elif turn[0] == "aid":
+            ...
+        else:
+            print("Unknown command to accept by game: {}".format(turn[0]))
+
+    def end(self, winner):
+        print("Игрок {} выиграл!!!".format(winner.name))
+        # todo закончить игру
 
     @to_json
     def get_init_data(self, player_name):
@@ -220,6 +338,8 @@ class Game:
             if p.name == player_name:
                 player = p
                 break
+        else:
+            print("Нет данных об игроке {}!".format(player_name))
         data = {
             "list_of_players": self.players_names,
             "place": player.location.coordinates,
@@ -243,13 +363,17 @@ class Game:
 
     def initialize_level(self):
         """ build game level from mask """
-        random.shuffle(self.players)
+        # random.shuffle(self.players)
         num_player = 0
         count_id = 0
         for row in range(levels.SIZE):
             for col in range(levels.SIZE):
                 coordinates = (row, col)
                 value = self.level[row][col]
+                if value == 10:
+                    grass = Grass(self, count_id, coordinates, None)
+                    grass.exit = True
+                    self.fields.add(grass)
                 if value == 0:
                     self.fields.add(Grass(self, count_id, coordinates, None))
                 elif value == 1:
