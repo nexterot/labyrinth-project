@@ -4,7 +4,7 @@ import asyncio
 import websockets
 import json
 
-from websocket_server.game import Game
+from game import Game
 
 MIN_PLAYERS = 1
 MAX_PLAYERS = 1
@@ -20,10 +20,15 @@ rooms = []
 games = []
 
 
+async def inform_whose_turn(player_name, room, active_player_name, response):
+    for websocket in room.players.values():
+        print("Уведомляем игрока {}({}), что ходит игрок {}".format(player_name, room.name, active_player_name))
+        await websocket.send(response)
+
 async def rooms_info_request_handler(websocket, path):
     global rooms
     while True:
-        dict_view = {room.name : list(room.players.keys()) for room in rooms}
+        dict_view = {room.name: list(room.players.keys()) for room in rooms}
         result = json.dumps(dict_view)
         await websocket.send(result)
         await asyncio.sleep(2)
@@ -33,17 +38,17 @@ async def rooms_info_request_handler(websocket, path):
 class Room:
     def __init__(self, name):
         self.name = name
-        self.players = []
+        self.players = {}
         self.game = None
 
     def __len__(self):
         return len(self.players)
 
-    def add(self, nickname):
-        self.players.append(nickname)
+    def add(self, nickname, websocket):
+        self.players[nickname] = websocket
 
     def start_game(self):
-        self.game = Game(self.players)
+        self.game = Game(self.players.keys())
 
 
 async def handler(websocket, url):
@@ -80,7 +85,7 @@ async def handler(websocket, url):
                 return
         # иначе все хорошо; создаем комнату
         new_room = Room(comd["name"])
-        new_room.add(player_name)
+        new_room.add(player_name, websocket)
         my_room = new_room
         rooms.append(my_room)
         print("Игрок {} создал комнату {}".format(player_name, my_room.name))
@@ -95,7 +100,7 @@ async def handler(websocket, url):
                     await websocket.close()
                     return
                 # иначе все ОК, добавляем игрока в комнату
-                room.add(player_name)
+                room.add(player_name, websocket)
                 my_room = room
                 print("Игрок {} присодинился к комнате {}".format(player_name, comd["name"]))
                 break
@@ -147,17 +152,18 @@ async def handler(websocket, url):
     # заполняем инвентарь игрока
     player.inventory = comd["equipment"]
 
-    # отправляем начальные данные: {"list_of_players":[name1, ..., nameN], "place":[x, y], "equipment":[3 elements]}
+    # отправляем начальные данные: {"list_of_players":[name1, ..., nameN], "size":[x, y], "place":[x, y], "equipment":[3 elements]}
     init_data = game.get_init_data(player_name)
     await websocket.send(init_data)
     print("Игрок {}({}) отправил клиенту данные: {}".format(player_name, my_room.name, init_data))
 
+    # await websocket.send("Kek kukarek")
+
     # основной игровой цикл
     while True:
-        # рассылаем имя игрока, который ходит todo возможно не все игроки получат эту информацию!
-        response = json.dumps({"whose_turn": game.active_player.name})
-        print("Уведомляем игрока {}({}), что ходит игрок {}".format(player_name, my_room.name, game.active_player.name))
-        await websocket.send(response)
+        # рассылаем имя игрока, который ходит
+        response = json.dumps({"type": "whose_turn", "name": game.active_player.name})
+        await inform_whose_turn(player_name, my_room, game.active_player.name, response)
 
         # переключаем контекст на активного игрока
         while player != game.active_player:
@@ -169,18 +175,33 @@ async def handler(websocket, url):
         print("Получен пакет от {}({}): {}".format(player_name, my_room.name, turn))
         was_error, result = game.accept(player, turn)  # передать игре
 
+        json_result = json.dumps(result)
+
         # если возвращается ошибка, отправить ее и ждать новых данных о ходе
         while was_error:
-            print("ошибка; отправляю игроку {}({}): {}".format(player_name, my_room.name, result))
-            await websocket.send(result)
+            print("ошибка; отправляю игроку {}({}): {}".format(player_name, my_room.name, json_result))
+            await websocket.send(json_result)
             turn = await websocket.recv()
             turn = json.loads(turn)
             print("Получен пакет от {}({}): {}".format(player_name, my_room.name, turn))
             was_error, result = game.accept(player, turn)
+            json_result = json.dumps(result)
 
         # в случае успеха отправить клиенту пакет
-        print("успех; отправляю игроку {}({}): {}".format(player_name, my_room.name, result))
-        await websocket.send(result)
+        print("успех; отправляю игроку {}({}): {}".format(player_name, my_room.name, json_result))
+        await websocket.send(json_result)
+
+        # если выиграл todo разослать всем игрокам, завершить игру
+        if result["exit"][1] == 1:
+            final_result = {
+                "type": "final",
+                "statistics": ['michelin', 'nexterot'],
+                "prize": [0, 0, 0]
+            }
+            print("Игрок {} выиграл!".format(player_name))
+            print("Посылаем игроку {} {}".format(player_name, final_result))
+            await websocket.send(json.dumps(final_result))
+            return
 
 
 # открыть веб-сокет для сервера
@@ -194,4 +215,7 @@ asyncio.get_event_loop().run_until_complete(room_info_server)
 asyncio.get_event_loop().run_until_complete(server)
 
 # запустить цикл
-asyncio.get_event_loop().run_forever()
+try:
+    asyncio.get_event_loop().run_forever()
+except KeyboardInterrupt:
+    print("Shutting down server on Ctrl+C")

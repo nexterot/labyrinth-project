@@ -4,7 +4,7 @@ import random
 import json
 from functools import wraps
 
-from websocket_server import levels
+import levels
 
 
 BOMB = 0
@@ -42,7 +42,7 @@ class Player:
         self.health = Player.MAX_HEALTH
         self.visible_fields = [False] * (len(game.level) * len(game.level[0]))
         self.inventory = [0, 0, 0]
-        self.has_treasure = False
+        self.has_treasure = True
 
     def __vector_to(self, obj):
         """ calculates vector distance to object """
@@ -58,8 +58,13 @@ class Player:
         # создаем пустой пакет для отправки клиенту
         result = create_packet()
 
-        # помещаем коориданты клетки, на которую перейдем
-        result["coordinates"] = field.coordinates
+        # текущие координаты
+        result["coordinates"] = self.location.coordinates
+
+        # если клетка не рядом
+        if not self.can_go(field):
+            result["error"] = 1
+            return result, True
 
         self.visible_fields[field.id] = True
 
@@ -67,8 +72,10 @@ class Player:
         if isinstance(field, Wall):
             self.vector = (0, 0)
             result["wall"] = True
-            result["error"] = 1
             return result, False
+
+        # помещаем коориданты клетки, на которую перейдем
+        result["coordinates"] = field.coordinates
 
         # передвинуть игрока
         self.move(field)
@@ -83,7 +90,7 @@ class Player:
                 result["bear"] = 2
             elif self.health == 1:
                 result["bear"] = 3
-            return result, True
+            return result, False
 
         # если обычная клетка
         if isinstance(field, Grass):
@@ -93,7 +100,6 @@ class Player:
                 result["exit"][0] = 1
                 if self.has_treasure:
                     result["exit"][1] = 1  # выиграл
-                    self.game.end(self)    # закончить игру
                 else:
                     result["exit"][1] = 0  # нужно откинуть
 
@@ -138,7 +144,7 @@ class Player:
 
             # если телепорт
             elif field.obj in {"tp1", "tp2", "tp3"}:
-                result["metro"] = [1, *field.pair.location]
+                result["metro"] = [1, *field.pair.coordinates]
                 self.visible_fields[field.pair.id] = True
                 self.teleport_from(field)
 
@@ -167,7 +173,7 @@ class Player:
             result["river"] = river_info
             self.vector = vector
 
-        return result, True
+        return result, False
 
     def move(self, field):
         """ make a move """
@@ -294,8 +300,8 @@ class Game:
     def __init__(self, players_names):
         self.fields = FieldGroup()
         self.level = levels.get_random_level()
-        self.num_players = len(players_names)
-        self.players_names = players_names
+        self.players_names = list(players_names)
+        self.num_players = len(self.players_names)
         self.players = [Player(self, name) for name in players_names]
         self.active_player = self.players[0]
         self.bear = Bear(self)
@@ -312,9 +318,14 @@ class Game:
 
     def accept(self, player, turn):
         if turn[0] == "go":
-            print("{}: go".format(player.name))
-            result, was_error = player.go(self.fields.at(turn[1:]))
-            return was_error, result
+            field = self.fields.at((turn[1], turn[2]))
+            if field:
+                result, was_error = player.go(field)
+                return was_error, result
+            else:
+                result = create_packet()
+                result["error"] = 1
+                return True, result
 
         elif turn[0] == "knife":
             ...
@@ -342,6 +353,7 @@ class Game:
             print("Нет данных об игроке {}!".format(player_name))
         data = {
             "list_of_players": self.players_names,
+            "size": [levels.SIZE, levels.SIZE],
             "place": player.location.coordinates,
             "equipment": player.inventory
         }
