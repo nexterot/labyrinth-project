@@ -4,6 +4,8 @@ import asyncio
 import websockets
 import json
 
+import logging
+
 from game import Game
 
 MIN_PLAYERS = 1
@@ -24,6 +26,7 @@ async def inform_whose_turn(player_name, room, active_player_name, response):
     for websocket in room.players.values():
         print("Уведомляем игрока {}({}), что ходит игрок {}".format(player_name, room.name, active_player_name))
         await websocket.send(response)
+
 
 async def rooms_info_request_handler(websocket, path):
     global rooms
@@ -152,12 +155,11 @@ async def handler(websocket, url):
     # заполняем инвентарь игрока
     player.inventory = comd["equipment"]
 
-    # отправляем начальные данные: {"list_of_players":[name1, ..., nameN], "size":[x, y], "place":[x, y], "equipment":[3 elements]}
+    # отправляем начальные данные:
+    # {"list_of_players":[name1, ..., nameN], "size":[x, y], "place":[x, y], "equipment":[3 elements]}
     init_data = game.get_init_data(player_name)
     await websocket.send(init_data)
     print("Игрок {}({}) отправил клиенту данные: {}".format(player_name, my_room.name, init_data))
-
-    # await websocket.send("Kek kukarek")
 
     # основной игровой цикл
     while True:
@@ -193,15 +195,16 @@ async def handler(websocket, url):
 
         # если выиграл todo разослать всем игрокам, завершить игру
         if result["exit"][1] == 1:
-            final_result = {
-                "type": "final",
-                "statistics": ['michelin', 'nexterot'],
-                "prize": [0, 0, 0]
-            }
+            final_result = game.get_statistics()
             print("Игрок {} выиграл!".format(player_name))
             print("Посылаем игроку {} {}".format(player_name, final_result))
             await websocket.send(json.dumps(final_result))
             return
+
+# логирование
+logger = logging.getLogger('websockets.server')
+logger.setLevel(logging.ERROR)
+logger.addHandler(logging.StreamHandler())
 
 
 # открыть веб-сокет для сервера

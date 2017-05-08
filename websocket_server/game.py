@@ -42,7 +42,7 @@ class Player:
         self.health = Player.MAX_HEALTH
         self.visible_fields = [False] * (len(game.level) * len(game.level[0]))
         self.inventory = [0, 0, 0]
-        self.has_treasure = True
+        self.has_treasure = False
 
     def __vector_to(self, obj):
         """ calculates vector distance to object """
@@ -100,6 +100,7 @@ class Player:
                 result["exit"][0] = 1
                 if self.has_treasure:
                     result["exit"][1] = 1  # выиграл
+                    self.game.winner = self
                 else:
                     result["exit"][1] = 0  # нужно откинуть
 
@@ -125,7 +126,8 @@ class Player:
                     result["arm"] = 2
 
             # сокровище :)
-            elif field.obj == "treasure":
+            elif field.treasure:
+                field.treasure = False
                 self.has_treasure = True
                 result["treasure"] = 1
                 # todo уведомить остальных игроков, что клад найден мною
@@ -203,8 +205,14 @@ class Player:
 
     def get_damage(self, damage):
         self.health -= damage
-        if self.health < 0:
+        if self.health <= 0:
             self.health = 0
+
+            # если убит, то теряет клад
+            if self.has_treasure:
+                self.has_treasure = False
+                self.location.treasure = True
+                print("Игрок {} потерял клад!".format(self.name))
 
     def get_pushed(self, from_obj):
         pass
@@ -216,6 +224,7 @@ class Field:
         self.obj = None
         self.id = identity
         self.coordinates = coordinates
+        self.treasure = False
 
     def update(self):
         pass
@@ -305,16 +314,8 @@ class Game:
         self.players = [Player(self, name) for name in players_names]
         self.active_player = self.players[0]
         self.bear = Bear(self)
+        self.winner = None
         self.initialize_level()
-
-    """
-    def add_player(self, player_name, equipment):
-        self.players_names.append(player_name)
-        self.num_players += 1
-        p = Player(self, player_name)
-        p.inventory = equipment
-        self.players.append(p)
-    """
 
     def accept(self, player, turn):
         if turn[0] == "go":
@@ -338,8 +339,14 @@ class Game:
         else:
             print("Unknown command to accept by game: {}".format(turn[0]))
 
-    def end(self, winner):
-        print("Игрок {} выиграл!!!".format(winner.name))
+    def get_statistics(self):
+        print("Игрок {} выиграл!!!".format(self.winner.name))
+        final_result = {
+            "type": "final",
+            "statistics": ['michelin', 'nexterot'],
+            "prize": [0, 0, 0]
+        }
+        return final_result
         # todo закончить игру
 
     @to_json
@@ -410,7 +417,9 @@ class Game:
                     self.fields.add(grass)
                     self.bear.location = grass
                 elif value == 6:
-                    self.fields.add(Grass(self, count_id, coordinates, "treasure"))
+                    grass = Grass(self, count_id, coordinates, None)
+                    grass.treasure = True
+                    self.fields.add(grass)
                 elif value == 7:
                     self.fields.add(Grass(self, count_id, coordinates, "mine"))
                 elif value == 8:
