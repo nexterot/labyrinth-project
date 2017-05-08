@@ -8,4 +8,4 @@ python:
 
 install: "pip install -r requirements.txt"
 
-script: python tests.py
+script: python websocket_server/tests.py
