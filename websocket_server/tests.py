@@ -1,6 +1,6 @@
 import unittest
 
-from game import Game
+from game.game import Game
 
 
 class GameTest(unittest.TestCase):
