@@ -7,6 +7,12 @@ import websockets
 from server_tools import *
 from game.game import Game
 
+
+ip_addr = '0.0.0.0'
+port_room_info = 5678
+port_websockets = 8765
+
+
 MIN_PLAYERS = 1
 MAX_PLAYERS = 1
 MAX_ROOMS = 5
@@ -246,18 +252,20 @@ def main():
     logging.basicConfig(
         format='%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
         level=logging.INFO,
-        # filename="server.log"
+        filename="server.log"
     )
 
     # открыть веб-сокет для сервера
-    room_info_server = websockets.serve(rooms_info_handler, '0.0.0.0', 5678)
+    room_info_server = websockets.serve(rooms_info_handler, ip_addr, port_room_info)
 
     # открыть веб-сокет для выдачи информации о свободных комнатах
-    server = websockets.serve(server_handler, '0.0.0.0', 8765)
+    server = websockets.serve(server_handler, ip_addr, port_websockets)
 
     # добавить handler'ы в основной цикл asyncio
     asyncio.get_event_loop().run_until_complete(room_info_server)
     asyncio.get_event_loop().run_until_complete(server)
+
+    print("Сервер запущен на {0}:{1} и {0}:{2}".format(ip_addr, port_websockets, port_room_info))
 
     # запустить цикл
     try:

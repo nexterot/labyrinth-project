@@ -4,7 +4,7 @@ import random
 
 import server_tools
 from game import fields
-from constants import *
+from game.constants import *
 
 
 class Player:
@@ -30,7 +30,6 @@ class Player:
         """ player movement logic """
         save_location = self.location
 
-
         # создаем пустой пакет для отправки клиенту
         result = server_tools.create_packet()
 
@@ -49,7 +48,6 @@ class Player:
             # self.vector = (0, 0)
             result["wall"] = [1, field.coordinates[0], field.coordinates[1]]
             return result, False
-
 
         # помещаем коориданты клетки, на которую перейдем
         result["coordinates"] = field.coordinates

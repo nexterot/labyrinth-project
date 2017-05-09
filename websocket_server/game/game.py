@@ -5,9 +5,10 @@ import random
 from game.bear import Bear
 from game.player import Player
 
-import levels
+
 import server_tools
 from game import fields
+from game import levels
 
 
 class Game:

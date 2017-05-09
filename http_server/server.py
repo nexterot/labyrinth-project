@@ -5,12 +5,18 @@ from aiohttp import web
 
 import workwithbase
 
+
+ip_addr = '0.0.0.0'
+port = 8080
+
+
 @aiohttp_jinja2.template('index.html')
 async def handle_index(request):
     login = request.cookies.get("nickname", '')
     if not login:
         return {}
     return {"login": login}
+
 
 async def handle_login(request):
     data = request.query
@@ -77,7 +83,6 @@ app = web.Application()
 
 aiohttp_jinja2.setup(app, loader=jinja2.PackageLoader('front_server', "templates"))
 
-
 app.router.add_static('/static', 'front_server/static', name='static')
 
 
@@ -89,4 +94,4 @@ app.router.add_get('/logout', handle_logout)
 app.router.add_get('/info', handle_info)
 app.router.add_get('/{tail:.*}', handle_404)
 
-web.run_app(app, host='0.0.0.0', port=8080)
+web.run_app(app, host=ip_addr, port=port)
