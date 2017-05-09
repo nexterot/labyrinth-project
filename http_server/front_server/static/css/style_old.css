@@ -1,0 +1,138 @@
+body {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  background-image: url(../images/bg1.jpg);
+  font-family: 'PT Sans Caption', sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+}
+
+h1 {
+    font-weight: 700;
+}
+
+.nav-justified > li > a {
+    margin-bottom: 0;
+    font-family: 'PT Sans Caption', sans-serif;
+    color: tan;
+    font-size: 19px;
+}
+
+.nav-justified > li > a:hover {
+    background-color: #520e0e;
+}
+
+.pagination > li > a, .pagination > li > span {
+    align-content: center;
+    padding: 6px 12px;
+    line-height: 1.42857143;
+    color: #101010;
+    text-decoration: none;
+    background-color: #e0e2df;
+    border: 1px solid #ddd;
+    font-size: 12px;
+    margin:0 auto;
+}
+
+.newscontainer {
+    margin: 10px;
+    border: 2px solid #101010;
+    border-radius: 5%;
+    padding: 10px;
+    background-color: #e0e2df;
+}
+
+.pagerow {
+    width: 165px;
+    margin: auto;
+}
+
+.blog-header {
+    text-align: center;
+}
+
+.pagination > .disabled > span, .pagination > .disabled > span:hover, .pagination > .disabled > span:focus, .pagination > .disabled > a, .pagination > .disabled > a:hover, .pagination > .disabled > a:focus {
+    color: #101010;
+    background-color: tan;
+}
+
+.nav > li > a {
+    position: relative;
+    display: block;
+    padding: 15px 15px;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.form-signin {
+  max-width: 330px;
+  margin: 0 auto;
+  margin-bottom: 5px;
+}
+
+.form-signin .form-control {
+  position: relative;
+  height: auto;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+  padding: 10px;
+  font-size: 16px;
+}
+
+.form-signin .form-control:focus {
+  z-index: 2;
+}
+
+.form-signin input[type="email"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.form-signin input[type="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+footer{
+    margin-top: 50%;
+}
+
+div.row.footer-top{
+    text-align: center;
+    font-size: 21px;
+    width: auto;  
+    height: 50px;
+    padding-top: 8px;
+    margin: auto;
+}
+
+div.row.footer-bottom {
+    text-align: center;
+    font-size: 14px;
+    margin: auto;
+}
+
+a:hover {
+    color: #520e0e;
+}
+
+a {
+ color: #101010;  
+}
+
+.col-sm-10 {
+    padding-top: 10px;
+    background-color: silver;
+
+}
+
+div.main-row {
+    background-color: aqua;
+}

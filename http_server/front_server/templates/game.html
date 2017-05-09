@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Game</title>
+</head>
+<body>
+    <p>
+        <input type="text" id="new_room_name"/>
+        <input type="button" value="Create" onclick="createRoom();"/>
+    </p>
+    <div id="info"></div>
+    <script>
+        function setCookie(cname, cvalue, exdays) {
+            var d = new Date();
+            d.setTime(d.getTime() + (exdays*24*60*60*1000));
+            var expires = "expires="+ d.toUTCString();
+            document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+        }
+
+        function createRoom() {
+            var new_room_name = document.getElementById("new_room_name").value;
+            if (new_room_name != "") {
+                ws.send("create_room " + value);
+            }
+        }
+
+        setCookie("nexterot", "HASH420380239874", 1);
+        var ws = new WebSocket("ws://127.0.0.1:8765/");
+
+        ws.onopen = function(event) {
+            ws.send(document.cookie);
+        };
+
+        ws.onmessage = function(event) {
+            info_obj = document.getElementById("info");
+            info_obj.innerHTML = event.data;
+        };
+
+        ws.onclose = function(event) {
+            //ws.send();
+        };
+
+    </script>
+</body>
+</html>
