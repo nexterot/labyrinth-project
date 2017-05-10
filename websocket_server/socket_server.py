@@ -22,43 +22,51 @@ games = []
 
 
 class Room:
+    """ класс представляющий собой комнату для игроков """
     def __init__(self, name):
         self.name = name
         self.players = {}
         self.game = None
 
     def __len__(self):
+        """ перегрузка метода __len__: получение количества игроков в комнате"""
         return len(self.players)
 
     def add(self, nickname, websocket):
+        """ добавление игрока как словарь {имя_игрока: [веб-сокет, текущее время]} в атрибут self.players"""
         self.players[nickname] = [websocket, datetime.datetime.now()]
 
     def remove(self, nickname):
+        """ удаления игрока из комнаты """
         if self.players.get(nickname):
             del self.players[nickname]
         else:
-            logging.error("Игрок {} не найден в комнате {}".format(nickname, self.name))
+            logging.critical("Игрок {} не найден в комнате {}".format(nickname, self.name))
 
     def start_game(self):
+        """ начинает игру """
         self.game = Game(self.players.keys())
 
 
 async def rooms_info_handler(websocket, path):
+    """ handler сервера на отдельном порту, который передает информацию о текущих комнатах """
     global rooms
     try:
         while True:
             dict_view = {room.name: list(room.players.keys()) for room in rooms}
             result = json.dumps(dict_view)
             await websocket.send(result)
-            logging.info("Информация о комнатах отправлена: {}".format(result))
+            # logging.info("Информация о комнатах отправлена: {}".format(result))
             await asyncio.sleep(5)
     except websockets.ConnectionClosed:
-        logging.info("Перестаю посылать информацию о клиенте")
+        pass
+        # logging.info("Перестаю посылать информацию о клиенте")
 
 
 async def remove_hung():
+    """ корутина, отключающая игроков по тайм-ауту; так же используется для закрытия "мертвых" сокетов """
     global rooms
-    time_out = 120
+    time_out = 300  # тайм-аут
     while True:
         now = datetime.datetime.now()
         for room in rooms:
@@ -70,11 +78,11 @@ async def remove_hung():
                 if (now - date_time).seconds > time_out:
                     logging.info("Игрок {} был отключен по тайм-ауту: {} секунд".format(player_name, time_out))
                     await websocket.close()
-        await asyncio.sleep(30)
+        await asyncio.sleep(20)
 
 
 async def get_client_info(websocket):
-    # получить имя игрока и его уникальный ключ
+    """ получение имени игрока и его уникального ключа """
     result = await websocket.recv()
     try:
         player_name, key = result.split("=")
@@ -86,16 +94,17 @@ async def get_client_info(websocket):
 
 
 def update_uptime(room, player_name):
+    """ обновляет время клиента, чтобы избежать отключения по тайм-ауту"""
     room.players[player_name][1] = datetime.datetime.now()
 
+
 async def server_handler(websocket, path):
+    """ handler основного сервера """
     player_name = "[неизвестный]"
     player_room = None
     try:
         # получить имя игрока и его уникальный ключ
         player_name, key = await get_client_info(websocket)
-
-        # update_uptime(player_name)
 
         logging.info("Подключился игрок {}[{}]".format(player_name, key))
 
@@ -103,8 +112,6 @@ async def server_handler(websocket, path):
         request = await websocket.recv()
         request = parse_json(request)
         logging.info("Игрок {}: {}".format(player_name, request))
-
-        # update_uptime(player_name)
 
         # если пришел сигнал создать комнату
         if request["type"] == "create":
@@ -154,8 +161,6 @@ async def server_handler(websocket, path):
         # ждем сообщения от клиента
         message = await websocket.recv()
         logging.info("Игрок {} прислал {}".format(player_name, message))
-
-
 
         # ждем начала игры или начинаем ее сами
         while True:
@@ -279,18 +284,11 @@ async def server_handler(websocket, path):
 
 def main():
     # логирование
-    """
     logging.basicConfig(
         format='%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
         level=logging.INFO,
         filename="server.log"
     )
-    """
-    """
-    logger = logging.getLogger('websockets.server')
-    logger.setLevel(logging.DEBUG)
-    logger.addHandler(logging.StreamHandler())
-    """
 
     # открыть веб-сокет для сервера
     room_info_server = websockets.serve(rooms_info_handler, ip_addr, port_room_info)
@@ -302,8 +300,9 @@ def main():
     asyncio.get_event_loop().run_until_complete(room_info_server)
     asyncio.get_event_loop().run_until_complete(server)
 
-    # добавить
-    asyncio.get_event_loop().run_until_complete(remove_hung())
+    # добавить Task: отключать по тайм-ауту в 5 минут
+    task = asyncio.Task(remove_hung())
+    asyncio.get_event_loop().run_until_complete(task)
 
     print("Сервер запущен на {0}:{1} и {0}:{2}".format(ip_addr, port_websockets, port_room_info))
 

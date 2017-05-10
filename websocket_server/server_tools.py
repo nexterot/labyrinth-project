@@ -48,9 +48,46 @@ def to_json(func):
     return inner
 
 
-def create_packet():
+def create_packet_go():
     return {
         "type": "turn", "type_of_turn": "go", "error": 0, "coordinates": [0, 0],
         "wall": 0, "mine": 0, "river": [0] * 3, "aid": 0, "arm": 0, "bear": 0,
         "treasure": 0, "metro": [0] * 3, "exit": [0] * 2
+    }
+
+
+def create_packet_knife():
+    return {
+        "type": "turn",
+        "type_of_turn": "knife",
+        "error": 0,
+        "is_here_enemy": 0,
+        "name_of_victim": None
+    }
+
+
+def create_packet_bomb():
+    return {
+        "type": "turn",
+        "type_of_turn": "bomb",
+        "error": 0,
+        "wall_or_ground": [0, 0, 0]
+    }
+
+
+def create_packet_concrete():
+    return {
+        "type": "turn",
+        "type_of_turn": "concrete",
+        "error": 0,
+        "coordinates": [0, 0]
+    }
+
+
+def create_packet_aid():
+    return {
+        "type": "turn",
+        "type_of_turn": "aid",
+        "error": 0,
+        "now_health": 0
     }
