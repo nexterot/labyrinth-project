@@ -29,11 +29,13 @@ function renderInterface() {
     land.sendToBack();
     var playerFace = game.add.sprite(25, 25, "playerFace");
     var panel = game.add.sprite(25, 275, "panel");
-    var labelNick = game.add.sprite(30, 320, "labelNick");
-    var weaponGun = game.add.sprite(30, 410, "weaponGun");
-    var weaponMine = game.add.sprite(145, 410, "weaponMine");
-    var buttonMenu = game.add.sprite(30, 515, "buttonMenu");
-    var scaleHealth = game.add.sprite(30, 365, "scaleHealth");
+    var labelNick = game.add.sprite(30, 205, "labelNick");
+    var scaleHealth = game.add.sprite(30, 300, "scaleHealth");
+    var weaponGun = game.add.sprite(30, 360, "weaponGun");
+    var weaponMine = game.add.sprite(145, 360, "weaponMine");
+    var weaponGun2 = game.add.sprite(30, 465, "weaponGun");
+    var weaponMine2 = game.add.sprite(145, 465, "weaponMine");
+    var buttonMenu = game.add.sprite(30, 570, "buttonMenu");
 }
 
 function create(levelSizeX, levelSizeY, playerX, playerY) {
