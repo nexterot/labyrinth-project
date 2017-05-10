@@ -23,6 +23,7 @@ class Grass(Field):
         self.obj = obj
         self.pair = None  # for teleports
         self.exit = False
+        self.concrete = False
 
     def update(self):
         pass
@@ -47,18 +48,16 @@ class FieldGroup:
     """ a container that represents the game battlefield """
     def __init__(self):
         self.sprites = []
+        self.dim = None
 
     def add(self, field):
         self.sprites.append(field)
 
     def at(self, coordinates):
         """ find Field object with such coordinates """
-        for field in self.sprites:
-            if field.coordinates == coordinates:
-                return field
+        return self.sprites[coordinates[0] * self.dim + coordinates[1]]
 
     def by_id(self, identity):
-        assert identity < len(self.sprites)
         return self.sprites[identity]
 
     def update(self):
@@ -67,6 +66,7 @@ class FieldGroup:
 
     def add_teleport(self, tp_field) -> None:
         """ method that finds pairs to teleports 1-3 while building level """
+
         for field in self.sprites:
             if isinstance(field, Grass) and field.obj == tp_field.obj:
                 field.pair = tp_field

@@ -25,27 +25,47 @@ class Game:
         self.initialize_level()
 
     def accept(self, player, turn):
+
+        # если передвижение по карте
         if turn[0] == "go":
             field = self.fields.at((turn[1], turn[2]))
             if field:
                 result, was_error = player.go(field)
                 return was_error, result
             else:
-                result = server_tools.create_packet()
+                result = server_tools.create_packet_go()
                 result["error"] = 1
                 return True, result
 
+        # если удар ножом
         elif turn[0] == "knife":
-            ...
+            return player.knife()
 
-        elif turn[0] == "concrete":
-            ...
-
+        # если выбрана бомба
         elif turn[0] == "bomb":
-            ...
+            field = self.fields.at((turn[1], turn[2]))
+            if field:
+                result, was_error = player.set_bomb(field)
+                return was_error, result
+            else:
+                result = server_tools.create_packet_bomb()
+                result["error"] = 2
+                return True, result
 
+        # если цемент
+        elif turn[0] == "concrete":
+            field = self.fields.at((turn[1], turn[2]))
+            if field:
+                result, was_error = player.set_concrete(field)
+                return was_error, result
+            else:
+                result = server_tools.create_packet_concrete()
+                result["error"] = 2
+                return True, result
+
+        # если использована аптечка
         elif turn[0] == "aid":
-            ...
+            return player.use_aid()
 
         else:
             print("Unknown command to accept by game: {}".format(turn[0]))
@@ -76,6 +96,7 @@ class Game:
         # random.shuffle(self.players)
         num_player = 0
         count_id = 0
+        self.fields.dim = levels.SIZE
         for row in range(levels.SIZE):
             for col in range(levels.SIZE):
                 coordinates = (row, col)

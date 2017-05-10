@@ -31,7 +31,7 @@ class Player:
         save_location = self.location
 
         # создаем пустой пакет для отправки клиенту
-        result = server_tools.create_packet()
+        result = server_tools.create_packet_go()
 
         # текущие координаты
         result["coordinates"] = self.location.coordinates
@@ -158,6 +158,105 @@ class Player:
         """ make a move """
         self.vector = self.__vector_to(field)
         self.location = field
+
+    def knife(self):
+        packet = server_tools.create_packet_knife()
+
+        if not self.alive:
+            packet["error"] = 1
+            return True, packet
+
+        for player in self.game.players:
+            if player.location == self.location:
+                packet["name_of_victim"] = player.name
+                player.get_damage(1)
+                if not player.alive:
+                    packet["is_here_enemy"] = 1
+                else:
+                    packet["is_here_enemy"] = 2
+                break
+
+        return False, packet
+
+    def set_bomb(self, field):
+        packet = server_tools.create_packet_bomb()
+
+        # если клетка не рядом
+        if not self.can_go(field):
+            packet["error"] = 2
+            return True, packet
+
+        # если игрок мертв
+        if not self.alive:
+            packet["error"] = 1
+            return True, packet
+
+        # если у игрока нет бомб
+        if self.inventory[BOMB] == 0:
+            packet["error"] = 3
+            return True, packet
+
+        # если клетка - трава и на ней ничего нет - просто установить бомбу
+        if isinstance(field, fields.Grass) and not field.obj and not field.has_treasure and not field.concrete:
+            packet["wall_or_ground"] = [1, field.coordinates[0], field.coordinates[1]]
+            field.obj = "mine"
+
+        # если же там стена, то взорвать стену
+        elif isinstance(field, fields.Wall) or isinstance(field, fields.Grass) and field.concrete:
+            packet["wall_or_ground"] = [1, field.coordinates[0], field.coordinates[1]]
+            # поменять тип объекта на пустой Grass
+            self.game.fields.sprites[field.id] = fields.Grass(self.game, field.id, field.coordinates, None)
+
+        return False, packet
+
+    def set_concrete(self, field):
+        packet = server_tools.create_packet_concrete()
+
+        # если клетка не рядом
+        if not self.can_go(field):
+            packet["error"] = 2
+            return True, packet
+
+        # если игрок мертв
+        elif not self.alive:
+            packet["error"] = 1
+            return True, packet
+
+        # если у игрока нет цемента
+        elif self.inventory[CONCRETE] == 0:
+            packet["error"] = 3
+            return True, packet
+
+        # если пустой Grass
+        if isinstance(field, fields.Grass) and not field.obj and not field.has_treasure and not field.concrete:
+            packet["coordinates"] = field.coordinates
+            field.concrete = True
+
+        return False, packet
+
+    def use_aid(self):
+        packet = server_tools.create_packet_aid()
+
+        # если игрок мертв
+        if not self.alive:
+            packet["error"] = 1
+            return True, packet
+
+        # если нет аптечек
+        if self.inventory[AID] == 0:
+            packet["error"] = 2
+            return True, packet
+
+        # если и так уже здоров
+        if self.health == Player.MAX_HEALTH:
+            packet["error"] = 3
+            return True, packet
+
+        packet["now_health"] = self.health
+
+        self.health += 1
+
+        return False, packet
 
     def teleport_from(self, field):
         self.location = field.pair
