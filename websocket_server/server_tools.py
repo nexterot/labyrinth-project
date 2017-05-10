@@ -15,7 +15,7 @@ SUCCESS = "111"
 
 
 async def inform_whose_turn(player_name, room, active_player_name, response):
-    for websocket in room.players.values():
+    for websocket, _ in room.players.values():
         logging.info("Уведомляем игрока {}({}), о том, что ходит игрок {}".format(player_name, room.name, active_player_name))
         await websocket.send(response)
 

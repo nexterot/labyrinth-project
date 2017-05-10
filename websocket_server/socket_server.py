@@ -31,7 +31,7 @@ class Room:
         return len(self.players)
 
     def add(self, nickname, websocket):
-        self.players[nickname] = websocket
+        self.players[nickname] = [websocket, datetime.datetime.now()]
 
     def remove(self, nickname):
         if self.players.get(nickname):
@@ -56,6 +56,23 @@ async def rooms_info_handler(websocket, path):
         logging.info("Перестаю посылать информацию о клиенте")
 
 
+async def remove_hung():
+    global rooms
+    time_out = 120
+    while True:
+        now = datetime.datetime.now()
+        for room in rooms:
+            keys = list(room.players.keys())
+            for player_name in keys:
+                if not room:
+                    break
+                websocket, date_time = room.players[player_name]
+                if (now - date_time).seconds > time_out:
+                    logging.info("Игрок {} был отключен по тайм-ауту: {} секунд".format(player_name, time_out))
+                    await websocket.close()
+        await asyncio.sleep(30)
+
+
 async def get_client_info(websocket):
     # получить имя игрока и его уникальный ключ
     result = await websocket.recv()
@@ -68,6 +85,9 @@ async def get_client_info(websocket):
     return player_name, key
 
 
+def update_uptime(room, player_name):
+    room.players[player_name][1] = datetime.datetime.now()
+
 async def server_handler(websocket, path):
     player_name = "[неизвестный]"
     player_room = None
@@ -75,12 +95,16 @@ async def server_handler(websocket, path):
         # получить имя игрока и его уникальный ключ
         player_name, key = await get_client_info(websocket)
 
+        # update_uptime(player_name)
+
         logging.info("Подключился игрок {}[{}]".format(player_name, key))
 
         # получаем сообщение-запрос (создать-присоединиться) от игрока
         request = await websocket.recv()
         request = parse_json(request)
         logging.info("Игрок {}: {}".format(player_name, request))
+
+        # update_uptime(player_name)
 
         # если пришел сигнал создать комнату
         if request["type"] == "create":
@@ -131,6 +155,8 @@ async def server_handler(websocket, path):
         message = await websocket.recv()
         logging.info("Игрок {} прислал {}".format(player_name, message))
 
+
+
         # ждем начала игры или начинаем ее сами
         while True:
             if player_room.game:  # если игра уже началась
@@ -177,6 +203,8 @@ async def server_handler(websocket, path):
         # ждать, чтобы клиент успел отрисовать
         response = await websocket.recv()
         logging.info("Игрок {} прислал {}".format(player_name, response))
+
+        update_uptime(player_room, player_name)
 
         # основной игровой цикл
         while True:
@@ -233,6 +261,8 @@ async def server_handler(websocket, path):
                 await websocket.send(json.dumps(final_result))
                 break
 
+            update_uptime(player_room, player_name)
+
     except websockets.ConnectionClosed:
         logging.critical("Игрок {} отвалился".format(player_name))
         if player_room:
@@ -249,11 +279,18 @@ async def server_handler(websocket, path):
 
 def main():
     # логирование
+    """
     logging.basicConfig(
         format='%(filename)s[LINE:%(lineno)d]# %(levelname)-8s [%(asctime)s]  %(message)s',
         level=logging.INFO,
         filename="server.log"
     )
+    """
+    """
+    logger = logging.getLogger('websockets.server')
+    logger.setLevel(logging.DEBUG)
+    logger.addHandler(logging.StreamHandler())
+    """
 
     # открыть веб-сокет для сервера
     room_info_server = websockets.serve(rooms_info_handler, ip_addr, port_room_info)
@@ -265,13 +302,16 @@ def main():
     asyncio.get_event_loop().run_until_complete(room_info_server)
     asyncio.get_event_loop().run_until_complete(server)
 
+    # добавить
+    asyncio.get_event_loop().run_until_complete(remove_hung())
+
     print("Сервер запущен на {0}:{1} и {0}:{2}".format(ip_addr, port_websockets, port_room_info))
 
     # запустить цикл
     try:
         asyncio.get_event_loop().run_forever()
     except KeyboardInterrupt:
-        logging.info("Shutting down server on Ctrl+C")
+        logging.info("Выключение сервера")
 
 
 if __name__ == "__main__":
