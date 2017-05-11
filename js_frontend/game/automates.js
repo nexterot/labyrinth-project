@@ -128,8 +128,8 @@ function STATE_6_func(data) {
 }
 
 function FINAL_func(data) {
-    console.log("Победлитель: " + data.statistics[0]);
-    console.log("Приз: " + data.prize[0] + " бомб; " + data.prize[1] + " блоков цемента; " + data.prize[2] + " аптечек.");
+    alert("Победлитель: " + data.statistics[0]);
+    alert("Приз: " + data.prize[0] + " бомб; " + data.prize[1] + " блоков цемента; " + data.prize[2] + " аптечек.");
     console.log("Результаты: ");
     for (var i = 0; i < data.statistics.length; i++) {
         console.log((i + 1) + " место: " + data.statistics[i]);

@@ -109,6 +109,8 @@ class Game:
                     self.fields.add(fields.Grass(self, count_id, coordinates, None))
                 elif value == 1:
                     self.fields.add(fields.Wall(self, count_id, coordinates))
+                elif value == 11:  # todo 
+                    self.fields.add(fields.Wall(self, count_id, coordinates))
                 elif value == 2:
                     grass = fields.Grass(self, count_id, coordinates, None)
                     if num_player < self.num_players:

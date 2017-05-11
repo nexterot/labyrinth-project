@@ -6,8 +6,13 @@ var port = '8765';
 
 var my_name = getCookie("nickname");
 
-var land = 0;
-var player = 0;
+var land;
+var player;
+
+/* ------------------------------------------------------------------ */
+/* Кнопки */
+var buttonKnife, buttonAid, buttonBomb, buttonConcrete;
+/* ------------------------------------------------------------------ */
 
 var canvasSizeX = 900;
 var canvasSizeY = 650;
@@ -21,6 +26,8 @@ var STATE_3__show_my_turn = 3;
 var STATE_4__sleep = 4;
 var STATE_5__send_signal = 5;
 var STATE_6_show_another_turn = 6;
+var STATE_7_bomb = 7;
+var STATE_8_concrete = 8;
 var FINAL__somebody_win = 0;
 var ERROR_EXIT = -1;
 /* Глобальная переменная - текущая координата */
@@ -39,6 +46,7 @@ var levelSizeY;
 
 /* send_coordinates() - функция, которая отправляет на сервер тип хода и его координаты */
 function send_coordinates(type, x, y) {
+    console.log(JSON.stringify([type, x, y]));
     webSocket.send(JSON.stringify([type, x, y]));
 }
 

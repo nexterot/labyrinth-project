@@ -114,6 +114,7 @@ async def server_handler(websocket, path):
         logging.info("Игрок {}: {}".format(player_name, request))
 
         # если пришел сигнал создать комнату
+        # todo: ошибка, если игрок уже создал игру
         if request["type"] == "create":
             if len(rooms) >= MAX_ROOMS:  # ошибка: слишком много комнат!
                 logging.error("Игрок {} не смог создать комнату: их слишком много".format(player_name))
@@ -195,8 +196,6 @@ async def server_handler(websocket, path):
         # заполняем инвентарь игрока
         player.inventory = request["equipment"]
 
-        # await asyncio.sleep(5)
-
         # отправляем начальные данные:
         # {"list_of_players":[name1, ..., nameN], "size":[x, y], "place":[x, y], "equipment":[3 elements]}
         init_data = game.get_init_data(player_name)
@@ -259,7 +258,7 @@ async def server_handler(websocket, path):
             logging.info("Игрок {} прислал {}".format(player_name, json.dumps(response)))
 
             # если выиграл todo разослать всем игрокам, завершить игру
-            if result["exit"][1] == 1:
+            if result["type"] == "turn" and result["type_of_turn"] == "go" and result["exit"][1] == 1:
                 final_result = game.get_statistics(player_name)
                 logging.info("Игрок {} выиграл!".format(player_name))
                 logging.info("Посылаем игроку {} {}".format(player_name, final_result))

@@ -44,7 +44,7 @@ class Player:
         self.visible_fields[field.id] = True
 
         # если стена
-        if isinstance(field, fields.Wall):
+        if isinstance(field, fields.Wall) or isinstance(field, fields.Grass) and field.concrete:
             # self.vector = (0, 0)
             result["wall"] = [1, field.coordinates[0], field.coordinates[1]]
             return result, False
@@ -167,7 +167,7 @@ class Player:
             return True, packet
 
         for player in self.game.players:
-            if player.location == self.location:
+            if player.location == self.location and player != self:
                 packet["name_of_victim"] = player.name
                 player.get_damage(1)
                 if not player.alive:
@@ -184,21 +184,21 @@ class Player:
         # если клетка не рядом
         if not self.can_go(field):
             packet["error"] = 2
-            return True, packet
+            return packet, True
 
         # если игрок мертв
         if not self.alive:
             packet["error"] = 1
-            return True, packet
+            return packet, True
 
         # если у игрока нет бомб
         if self.inventory[BOMB] == 0:
             packet["error"] = 3
-            return True, packet
+            return packet, True
 
         # если клетка - трава и на ней ничего нет - просто установить бомбу
         if isinstance(field, fields.Grass) and not field.obj and not field.has_treasure and not field.concrete:
-            packet["wall_or_ground"] = [1, field.coordinates[0], field.coordinates[1]]
+            packet["wall_or_ground"] = [2, field.coordinates[0], field.coordinates[1]]
             field.obj = "mine"
 
         # если же там стена, то взорвать стену
@@ -207,7 +207,9 @@ class Player:
             # поменять тип объекта на пустой Grass
             self.game.fields.sprites[field.id] = fields.Grass(self.game, field.id, field.coordinates, None)
 
-        return False, packet
+        self.inventory[BOMB] -= 1
+
+        return packet, False
 
     def set_concrete(self, field):
         packet = server_tools.create_packet_concrete()
@@ -215,24 +217,31 @@ class Player:
         # если клетка не рядом
         if not self.can_go(field):
             packet["error"] = 2
-            return True, packet
+            return packet, True
 
         # если игрок мертв
         elif not self.alive:
             packet["error"] = 1
-            return True, packet
+            return packet, True
 
         # если у игрока нет цемента
         elif self.inventory[CONCRETE] == 0:
             packet["error"] = 3
-            return True, packet
+            return packet, True
 
         # если пустой Grass
         if isinstance(field, fields.Grass) and not field.obj and not field.has_treasure and not field.concrete:
+            for player in self.game.players:
+                if player.location == field:
+                    packet["error"] = 2
+                    return packet, True
             packet["coordinates"] = field.coordinates
             field.concrete = True
-
-        return False, packet
+            self.inventory[CONCRETE] -= 1
+            return packet, False
+        else:
+            packet["error"] = 2
+            return packet, True
 
     def use_aid(self):
         packet = server_tools.create_packet_aid()
@@ -255,6 +264,7 @@ class Player:
         packet["now_health"] = self.health
 
         self.health += 1
+        self.inventory[AID] -= 1
 
         return False, packet
 
