@@ -10,4 +10,4 @@ websocket_server/game/__pycache__/
 websocket_server/log.txt
 websocket_server/server.log
 
-http_server/labyrinth.db
+http_server/labyrintdb.db
