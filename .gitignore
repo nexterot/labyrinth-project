@@ -1,0 +1,13 @@
+http_server/__pycache__/
+http_server/front_server/__pycache__/
+http_server/err.txt
+http_server/log.txt
+js_frontend/err.txt
+js_frontend/log.txt
+websocket_server/err.txt
+websocket_server/__pycache__/
+websocket_server/game/__pycache__/
+websocket_server/log.txt
+websocket_server/server.log
+
+http_server/labyrinth.db
