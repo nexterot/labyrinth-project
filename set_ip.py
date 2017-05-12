@@ -6,9 +6,13 @@ ip = "37.139.2.176"
 
 
 def replace_ips(file_name):
-    with open(file_name, "rw") as file:
+    with open(file_name, "r") as file:
         content = file.read()
-        result = content.replace(pattern, ip)
+        while content.find(pattern) != -1:
+                content = content.replace(pattern, ip)
+        result = content
+
+    with open(file_name, "w") as file:
         file.write(result)
 
 files = [
