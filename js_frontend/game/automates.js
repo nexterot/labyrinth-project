@@ -1,3 +1,6 @@
+// Отредактировал.
+
+// Функции, реализующие работу конечного автомата.
 function automate1(data) {
     switch (CURRENT_STATE) {
         case STATE_1__waiting_for_connection: {

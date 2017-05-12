@@ -44,9 +44,13 @@ class Player:
         self.visible_fields[field.id] = True
 
         # если стена
-        if isinstance(field, fields.Wall) or isinstance(field, fields.Grass) and field.concrete:
+        if isinstance(field, fields.Wall):
             # self.vector = (0, 0)
             result["wall"] = [1, field.coordinates[0], field.coordinates[1]]
+            return result, False
+            
+        elif isinstance(field, fields.Grass) and field.concrete:
+            result["wall"] = [2, field.coordinates[0], field.coordinates[1]]
             return result, False
 
         # помещаем коориданты клетки, на которую перейдем
@@ -166,6 +170,8 @@ class Player:
             packet["error"] = 1
             return True, packet
 
+        packet["coordinates"] = self.location.coordinates
+
         for player in self.game.players:
             if player.location == self.location and player != self:
                 packet["name_of_victim"] = player.name
@@ -198,14 +204,22 @@ class Player:
 
         # если клетка - трава и на ней ничего нет - просто установить бомбу
         if isinstance(field, fields.Grass) and not field.obj and not field.has_treasure and not field.concrete:
-            packet["wall_or_ground"] = [2, field.coordinates[0], field.coordinates[1]]
+            packet["wall_or_ground"] = [3, field.coordinates[0], field.coordinates[1]]
             field.obj = "mine"
 
         # если же там стена, то взорвать стену
-        elif isinstance(field, fields.Wall) or isinstance(field, fields.Grass) and field.concrete:
+        elif isinstance(field, fields.Wall):
             packet["wall_or_ground"] = [1, field.coordinates[0], field.coordinates[1]]
             # поменять тип объекта на пустой Grass
             self.game.fields.sprites[field.id] = fields.Grass(self.game, field.id, field.coordinates, None)
+        elif isinstance(field, fields.Grass) and field.concrete:
+            packet["wall_or_ground"] = [2, field.coordinates[0], field.coordinates[1]]
+            # поменять тип объекта на пустой Grass
+            self.game.fields.sprites[field.id] = fields.Grass(self.game, field.id, field.coordinates, None)            
+            
+        else:
+            packet["error"] = 2
+            return packet, True
 
         self.inventory[BOMB] -= 1
 

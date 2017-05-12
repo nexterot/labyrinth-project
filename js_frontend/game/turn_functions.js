@@ -1,299 +1,259 @@
-/* ------------------------------------------------------------------ */
-/* Функции отрисовки очередного действия данного игрока */
+// Вспомогательные функции отрисовки хода данного игрока.
 
-/* Функция отрисовки перехода на новую клетку.
- * Обрабатывает:
- * 1) ...
- */
-function draw_go(data) {
+// Перемещение.
+function drawGo(data) {
     if (data.error == 1) {
-        alert("Сюда нельзя идти, повторите попытку!!!");
-        // draw
+        alert("Сюда идти нельзя!\n Повторите попытку!");
         CURRENT_STATE = STATE_5__send_signal;
     } else {
         var flag = false;
-        console.log("Вы перешли на клетку [" + data.coordinates[0] + " ," + data.coordinates[1] + "]");
-        if (data.wall[0] == 1) {
-            alert("Вы упёрлись в стену!");
-            fields[data.wall[1]][data.wall[2]].changeSprite(275 + data.wall[2] * spriteSize, 25 + data.wall[1] * spriteSize, "wall");
-            flag = true;
-        }
-        if ((data.mine == 1) || (data.mine == 2) || (data.mine == 3)) {
-            draw_go_helper1(data, data.coordinates[0], data.coordinates[1], "mine", "player");
-            switch (data.mine) {
+        if ((data.wall[0] == 1) || (data.wall[0] == 2)) {
+            intoWallSound.play();
+            switch (data.wall[0]) {
                 case 1: {
-                    alert("Вы убиты на мине!");
+                    fields[data.wall[1]][data.wall[2]].changeSprite(275 + data.wall[2] * spriteSize, 25 + data.wall[1] * spriteSize, "wall");
                     break;
                 }
                 case 2: {
-                    alert("Вы ранены на мине! У вас 50 % здоровья");
+                    fields[data.wall[1]][data.wall[2]].changeSprite(275 + data.wall[2] * spriteSize, 25 + data.wall[1] * spriteSize, "concrete");
+                    break;
+                }
+            }
+            flag = true;
+        }
+        if ((data.mine == 1) || (data.mine == 2) || (data.mine == 3)) {
+            bombBlastedSound.play()
+            drawHelper(data, data.coordinates[0], data.coordinates[1], "bomb", "player_stay");
+            setTimeout(drawHelper, 300, data, data.coordinates[0], data.coordinates[1], "sand", "player_bang");
+            switch (data.mine) {
+                case 1: {
+                    setTimeout(drawHelper, 600, data, data.coordinates[0], data.coordinates[1], "sand", "player_died");
+                    setTimeout(drawHelper, 900, data, data.coordinates[0], data.coordinates[1], "sand", "player_ghost");
+                    setTimeout(function(){alert("Вы убиты на мине!");}, 1000);
+                    break;
+                }
+                case 2: {
+                    setTimeout(drawHelper, 600, data, data.coordinates[0], data.coordinates[1], "sand", "player_injured");
+                    setTimeout(drawHelper, 900, data, data.coordinates[0], data.coordinates[1], "sand", "player_stay");
+                    setTimeout(function(){alert("Вы ранены на мине!\n У вас 50 % здоровья!");}, 1000);                   
                     break;
                 }
                 case 3: {
-                    alert("Вы ранены на мине! У вас 25% здоровья");
+                    setTimeout(drawHelper, 600, data, data.coordinates[0], data.coordinates[1], "sand", "player_injured");
+                    setTimeout(drawHelper, 900, data, data.coordinates[0], data.coordinates[1], "sand", "player_stay");
+                    setTimeout(function(){alert("Вы ранены на мине!\n У вас 25 % здоровья!");}, 1000);    
                     break;
                 }
             }
             flag = true;
         }
         if (data.river[0] == 1) {
-            alert("Вы поплылил по реке!");
-            draw_go_helper1(data, data.coordinates[0], data.coordinates[1], "water", "player");
+            waterSound.play();
+            setTimeout(drawHelper, 0, data, data.coordinates[0], data.coordinates[1], "water", "player_stay");
             for (var i = 0; i < data.river[1].length; i++)
-                draw_go_helper1(data, data.river[1][i][0], data.river[1][i][1], "water", "player");
-            flag = true;
+                setTimeout(drawHelper, (1000 / data.river[1].length) * (i + 1), data, data.river[1][i][0], data.river[1][i][1], "water", "player_stay");
         }
         if ((data.aid == 1) || (data.aid == 2) || (data.aid == 3)) {
-            draw_go_helper1(data, data.coordinates[0], data.coordinates[1], "hospital", "player");
+            drawHelper(data, data.coordinates[0], data.coordinates[1], "aid", "player_stay");
+            setTimeout(drawHelper, 300, data, data.coordinates[0], data.coordinates[1], "aid", "player_use_aid");
+            setTimeout(drawHelper, 700, data, data.coordinates[0], data.coordinates[1], "aid", "player_stay");
             switch (data.aid) {
                 case 1: {
-                    console.log("Вы ожили");
-                    alert("Вы ожили");
-                    // draw
+                    setTimeout(function(){alert("Вы попали в госпиталь!\n  Вы ожили!");}, 1000);
                     break;
                 }
                 case 2: {
-                    alert("У вас теперь 100% здоровья");
+                    setTimeout(function(){alert("Вы попали в госпиталь!\n   У вас теперь 100% здоровья!");}, 1000);              
                     break;
                 }
                 case 3: {
-                    alert("У вас плюс одна аптечка");
+                    setTimeout(function(){alert("Вы попали в госпиталь!\n   У вас плюс одна аптечка!");}, 1000); 
                     break;
                 }
             }
             flag = true;
         }
         if ((data.arm == 1) || (data.arm == 2)) {
-            draw_go_helper1(data, data.coordinates[0], data.coordinates[1], "weapons", "player");
+            drawHelper(data, data.coordinates[0], data.coordinates[1], "arm", "player_stay");
+            setTimeout(drawHelper, 300, data, data.coordinates[0], data.coordinates[1], "arm", "player_use_aid");
+            setTimeout(drawHelper, 700, data, data.coordinates[0], data.coordinates[1], "arm", "player_stay");
             switch (data.arm) {
                 case 1: {
-                    console.log("У вас плюс один цемент");
-                    alert("У вас плюс один цемент");
+                    setTimeout(function(){alert("Вы попали в арсенал!\n  У вас плюс один цемент!");}, 1000);  
                     break;
                 }
                 case 2: {
-                    console.log("У вас плюс одна бомба");
-                    alert("У вас плюс одна бомба");
+                    setTimeout(function(){alert("Вы попали в арсенал!\n  У вас плюс одна бомба");}, 1000); 
                     break;
                 }
             }
-            flag = true;
-        }
-        if ((data.bear == 1) || (data.bear == 2) || (data.bear == 3)) {
-            console.log("На вас напал медведь!");
-            switch (data.bear) {
-                case 1: {
-                    console.log("Вы убиты!");
-                    //draw
-                    break;
-                }
-                case 2: {
-                    console.log("Вы ранены! 50% здоровья");
-                    //draw
-                    break;
-                }
-                case 3: {
-                    console.log("Вы ранены! 25% здоровья");
-                    // draw 
-                    break;
-                }
-            }
-            console.log("Медведь");
-            // draw
             flag = true;
         }
         if (data.treasure == 1) {
-            console.log("Вы нашли клад");
-            alert("Вы нашли клад!");
-            draw_go_helper1(data, data.coordinates[0], data.coordinates[1], "treasure", "player");
-            // Отрисовать исчезновение сокровища
+            treasureSound.play();
+            drawHelper(data, data.coordinates[0], data.coordinates[1], "treasure", "player_stay");
+            setTimeout(drawHelper, 300, data, data.coordinates[0], data.coordinates[1], "treasure", "player_use_aid");
+            setTimeout(drawHelper, 700, data, data.coordinates[0], data.coordinates[1], "sand", "player_stay");
+            setTimeout(function(){alert("Вы нашли клад!");}, 1000); 
             flag = true;
         }
         if (data.metro[0] == 1) {
-            console.log("Вы воспользовались метро!");
-            draw_go_helper1(data, data.coordinates[0], data.coordinates[1], "teleport", "player");
-            draw_go_helper1(data, data.metro[1], data.metro[2], "teleport", "player");
-            console.log("Вы воспользовались метрополитеном");
-            console.log("Вы перешли на клетку [" + data.metro[1] + ", " + data.metro[2] + "]");
+            metroSound.play();
+            drawHelper(data, data.coordinates[0], data.coordinates[1], "metro", "player_stay");
+            setTimeout(drawHelper, 300, data, data.coordinates[0], data.coordinates[1], "metro", "player_use_aid");
+            setTimeout(drawHelper, 600, data, data.metro[1], data.metro[2], "metro", "player_use_aid");
+            setTimeout(drawHelper, 900, data, data.metro[1], data.metro[2], "metro", "player_stay");
             flag = true;
         }
         if (data.exit[0] == 1) {
             if (data.exit[1] == 1) {
-                console.log("Вы выиграли");
-                // draw
+                drawHelper(data, data.coordinates[0], data.coordinates[1], "sand", "player_stay");
+                setTimeout(drawHelper, 300, data, data.coordinates[0], data.coordinates[1], "treasure", "player_stay");
+                setTimeout(drawHelper, 700, data, data.coordinates[0], data.coordinates[1], "sand", "player_stay");
+                setTimeout(function(){alert("Вы выиграли!");}, 1000);
                 CURRENT_STATE = FINAL__somebody_win; return;
             } else {
-                console.log("У вас нет клада!!! Вам нельзя выходить");
-                // draw
+                drawHelper(data, data.coordinates[0], data.coordinates[1], "sand", "player_stay");                
+                alert("У вас нет клада!\n Вам сюда нельзя!")
             }
             flag = true;
         }
         if (! flag) {
-            draw_go_helper1(data, data.coordinates[0], data.coordinates[1], "grass", "player");
+            drawHelper(data, data.coordinates[0], data.coordinates[1], "sand", "player_stay");
         }
         CURRENT_STATE = STATE_4__sleep;
     }
 }
 
-/* Вспомогателььная функция для функции отрисовки draw_go
- */
-function draw_go_helper1(data, x, y, fieldImage, playerImage) {
-    fields[x][y].changeSprite(275 + y * spriteSize, 25 + x * spriteSize, fieldImage);
-    player.sprite.kill();
-    player.sprite = game.add.sprite(275 + y * spriteSize, 25 + x * spriteSize, playerImage);
-}
-
-
-/* Функция отрисовки удара ножом.
- * Обрабатывает:
- * 1) ...
- */
-function draw_knife(data) {
+// Нож.
+function drawKnife(data) {
     if (data.error == 1) {
-        console.log("Вы мертвы, а значит не можете пользоваться ножом");
-        console.log("Повторите попытку");
+        alert("Вы мертвы, а значит не можете пользоваться ножом!\n  Повторите попытку!");
         CURRENT_STATE = STATE_5__send_signal;
     } else {
-        if ((data.is_here_enemy == 1) || (data.is_here_enemy == 2) || (data.is_here_enemy == 3) || (data.is_here_enemy == 4)) {
-            console.log("В этой клетке есть враг!!!");
-            // draw
-            switch (data.is_here_enemy) {
-                case 1: {
-                    console.log("Вы убили врага");
-                    // draw
-                    break;
-                }
-                case 2: {
-                    console.log("Вы ранили врага: у него 25% здоровья");
-                    // draw
-                    break;
-                }
-                case 3: {
-                    console.log("Вы ранили врага: у него 50% здоровья");
-                    // draw
-                    break;
-                }
-                case 4: {
-                    console.log("Вы ранили врага: у него 75% здоровья");
-                    // draw
-                    break;
-                }
+        knifeSound.play();
+        drawHelper(data, data.coordinates[0], data.coordinates[1], "sand", "player_stay");
+        setTimeout(drawHelper, 300, data, data.coordinates[0], data.coordinates[1], "sand", "player_use_knife");
+        setTimeout(drawHelper, 700, data, data.coordinates[0], data.coordinates[1], "sand", "player_stay");
+        switch (data.is_here_enemy) {
+            case 0: {
+                setTimeout(function(){alert("Вы промахнулись!");}, 1000);
+                break;
+            }
+            case 1: {
+                setTimeout(function(){alert("Вы убили врага!");}, 1000);
+                break;
+            }
+            case 2: {
+                setTimeout(function(){alert("Вы ранили врага!");}, 1000);                    
+                break;
             }
         }
         CURRENT_STATE = STATE_4__sleep;
     }
 }
 
-/* Функция отрисовки установки бомбы.
- * Обрабатывает:
- * 1) ...
- */
-function draw_bomb(data) {
+// Бомба.
+function drawBomb(data) {
     if (data.error != 0) {
         switch (data.error) {
             case 1: {
-                console.log("Вы мертвы, а значит не можете установить бомбу");
-                console.log("Повторите попытку");
-                // draw                                  
+                alert("Вы мертвы, а значит не можете установить бомбу!\n      Повторите попытку");                                
                 break;                                    
             }
             case 2: {
-                console.log("Сюда ставить бомбу нельзя");
-                console.log("Повторите попытку");
-                // draw                                   
+                alert("Сюда нельзя ставить бомбу!\n     Повторите попытку!");                            
                 break; 
             }
             case 3: {
-                console.log("У вас нет ни одной бомбы");
-                console.log("Повторите попытку");
-                // draw
+                alert("У вас нет ни одной бомбы!\n   Повторите попытку!");
                 break; 
             }
         }
         CURRENT_STATE = STATE_5__send_signal; 
     } else {
-        if (data.on_wall[0] == 1) {
-            console.log("Клетка [" + data.on_wall[1] + ", " + data.on_wall[2] + "] взорвана!!!");
-            // draw
-        } else if (data.on_ground[0] == 1) {
-            console.log("Бомба в клетке [" + data.on_ground[1] + ", " + data.on_ground[2] + "] установлена!!!");
-            // draw
+        if ((data.wall_or_ground[0] == 1) || (data.wall_or_ground[0] == 2)) {
+            bombBlastedSound.play();
+            if (data.wall_or_ground[0] == 1) 
+                drawHelper(data, data.wall_or_ground[1], data.wall_or_ground[2], "wall", "-");
+            else 
+                drawHelper(data, data.wall_or_ground[1], data.wall_or_ground[2], "concrete", "-");
+            setTimeout(drawHelper, 300, data, data.wall_or_ground[1], data.wall_or_ground[2], "player_bang", "-");
+            setTimeout(drawHelper, 700, data, data.wall_or_ground[1], data.wall_or_ground[2], "sand", "-");  
+        } else if (data.wall_or_ground[0] == 3) {
+            bombPlantedSound.play();
+            drawHelper(data, data.wall_or_ground[1], data.wall_or_ground[2], "bomb", "-");             
         }
         CURRENT_STATE = STATE_4__sleep;
     }   
 }
 
 
-/* Функция отрисовки установки бетонного блока.
- * Обрабатывает:
- * 1) ...
- */
-function draw_concrete(data) {
+// Цемент.
+function drawConcrete(data) {
     if (data.error != 0) {
         switch (data.error) {
             case 1: {
-                console.log("Вы мертвы, а значит не можете установить блок цемента");
-                console.log("Повторите попытку");
-                // draw
+                alert("Вы мертвы, а значит не можете установить блок цемента!\n    Повторите попытку!");
                 break;                                    
             }
             case 2: {
-                console.log("Сюда ставить блок цемента нельзя");
-                console.log("Повторите попытку");
-                // draw                               
+                alert("Сюда нельзя ставить блок цемента!\n    Повторите попытку");
                 break; 
             }
             case 3: {
-                console.log("У вас нет ни одного блока цемента");
-                console.log("Повторите попытку");
-                // draw                              
+                alert("У вас нет ни одного блока цемента!\n      Повторите попытку!");                     
                 break; 
             }                                
         }
         CURRENT_STATE = STATE_5__send_signal;
     } else {
-        console.log("Цемент в клетке [" + data.on_ground[1] + ", " + data.on_ground[2] + "] установлен!!!");
-        // draw
+        concreteSound.play();
+        drawHelper(data, data.coordinates[0], data.coordinates[1], "concrete", "-");
         CURRENT_STATE = STATE_4__sleep;     
     }     
 }
 
-/* Функция отрисовки использования аптечки.
- * Обрабатывает:
- * 1) ...
- */
-function draw_aid(data) {
+// Аптечка.
+function drawAid(data) {
     if (data.error != 0) {
         switch (data.error) {
             case 1: {
-                console.log("Вы мертвы, а значит не можете использовать аптечку");
-                console.log("Повторите попытку");
-                // draw
+                alert("Вы мертвы, а значит не можете использовать аптечку!\n     Повторите попытку!");
                 break;                                    
             }
             case 2: {
-                console.log("У вас нет ни одной аптечки");
-                console.log("Повторите попытку");
-                // draw                              
+                alert("У вас нет ни одной аптечки!\n     Повторите попытку!");
                 break; 
-            }                              
+            }      
+            case 3: {
+                alert("У вас и так 100% здоровье!\n      Повторите поптыку!");
+                break;
+            }                        
         }
         CURRENT_STATE = STATE_5__send_signal;                                   
     } else {
-        if (now_aid == 1) {
-            console.log("Вы использовали аптечку. Теперь ваше здоровье - 50%");
-            // draw
+        drawHelper(data, data.coordinates[0], data.coordinates[1], "sand", "player_stay");
+        setTimeout(drawHelper, 300, data, data.coordinates[0], data.coordinates[1], "sand", "player_use_aid");
+        setTimeout(drawHelper, 700, data, data.coordinates[0], data.coordinates[1], "sand", "player_stay");
+        if (data.now_heatlh == 1) {
+            setTimeout(function(){alert("Вы использовали аптечку. Теперь ваше здоровье - 50%");}, 1000); 
         }
-        if (now_aid == 2) {
-            console.log("Вы использовали аптечку. Теперь ваше здоровье - 75%");
-            // draw
+        if (data.now_health == 2) {
+            setTimeout(function(){alert("Вы использовали аптечку. Теперь ваше здоровье - 75%");}, 1000); 
         }
-        if (now_aid == 3) {
-            console.log("Вы использовали аптечку. Теперь ваше здоровье - 100%");
-            // draw
+        if (data.now_health == 3) {
+            setTimeout(function(){alert("Вы использовали аптечку. Теперь ваше здоровье - 100%");}, 1000); 
         }
         CURRENT_STATE = STATE_4__sleep;
     } 
 }
 
-/* ------------------------------------------------------------------ */
+// Функция отрисовки.
+function drawHelper(data, x, y, fieldImage, playerImage) {
+    fields[x][y].changeSprite(275 + y * spriteSize, 25 + x * spriteSize, fieldImage);
+    if (playerImage != "-") {
+        player.sprite.kill();
+        player.sprite = game.add.sprite(275 + y * spriteSize, 25 + x * spriteSize, playerImage);
+    }
+}

@@ -1,10 +1,12 @@
+// Отредактировал.
+
 var ipAddr = '0.0.0.0';
 var portRoomInfo = 5678;
 
 var portWebsockets = 8765;
 var portHttp = 8080;
 
-// сокет для общения с сервером
+// Сокет для общения с сервером.
 var webSocket;
 var webSocketOpen = false;
 
@@ -17,19 +19,19 @@ ws.onmessage = function(event) {
     for (var room in data) {
         row = document.createElement("TR");
 
-        // название комнаты
+        // Название комнаты.
         var colRoomName = document.createElement("TD");
         colRoomName.innerHTML = room;
         row.appendChild(colRoomName);
 
-        // список игроков
+        // Список игроков.
         var colListOfPlayers = document.createElement("TD");
         for (var i = 0; i < data[room].length; i++) {
             colListOfPlayers.innerHTML += data[room] + " ";
         }
         row.appendChild(colListOfPlayers);
 
-        // кнопка "присоединиться"
+        // Кнопка "присоединиться".
         var buttonJoin = document.createElement("TD");
         var button = document.createElement("BUTTON");
         button.innerHTML = "Присоединиться";
@@ -40,7 +42,7 @@ ws.onmessage = function(event) {
             if (!websocketOpen) {
                 webSocket = new WebSocket('ws://' + ipAddr + ':' + portWebsockets);
                 webSocketOpen = true;
-                /* Действия, выполняемые в начале общения сервера и клиента */
+                // Действия, выполняемые в начале общения сервера и клиента.
                 webSocket.onopen = function(event) {
                     webSocket.send(getCookie('nickname') + "=" + getCookie('hash'));
                     var equipment = getCookie("equipment").split('_');
@@ -52,13 +54,13 @@ ws.onmessage = function(event) {
                     }));
                 };
 
-                /* Действия, которые выполняет клиент при получении очередного сообщения от сервера */
+                // Действия, которые выполняет клиент при получении очередного сообщения от сервера.
                 webSocket.onmessage = function(event) {
                     console.log("Текущие данные:" + event.data);
                     automate1(JSON.parse(event.data));
                 };
 
-                /* Действия, выполняемые при завершении общения сервера и клиента */
+                // Действия, выполняемые при завершении общения сервера и клиента.
                 webSocket.onclose = function(event) {
                     console.log("НАЧАЛО ЗАКРЫТИЯ!!!");
                     if (CURRENT_STATE != FINAL__somebody_win) {
@@ -81,6 +83,7 @@ ws.onmessage = function(event) {
     }
 };
 
+// Создание кнопки.
 var create_button = document.getElementById("create_room");
 create_button.onclick = function() {
     setCookie("type", "create");
@@ -124,26 +127,3 @@ create_button.onclick = function() {
         };
     }
 };
-
-function setCookie(cname, cvalue, exdays) {
-    var d = new Date();
-    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-    var expires = "expires=" + d.toUTCString();
-    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-}
-
-function getCookie(cname) {
-    var name = cname + "=";
-    var decodedCookie = decodeURIComponent(document.cookie);
-    var ca = decodedCookie.split(';');
-    for (var i = 0; i < ca.length; i++) {
-        var c = ca[i];
-        while (c.charAt(0) == ' ') {
-            c = c.substring(1);
-        }
-        if (c.indexOf(name) == 0) {
-            return c.substring(name.length, c.length);
-        }
-    }
-    return "";
-}

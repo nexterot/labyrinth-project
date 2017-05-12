@@ -1,25 +1,16 @@
+// отредактировал.
+
 //var ipAddress = '192.168.43.210';
+//var webSocket;
+
+// Где стартует игра:
 var ipAddress = '0.0.0.0';
 var port = '8765';
 
-//var webSocket;
-
 var my_name = getCookie("nickname");
 
-var land;
-var player;
-
-/* ------------------------------------------------------------------ */
-/* Кнопки */
-var buttonKnife, buttonAid, buttonBomb, buttonConcrete;
-/* ------------------------------------------------------------------ */
-
-var canvasSizeX = 900;
-var canvasSizeY = 650;
-var spriteSize = 50;
-
-var game;
-
+// JS-фронтэнд представляет из себя конечный автомат
+// с 10 состояними. 
 var STATE_1__waiting_for_connection = 1;
 var STATE_2__waiting_for_game_start = 2;
 var STATE_3__show_my_turn = 3;
@@ -30,67 +21,60 @@ var STATE_7_bomb = 7;
 var STATE_8_concrete = 8;
 var FINAL__somebody_win = 0;
 var ERROR_EXIT = -1;
-/* Глобальная переменная - текущая координата */
+
+// текущее состояние.
 var CURRENT_STATE = STATE_1__waiting_for_connection;
 
-var fields = [];
-
-var levelSizeX;
-var levelSizeY;
-
-/* ------------------------------------------------------------------ */
-
-/* ------------------------------------------------------------------ */
-
-////////////////////////////////////
-
-/* send_coordinates() - функция, которая отправляет на сервер тип хода и его координаты */
+// send_coordinates(type, x, y) - функция, отправляющая информацию
+// об очередном ходе игрока.
 function send_coordinates(type, x, y) {
     console.log(JSON.stringify([type, x, y]));
     webSocket.send(JSON.stringify([type, x, y]));
 }
 
-/* turn - функция, определяющая какой ход нужно отрисовать */
+// turn(data) - функция, отвечающая за отрисовку хода
+// текущего игрока.
 function turn(data) {
     switch (data.type_of_turn) {
         case "go": {
-            draw_go(data);
+            drawGo(data);
             break;
         }
         case "knife": {
-            draw_knife(data);
+            drawKnife(data);
             break;
         }
         case "bomb": {
-            draw_bomb(data);
+            drawBomb(data);
             break;
         }
         case "concrete": {
-            draw_concrete(data);
+            drawConcrete(data);
             break;
         }
         case "aid": {
-            draw_aid(data);
+            drawAid(data);
             break;
         }
     }
 }
 
+// another_turn(data) - функция, отвечающая за отрисовку хода
+// другого игрока.
 function another_turn(data) {
     console.log("Ходит игрок с ником " + data.name);
 
 }
 
-
+// Установка куки.
 function setCookie(cname, cvalue, exdays) {
-    console.log(document.cookie);
     var d = new Date();
-    d.setTime(d.getTime() + (exdays*24*60*60*1000));
-    var expires = "expires="+ d.toUTCString();
+    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+    var expires = "expires=" + d.toUTCString();
     document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-    console.log(document.cookie);
 }
 
+// Получение куки.
 function getCookie(cname) {
     var name = cname + "=";
     var decodedCookie = decodeURIComponent(document.cookie);
@@ -107,6 +91,7 @@ function getCookie(cname) {
     return "";
 }
 
+// Удаление куки.
 function delCookie(name) {
   document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 }

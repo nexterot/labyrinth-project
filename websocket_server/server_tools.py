@@ -61,6 +61,7 @@ def create_packet_knife():
         "type": "turn",
         "type_of_turn": "knife",
         "error": 0,
+        "coordinates": [0, 0],
         "is_here_enemy": 0,
         "name_of_victim": None
     }
