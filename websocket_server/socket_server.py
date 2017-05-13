@@ -18,7 +18,6 @@ MAX_PLAYERS = 1
 MAX_ROOMS = 5
 
 rooms = []
-games = []
 
 
 class Room:
@@ -45,7 +44,8 @@ class Room:
 
     def start_game(self):
         """ начинает игру """
-        self.game = Game(self.players.keys())
+        self.game = Game(self.players)
+        self.game.initialize_level()
 
 
 async def rooms_info_handler(websocket, path):
@@ -57,7 +57,7 @@ async def rooms_info_handler(websocket, path):
             result = json.dumps(dict_view)
             await websocket.send(result)
             # logging.info("Информация о комнатах отправлена: {}".format(result))
-            await asyncio.sleep(5)
+            await asyncio.sleep(3)
     except websockets.ConnectionClosed:
         pass
         # logging.info("Перестаю посылать информацию о клиенте")
@@ -98,11 +98,44 @@ def update_uptime(room, player_name):
     room.players[player_name][1] = datetime.datetime.now()
 
 
+async def send_turn_to_enemies(player, packet):
+    for pl in player.game.players:
+        if player != pl:
+            if packet["type_of_turn"] == "go":
+                result = analyze_go_turn(pl, player, packet)
+            elif packet["type_of_turn"] == "knife":
+                result = analyze_knife_turn(pl, player, packet)
+            elif packet["type_of_turn"] == "bomb":
+                result = analyze_bomb_turn(pl, player, packet)
+            elif packet["type_of_turn"] == "aid":
+                result = analyze_aid_turn(pl, player, packet)
+            elif packet["type_of_turn"] == "concrete":
+                result = analyze_concrete_turn(pl, player, packet)
+            else:
+                result = None
+                logging.critical("Неизвестный тип хода: {}".format(packet["type_of_turn"]))
+
+            try:
+                await pl.websocket.send(result)
+                logging.info("Отправили игроку {} ход игрока {}: {}".format(pl.name, player.name, result))
+            except websockets.ConnectionClosed:
+                logging.error("Игрок {} отвалился при получении информации о ходе {}".format(pl.name, player.name))
+                logging.critical("Реализовать удаление игрока из комнаты!")  # todo
+
+
 async def server_handler(websocket, path):
     """ handler основного сервера """
+
     player_name = "[неизвестный]"
     player_room = None
+    game = None
     try:
+        """
+
+        Подключение игрока к комнате
+
+        """
+
         # получить имя игрока и его уникальный ключ
         player_name, key = await get_client_info(websocket)
 
@@ -114,7 +147,7 @@ async def server_handler(websocket, path):
         logging.info("Игрок {}: {}".format(player_name, request))
 
         # если пришел сигнал создать комнату
-        # todo: ошибка, если игрок уже создал игру
+        # todo: возвращать ошибку, если игрок уже создал комнату
         if request["type"] == "create":
             if len(rooms) >= MAX_ROOMS:  # ошибка: слишком много комнат!
                 logging.error("Игрок {} не смог создать комнату: их слишком много".format(player_name))
@@ -180,6 +213,11 @@ async def server_handler(websocket, path):
                 logging.info("Игрок {}({}): жду начала игры".format(player_name, player_room.name))
                 await asyncio.sleep(1)
 
+        """
+
+        Запуск игры
+
+        """
         game = player_room.game
 
         # находим объект игрока по его нику
@@ -192,7 +230,6 @@ async def server_handler(websocket, path):
             logging.error("Объект игрока с именем {} не найден!!! PANIC".format(player_name))
             await websocket.close()
 
-
         # заполняем инвентарь игрока
         player.inventory = request["equipment"]
 
@@ -202,70 +239,101 @@ async def server_handler(websocket, path):
         await websocket.send(init_data)
         logging.info("Игрок {}({}) отправил клиенту данные: {}".format(player_name, player_room.name, init_data))
 
-        # await asyncio.sleep(5)
-
         # ждать, чтобы клиент успел отрисовать
         response = await websocket.recv()
         logging.info("Игрок {} прислал {}".format(player_name, response))
 
         update_uptime(player_room, player_name)
 
-        # основной игровой цикл
+        """
+
+        Основной игровой цикл
+
+        """
         while True:
             # рассылаем имя игрока, который ходит
-            name_active_player = json.dumps({"type": "whose_turn", "name": game.active_player.name})
-            await inform_whose_turn(player_name, player_room, game.active_player.name, name_active_player)
+            response = json.dumps({"type": "whose_turn", "name": game.active_player.name})
 
-            # переключаем контекст на активного игрока
-            while player != game.active_player:
-                logging.info("Игрок {}({}): сейчас ходит {}, жду своего хода".format(player_name, player_room.name,
-                                                                                     game.active_player))
-                await asyncio.sleep(0.1)
+            logging.info("Уведомляем игрока {}({}), о том, что ходит игрок {}".format(
+                player_name,
+                player_room.name,
+                game.active_player.name
+            ))
+            await websocket.send(response)
 
-            # получить данные об очередном ходе
-            turn = await websocket.recv()
-            turn = parse_json(turn)
-            logging.info("Получен пакет от {}({}): {}".format(player_name, player_room.name, turn))
-            was_error, result = game.accept(player, turn)  # передать игре
+            # ждать, чтобы клиент успел отрисовать
+            message = await websocket.recv()
+            logging.info("Игрок {} прислал {}".format(player_name, message))
 
-            json_result = json.dumps(result)
+            # если ходит текущий игрок
+            if player == game.active_player:
 
-            # если возвращается ошибка, отправить ее, inform players, и ждать новых данных о ходе
-            while was_error:
-                logging.info("ошибка; отправляю игроку {}({}): {}".format(player_name, player_room.name, json_result))
+                # получить данные об очередном ходе
+                turn = await websocket.recv()
+                turn = parse_json(turn)
+                logging.info("Получен пакет от {}({}): {}".format(player_name, player_room.name, turn))
+                was_error, result = await game.accept(player, turn)  # передать игре
+                json_result = json.dumps(result)
+
+                # если возвращается ошибка, отправить ее, inform players, и ждать новых данных о ходе
+                while was_error:
+                    logging.info("ошибка; отправляю игроку {}({}): {}".format(player_name, player_room.name, json_result))
+                    await websocket.send(json_result)
+
+                    # ждать, чтобы клиент успел отрисовать
+                    response = await websocket.recv()
+                    logging.info("Игрок {} прислал {}".format(player_name, response))
+
+                    # inform player
+                    response = json.dumps({"type": "whose_turn", "name": game.active_player.name})
+
+                    logging.info("Уведомляем игрока {}({}), о том, что ходит игрок {}".format(
+                        player_name,
+                        player_room.name,
+                        game.active_player.name
+                    ))
+                    await websocket.send(response)
+
+                    # ждать, чтобы клиент успел отрисовать
+                    message = await websocket.recv()
+                    logging.info("Игрок {} прислал {}".format(player_name, message))
+
+                    # получить данные об очередном ходе
+                    turn = await websocket.recv()
+                    turn = parse_json(turn)
+                    logging.info("Получен пакет от {}({}): {}".format(player_name, player_room.name, turn))
+                    was_error, result = await game.accept(player, turn)
+                    json_result = json.dumps(result)
+
+                # в случае успеха отправить клиенту пакет
+                logging.info("успех; отправляю игроку {}({}): {}".format(player_name, player_room.name, json_result))
                 await websocket.send(json_result)
 
                 # ждать, чтобы клиент успел отрисовать
                 response = await websocket.recv()
                 logging.info("Игрок {} прислал {}".format(player_name, response))
 
-                # inform player
-                await inform_whose_turn(player_name, player_room, game.active_player.name, name_active_player)
+                # разослать врагам то, что они увидят
+                if result["type"] == "turn":
+                    await send_turn_to_enemies(player, result)
 
-                # receive turn info
-                turn = await websocket.recv()
-                turn = parse_json(turn)
-                logging.info("Получен пакет от {}({}): {}".format(player_name, player_room.name, turn))
-                was_error, result = game.accept(player, turn)
-                json_result = json.dumps(result)
+                # если выиграл todo разослать всем игрокам, завершить игру
+                if result["type"] == "turn" and result["type_of_turn"] == "go" and result["exit"][1] == 1:
+                    final_result = game.get_statistics(player_name)
+                    logging.info("Игрок {} выиграл!".format(player_name))
+                    logging.info("Посылаем игроку {} {}".format(player_name, final_result))
+                    await websocket.send(json.dumps(final_result))
+                    break
 
-            # в случае успеха отправить клиенту пакет
-            logging.info("успех; отправляю игроку {}({}): {}".format(player_name, player_room.name, json_result))
-            await websocket.send(json_result)
+                update_uptime(player_room, player_name)
 
-            # ждать, чтобы клиент успел отрисовать
-            response = await websocket.recv()
-            logging.info("Игрок {} прислал {}".format(player_name, json.dumps(response)))
-
-            # если выиграл todo разослать всем игрокам, завершить игру
-            if result["type"] == "turn" and result["type_of_turn"] == "go" and result["exit"][1] == 1:
-                final_result = game.get_statistics(player_name)
-                logging.info("Игрок {} выиграл!".format(player_name))
-                logging.info("Посылаем игроку {} {}".format(player_name, final_result))
-                await websocket.send(json.dumps(final_result))
-                break
-
-            update_uptime(player_room, player_name)
+            # если же ход другого игрока
+            else:
+                logging.info("Игрок {}({}): сейчас ходит {}, жду своего хода".format(player_name, player_room.name,
+                                                                                      game.active_player.name))
+                response = await websocket.recv()
+                logging.info("Игрок {} отрисовал ход врага: {}".format(player_name, response))
+                await asyncio.sleep(0.3)
 
     except websockets.ConnectionClosed:
         logging.critical("Игрок {} отвалился".format(player_name))
@@ -274,6 +342,8 @@ async def server_handler(websocket, path):
             if len(player_room) == 0:
                 logging.info("Не осталось игроков. Комната {} была удалена".format(player_room.name))
                 rooms.remove(player_room)
+                if game is not None:
+                    game.next_player()
     else:
         player_room.remove(player_name)
         if len(player_room) == 0:

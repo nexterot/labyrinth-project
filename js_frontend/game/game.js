@@ -1,10 +1,9 @@
-// Отредактировал.
 
-var ipAddr = '0.0.0.0';
+var ipAddr = '37.139.2.176';
 var portRoomInfo = 5678;
 
 var portWebsockets = 8765;
-var portHttp = 8080;
+var portHttp = 80;
 
 // Сокет для общения с сервером.
 var webSocket;
@@ -39,7 +38,7 @@ ws.onmessage = function(event) {
             setCookie("type", "join");
             setCookie("room_name", room);
             setCookie("equipment", "0_0_0");
-            if (!websocketOpen) {
+            if (!webSocketOpen) {
                 webSocket = new WebSocket('ws://' + ipAddr + ':' + portWebsockets);
                 webSocketOpen = true;
                 // Действия, выполняемые в начале общения сервера и клиента.

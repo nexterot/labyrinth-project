@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import random
+import websockets
+import logging
+
 
 from game.bear import Bear
 from game.player import Player
@@ -12,25 +15,28 @@ from game import levels
 
 
 class Game:
-    """ class representing the game """
+    """ Класс, реализующий логику игры """
+
     def __init__(self, players_names):
         self.fields = fields.FieldGroup()
         self.level = levels.get_random_level()
-        self.players_names = list(players_names)
-        self.num_players = len(self.players_names)
-        self.players = [Player(self, name) for name in players_names]
+        self.players = [Player(self, name, players_names[name][0]) for name in players_names]
         self.active_player = self.players[0]
         self.bear = Bear(self)
         self.winner = None
-        self.initialize_level()
 
-    def accept(self, player, turn):
+    @property
+    def num_players(self):
+        return len(self.players)
 
+    async def accept(self, player, turn):
         # если передвижение по карте
         if turn[0] == "go":
             field = self.fields.at((turn[1], turn[2]))
             if field:
                 result, was_error = player.go(field)
+                if not was_error:
+                    self.next_player()
                 return was_error, result
             else:
                 result = server_tools.create_packet_go()
@@ -39,13 +45,18 @@ class Game:
 
         # если удар ножом
         elif turn[0] == "knife":
-            return player.knife()
+            was_error, result = player.knife()
+            if not was_error:
+                self.next_player()
+            return was_error, result
 
         # если выбрана бомба
         elif turn[0] == "bomb":
             field = self.fields.at((turn[1], turn[2]))
             if field:
                 result, was_error = player.set_bomb(field)
+                if not was_error:
+                    self.next_player()
                 return was_error, result
             else:
                 result = server_tools.create_packet_bomb()
@@ -57,6 +68,8 @@ class Game:
             field = self.fields.at((turn[1], turn[2]))
             if field:
                 result, was_error = player.set_concrete(field)
+                if not was_error:
+                    self.next_player()
                 return was_error, result
             else:
                 result = server_tools.create_packet_concrete()
@@ -65,10 +78,19 @@ class Game:
 
         # если использована аптечка
         elif turn[0] == "aid":
-            return player.use_aid()
+            was_error, result = player.use_aid()
+            if not was_error:
+                self.next_player()
+            return was_error, result
 
         else:
             print("Unknown command to accept by game: {}".format(turn[0]))
+
+    def next_player(self):  # todo работает только для двух игроков
+        for player in self.players:
+            if self.active_player != player:
+                self.active_player = player
+                break
 
     def end(self, winner):
         print("Игрок {} выиграл!!!".format(winner.name))
@@ -84,7 +106,7 @@ class Game:
         else:
             print("Нет данных об игроке {}!".format(player_name))
         data = {
-            "list_of_players": self.players_names,
+            "list_of_players": [player.name for player in self.players],
             "size": [levels.SIZE, levels.SIZE],
             "place": player.location.coordinates,
             "equipment": player.inventory
@@ -93,7 +115,7 @@ class Game:
 
     def initialize_level(self):
         """ build game level from mask """
-        # random.shuffle(self.players)
+        random.shuffle(self.players)
         num_player = 0
         count_id = 0
         self.fields.dim = levels.SIZE

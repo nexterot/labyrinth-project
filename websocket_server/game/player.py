@@ -11,7 +11,7 @@ class Player:
     """ player for the game """
     MAX_HEALTH = 4
 
-    def __init__(self, game, name):
+    def __init__(self, game, name, websocket):
         self.game = game
         self.name = name
         self.location = None
@@ -20,6 +20,7 @@ class Player:
         self.visible_fields = [False] * (len(game.level) * len(game.level[0]))
         self.inventory = [0, 0, 0]
         self.has_treasure = False
+        self.websocket = websocket
 
     def __vector_to(self, obj):
         """ calculates vector distance to object """
@@ -48,7 +49,7 @@ class Player:
             # self.vector = (0, 0)
             result["wall"] = [1, field.coordinates[0], field.coordinates[1]]
             return result, False
-            
+
         elif isinstance(field, fields.Grass) and field.concrete:
             result["wall"] = [2, field.coordinates[0], field.coordinates[1]]
             return result, False
@@ -98,6 +99,8 @@ class Player:
 
             # если на этой клетке лежит вооружение
             if field.obj == "ammo":
+                if not self.alive:
+                    result["arm"] = -1
                 if random.randrange(1, 3) == 1:  # +1 цемент
                     self.inventory[CONCRETE] += 1
                     result["arm"] = 1
@@ -212,11 +215,13 @@ class Player:
             packet["wall_or_ground"] = [1, field.coordinates[0], field.coordinates[1]]
             # поменять тип объекта на пустой Grass
             self.game.fields.sprites[field.id] = fields.Grass(self.game, field.id, field.coordinates, None)
+
+        # если клетка, на которую кто-то установил бетон
         elif isinstance(field, fields.Grass) and field.concrete:
             packet["wall_or_ground"] = [2, field.coordinates[0], field.coordinates[1]]
-            # поменять тип объекта на пустой Grass
-            self.game.fields.sprites[field.id] = fields.Grass(self.game, field.id, field.coordinates, None)            
-            
+            # удалить бетон
+            field.obj = None
+
         else:
             packet["error"] = 2
             return packet, True
@@ -276,6 +281,7 @@ class Player:
             return True, packet
 
         packet["now_health"] = self.health
+        packet["coordinates"] = self.location.coordinates
 
         self.health += 1
         self.inventory[AID] -= 1
