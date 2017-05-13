@@ -51,10 +51,7 @@ async def handle_signup(request):
     age = data['Age']
     sex = data['genderRadios']
     agree = data['Agree']
-    if sex and (password == confirm_password):
-        result = workwithbase.add_user(login, password, name, email, phone, age, sex)
-    else: 
-        return web.Response(text="passwords didn't match or u didn't choose gender")
+    result = workwithbase.add_user(login, password, name, email, phone, age, sex)
     if result:
         response = web.HTTPFound('/')
         response.set_cookie("nickname", result[0])
