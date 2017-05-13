@@ -1,4 +1,3 @@
-
 import jinja2
 import aiohttp_jinja2
 from aiohttp import web
@@ -17,19 +16,9 @@ async def handle_index(request):
         return {}
     return {"login": login}
 
-
-async def handle_login(request):
-    data = request.query
-    email = data.get('email')
-    password = data.get('password')
-    result = workwithbase.auth_user(email, password)
-    if result:
-        response = web.HTTPFound('/info')
-        response.set_cookie("nickname", result[0])
-        response.set_cookie("hash", "hash6456")
-        return response
-    return web.Response(text='invalid login')
-
+@aiohttp_jinja2.template('registration.html')
+async def handle_registration(request):
+    return {}
 
 @aiohttp_jinja2.template('info.html')
 async def handle_info(request):
@@ -38,28 +27,33 @@ async def handle_info(request):
     return {}
 
 
-@aiohttp_jinja2.template('registration.html')
-async def handle_registration(request):
-    return {}
+async def handle_login(request):
+    data = await request.post()
+    email = data['email']
+    password = data['password']
+    result = workwithbase.auth_user(email, password)
+    if result:
+        response = web.HTTPFound('/')
+        response.set_cookie("nickname", result[0])
+        response.set_cookie("hash", "hash6456")
+        return response
+    return web.Response(text='invalid login')
 
 
 async def handle_signup(request):
-    data = request.query
-    login = data.get('Login')
-    name = data.get('Name')
-    email = data.get('Email')
-    password = data.get('Password')
-    confirm_password = data.get('confirmPassword')
-    phone = data.get('Phone')
-    age = data.get('Age')
-    sex = data.get('genderRadios')
-    agree = data.get('Agree')
-    if agree and (password == confirm_password):
-        result = workwithbase.add_user(login, password, name, email, phone, age, sex)
-    else: 
-        return web.Response(text="invalid passwords or u don't agree")
+    data = await request.post()
+    login = data['Login']
+    name = data['Name']
+    email = data['Email']
+    password = data['Password']
+    confirm_password = data['confirmPassword']
+    phone = data['Phone']
+    age = data['Age']
+    sex = data['genderRadios']
+    agree = data['Agree']
+    result = workwithbase.add_user(login, password, name, email, phone, age, sex)
     if result:
-        response = web.HTTPFound('/info')
+        response = web.HTTPFound('/')
         response.set_cookie("nickname", result[0])
         response.set_cookie("hash", "hash6456")
         return response
@@ -67,8 +61,7 @@ async def handle_signup(request):
     
 
 async def handle_logout(request):
-    name = request.cookies.get("nickname", "")
-    response = web.Response(text="Goodbye, {}!".format(name))
+    response = web.HTTPFound('/')
     response.del_cookie("nickname")
     return response
 
@@ -85,11 +78,11 @@ aiohttp_jinja2.setup(app, loader=jinja2.PackageLoader('front_server', "templates
 
 app.router.add_static('/static', 'front_server/static', name='static')
 
-
+# Routes
 app.router.add_get('/', handle_index)
-app.router.add_get('/login', handle_login)
+app.router.add_post('/login', handle_login)
 app.router.add_get('/registration', handle_registration)
-app.router.add_get('/sign_up', handle_signup)
+app.router.add_post('/sign_up', handle_signup)
 app.router.add_get('/logout', handle_logout)
 app.router.add_get('/info', handle_info)
 app.router.add_get('/{tail:.*}', handle_404)

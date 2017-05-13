@@ -2,24 +2,16 @@
 <html lang="ru">
 <head>
     <meta charset="utf-8">
-    <link href="{{ app.router.static.url(filename='css/style.css') }}" rel="stylesheet">
+    
+    <!-- Static CSS -->
     <link href="{{ app.router.static.url(filename='css/bootstrap.css') }}" rel="stylesheet">
+    <link href="{{ app.router.static.url(filename='css/style.css') }}" rel="stylesheet">
     <link href="{{ app.router.static.url(filename='css/font-awesome.css') }}" rel="stylesheet">
-    <script src="{{ app.router.static.url(filename='js/bootstrap.js') }}"></script>
-    
-    <title>Labyrinth</title>
-    
-    <!-- Bootstrap core CSS -->
-    <link href="css/bootstrap.css" rel="stylesheet">  
-    
-    <!-- Custom styles for this template -->
-    <link href="css/style.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/font-awesome.css">
-    <!-- <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet"> -->
-    <!-- <link href="https://fonts.googleapis.com/css?family=PT+Sans+Caption" rel="stylesheet"> -->
     
     <!-- Logo -->
-    <link rel="icon" href="images/logo-small.ico" type="image/x-icon">
+    <link rel="icon" href="{{app.router.static.url(filename='images/logo-small.ico')}}" type="image/x-icon">
+    
+    <title>Labyrinth</title>
 </head>
 
     
@@ -50,20 +42,33 @@
     </div>
     
 <!-- MAIN -->
-    <main>
-        <div class="col-sm-12">
-            <h3>Доступные комнаты:</h3>  
+    <main class="container">
+        <div class="col-md-1">
+                <a href="/" type="submit" class="btn btn-primary btn-block"><i class="fa fa-reply" aria-hidden="true"></i></a>
+        </div>
+        
+        <div class="blog-header">
+            <h3 class="blog-title">Доступные комнаты:</h3>
+        </div>  
             
-            <table id="rooms" border="1">
-                <tr>
-                    <td>Название комнаты</td>
-                    <td>Список игроков</td>
-                    <td>Присоединиться</td>
-                </tr>
-            </table>
-
-            <input id="room_name" type="text" \>
-            <button id="create_room"> Создать комнату </button>
+        <table id="rooms">
+            <tr>
+                <th>Название комнаты</th>
+                <th>Список игроков</th> 
+                <th>Присоединиться</th>
+            </tr>
+        </table>
+            
+        <div class="rowinfo">
+            <div class="col-sm-2">
+                <input class="form-control" id="room_name" type="text" placeholder="Название комнаты"\> 
+            </div>
+           
+            <div class="col-sm-2"> 
+                <button class="btn btn-info btn-block" id="create_room"> Создать комнату </button>
+           </div>
+  
+            
             
             <script src="http://37.139.2.176:8000/game/automates.js"></script>
             <script src="http://37.139.2.176:8000/game/game.js"></script>
@@ -95,11 +100,9 @@
         </div><!--footer-bottom-->
     </footer>  
     
-<!-- Bootstrap core JavaScript  --> 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="js/bootstrap.js"></script>
-    
+<!-- Static JS  --> 
+   <script src="{{ app.router.static.url(filename='js/jquery-1.12.4.min.js') }}"></script>
+   <script src="{{ app.router.static.url(filename='js/bootstrap.js') }}"></script>
 </body>    
     
 </html>

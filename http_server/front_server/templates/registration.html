@@ -2,31 +2,17 @@
 <html lang="ru">
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="shortcut icon" href="../../assets/ico/favicon.ico">
-    <link href="{{ app.router.static.url(filename='css/style.css') }}" rel="stylesheet">
+    
+    <!-- Static CSS -->
     <link href="{{ app.router.static.url(filename='css/bootstrap.css') }}" rel="stylesheet">
+    <link href="{{ app.router.static.url(filename='css/style.css') }}" rel="stylesheet">
     <link href="{{ app.router.static.url(filename='css/font-awesome.css') }}" rel="stylesheet">
-    <script src="{{ app.router.static.url(filename='js/bootstrap.js') }}"></script>
-
-    <title>Registration</title>
-
-    <!-- Bootstrap core CSS -->
-    <link href="css/bootstrap.css" rel="stylesheet">
-
-    <!-- Custom styles for this template -->
-    <link href="css/style.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/font-awesome.css">
-    <link href="https://fonts.googleapis.com/css?family=PT+Sans+Caption" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
-
-  </head>
-  
+    
     <!-- Logo -->
-    <link rel="icon" href="images/logo-small.ico" type="image/x-icon">
+    <link rel="icon" href="{{app.router.static.url(filename='images/logo-small.ico')}}" type="image/x-icon">
+    
+    <title>Registration</title>
+  </head>
 
    
 <!-- NAVBAR -->
@@ -64,81 +50,89 @@
             <div class="col-sm-1">
                 <a href="/" type="submit" class="btn btn-primary btn-block"><i class="fa fa-reply" aria-hidden="true"></i></a>
             </div>
+            
             <h1>Регистрация</h1>
         </div>
-<form class="form-horizontal" action="/sign_up">
-  <div class="form-group">
-    <label class="control-label col-xs-3" for="Login">Логин:</label>
-    <div class="col-xs-9">
-      <input type="text" class="form-control" name="Login" placeholder="Введите логин">
-    </div>
-  </div>
-  <div class="form-group">
-    <label class="control-label col-xs-3" for="Name">Имя:</label>
-    <div class="col-xs-9">
-      <input type="text" class="form-control" name="Name" placeholder="Введите имя">
-    </div>
-  </div>
-  <div class="form-group">
-    <label class="control-label col-xs-3" for="inputEmail">Email:</label>
-    <div class="col-xs-9">
-      <input type="email" class="form-control" name="Email" id="inputEmail" placeholder="Введите E-mail">
-    </div>
-  </div>
-  <div class="form-group">
-    <label class="control-label col-xs-3" for="Password">Пароль:</label>
-    <div class="col-xs-9">
-      <input type="password" class="form-control" name="Password" placeholder="Введите пароль">
-    </div>
-  </div>
-  <div class="form-group">
-    <label class="control-label col-xs-3" for="confirmPassword">Подтвердите пароль:</label>
-    <div class="col-xs-9">
-      <input type="password" class="form-control" name="confirmPassword" placeholder="Введите пароль ещё раз">
-    </div>
-  </div>
-  <div class="form-group">
-    <label class="control-label col-xs-3" for="Phone">Телефон:</label>
-    <div class="col-xs-9">
-      <input type="tel" class="form-control" name="Phone" placeholder="Введите номер телефона">
-    </div>
-  </div>
-    
-    <div class="form-group">
-    <label class="control-label col-xs-3" for="Age">Возраст:</label>
-    <div class="col-xs-9">
-      <input type="text" class="form-control" name="Age" placeholder="Введите свой возраст">
-    </div>
-  </div>
-    
-  <div class="form-group">
-    <label class="control-label col-xs-3">Пол:</label>
-    <div class="col-xs-2">
-      <label class="radio-inline">
-        <input type="radio" name="genderRadios" value="male"> Мужской
-      </label>
-    </div>
-    <div class="col-xs-2">
-      <label class="radio-inline">
-        <input type="radio" name="genderRadios" value="female"> Женский
-      </label>
-    </div>
-  </div>
-  <div class="form-group">
-    <div class="col-xs-offset-3 col-xs-9">
-      <label class="checkbox-inline">
-        <input type="checkbox" value="agree" name="Agree">  Я согласен с <a href="#">условиями</a>.
-      </label>
-    </div>
-  </div>
-  <br />
-  <div class="form-group">
-    <div class="col-xs-offset-3 col-xs-9">
-      <input type="submit" class="btn btn-primary" value="Регистрация">
-      <input type="reset" class="btn btn-default" value="Очистить форму">
-    </div>
-  </div>
-</form>
+        <form class="form-horizontal" action="/sign_up" method="post" data-toggle="validator" id="form">
+          <div class="form-group">
+            <label class="control-label col-xs-3" for="Login">Логин:</label>
+            <div class="col-xs-9">
+              <input type="text" class="form-control" name="Login" placeholder="Введите логин" required autofocus>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="control-label col-xs-3" for="Name">Имя:</label>
+            <div class="col-xs-9">
+              <input type="text" class="form-control" name="Name" placeholder="Введите имя" required>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="control-label col-xs-3" for="inputEmail">Email:</label>
+            <div class="col-xs-9">
+              <input type="email" class="form-control" name="Email" id="inputEmail" placeholder="Введите E-mail" required>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="control-label col-xs-3" for="inputPassword">Пароль:</label>
+            <div class="col-xs-9">
+                  <input type="password" data-toggle="validator" data-minlength="6" class="form-control" name="Password"  id="inputPassword" placeholder="Введите пароль" required>
+                  <span class="help-block">Минимум 6 значений</span>
+            </div>
+            <label for="inputPassword" class="control-label col-xs-3">Повторитe: </label>
+            <div class="col-xs-9">
+                  <input type="password" class="form-control" name="confirmPassword" id="inputPasswordConfirm" data-match="#inputPassword" data-match-error="Ошибка! Пароли не совпадают!" placeholder="Введите пароль ещё раз" required>
+                  <div class="help-block with-errors"></div>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="control-label col-xs-3" for="Phone">Телефон:</label>
+            <div class="col-xs-9">
+              <input type="tel" class="form-control" name="Phone" placeholder="Введите номер телефона" required>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="control-label col-xs-3" for="Age">Возраст:</label>
+            <div class="col-xs-9">
+              <input type="text" class="form-control" name="Age" placeholder="Введите свой возраст" required>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="control-label col-xs-3">Пол:</label>
+            <div class="col-xs-2">
+              <label class="radio-inline">
+                <input type="radio" name="genderRadios" value="male" checked> Мужской
+              </label>
+            </div>
+            <div class="col-xs-2">
+              <label class="radio-inline">
+                <input type="radio" name="genderRadios" value="female"> Женский
+              </label>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <div class="col-xs-offset-3 col-xs-9">
+              <label class="checkbox-inline">
+                <input type="checkbox" value="agree" name="Agree" required>  Я согласен с <a href="#">условиями</a>.
+              </label>
+            </div>
+          </div>
+          
+      <br />
+      <div class="form-group">
+        <div class="col-xs-offset-3 col-xs-9">
+          <input type="submit" class="btn btn-primary" value="Регистрация">
+          <input type="reset" class="btn btn-info" value="Очистить форму">
+        </div>
+      </div>
+      
+    </form>
      </main> <!-- /container -->
      
      
@@ -160,13 +154,11 @@
             <p><i class="fa fa-copyright" aria-hidden="true"></i> Labyrinth, 2017</p>
         </div>
     </footer>
-
-    
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     
     
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="js/bootstrap.js"></script>
+    <!-- Static JS  --> 
+   <script src="{{ app.router.static.url(filename='js/jquery-1.12.4.min.js') }}"></script>
+   <script src="{{ app.router.static.url(filename='js/bootstrap.js') }}"></script>
+   <script src="http://bootstraptema.ru/plugins/2016/validator/validator.min.js"></script>
       </body>
   </html>

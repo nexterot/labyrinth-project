@@ -3,18 +3,15 @@
 <head>
     <meta charset="utf-8">
     
+    <!-- Static CSS -->
     <link href="{{ app.router.static.url(filename='css/bootstrap.css') }}" rel="stylesheet">
     <link href="{{ app.router.static.url(filename='css/style.css') }}" rel="stylesheet">
     <link href="{{ app.router.static.url(filename='css/font-awesome.css') }}" rel="stylesheet">
-    <script src="{{ app.router.static.url(filename='js/bootstrap.js') }}"></script>
-    
-    <title>Labyrinth</title>
-    
-    <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=PT+Sans+Caption" rel="stylesheet">
     
     <!-- Logo -->
     <link rel="icon" href="{{app.router.static.url(filename='images/logo-small.ico')}}" type="image/x-icon">
+    
+    <title>Labyrinth</title>
 </head>
 
     
@@ -52,19 +49,21 @@
 
             <div class="col-sm-2">
                 {% if not login %}
-                <form class="form-signin" role="form" action="/login">
-                    <input type="email" class="form-control" name="email" placeholder="E-mail" required autofocus>
+                <form action="/login" method='post' role="form" class="form-signin">
+                      <input type="email" id="email" class="form-control" name="email" placeholder="E-mail" required autofocus> 
+                      <input type="password" id="email" class="form-control"  name="password" placeholder="Password" required>
                     
-                    <input type="password" class="form-control"  name="password" placeholder="Password" required>
-                    <button class="btn btn-info btn-block" type="submit">Войти</button>
+                      <button class="btn btn-info btn-block" type="submit">Войти</button>
                 
                 </form>     
                 <a href="/registration" type="submit" class="btn btn-primary btn-block">Регистрация</a>
                 {% endif %}
 
                 {% if login %}
-                Привет, {{ login }}!
-                <a href="/info" type="submit" class="btn btn-primary btn-block">Играть!</a>
+                <div class="blog-header">
+                    <h3>{{ login }}</h3>
+                </div>  
+                <a href="/info" type="submit" class="btn btn-info btn-block">Играть!</a>
                 <a href="/logout" type="submit" class="btn btn-primary btn-block">Выйти</a>
                 {% endif %}
             </div>
@@ -81,6 +80,9 @@
             </div>
             <div class="newscontainer">
                 <p>Новая версия сайта!</p>
+            </div>
+            <div class="newscontainer">
+                <p>Странно, но почти все работает!</p>
             </div>
             
             <div class="pagerow">
@@ -114,11 +116,9 @@
         </div><!--footer-bottom-->
     </footer>  
     
-<!-- Bootstrap core JavaScript  --> 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="js/bootstrap.js"></script>
-    
+<!-- Static JS  --> 
+   <script src="{{ app.router.static.url(filename='js/jquery-1.12.4.min.js') }}"></script>
+   <script src="{{ app.router.static.url(filename='js/bootstrap.js') }}"></script>
     
 </body>    
     
