@@ -34,7 +34,7 @@ var treasureSound;
 
 // Функция preload загружает в игру спрайты и звуки.
 function preload() {
-    var path = "http://0.0.0.0:8000/game/", path;
+    var path = "http://37.139.2.176:8000/game/", path;
     
     // Загрузка изображений.
     path1 = path + "sprites/interface/";

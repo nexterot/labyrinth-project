@@ -1,6 +1,6 @@
 // Отредактировал.
 
-var ipAddr = '0.0.0.0';
+var ipAddr = '37.139.2.176';
 var portRoomInfo = 5678;
 
 var portWebsockets = 8765;
