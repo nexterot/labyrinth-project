@@ -6,7 +6,7 @@ import workwithbase
 
 
 ip_addr = '0.0.0.0'
-port = 80
+port = 8080
 
 
 @aiohttp_jinja2.template('index.html')
@@ -42,22 +42,25 @@ async def handle_login(request):
 
 async def handle_signup(request):
     data = await request.post()
+    
     login = data['Login']
     name = data['Name']
     email = data['Email']
     password = data['Password']
-    confirm_password = data['confirmPassword']
     phone = data['Phone']
     age = data['Age']
     sex = data['genderRadios']
-    agree = data['Agree']
+    
     result = workwithbase.add_user(login, password, name, email, phone, age, sex)
-    if result:
+    if result == 0:
+        return aiohttp_jinja2.render_template('registration.html', request, {"phone": phone, "age": age, "name": name, "email": email, "mistake_login": "Этот логин занят"})
+    elif result == 1:
+        return aiohttp_jinja2.render_template('registration.html', request, {"phone": phone, "age": age, "name": name, "login": login, "mistake_email": "Этот e-mail занят"})
+    else:
         response = web.HTTPFound('/')
         response.set_cookie("nickname", result[0])
         response.set_cookie("hash", "hash6456")
         return response
-    return web.Response(text='invalid login or e-mail')
     
 
 async def handle_logout(request):
@@ -86,5 +89,6 @@ app.router.add_post('/sign_up', handle_signup)
 app.router.add_get('/logout', handle_logout)
 app.router.add_get('/info', handle_info)
 app.router.add_get('/{tail:.*}', handle_404)
+app.router.add_get('/mistake{text}', handle_info)
 
 web.run_app(app, host=ip_addr, port=port)

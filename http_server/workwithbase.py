@@ -25,13 +25,19 @@ def add_user(login, pswd, name, email, phone, age, gender):
     conn = sqlite3.connect('labyrinthdb.db')
     c = conn.cursor()
     
-    c.execute('SELECT * FROM users WHERE login=? or email=?', (login, email))
+    c.execute('SELECT * FROM users WHERE login=?', (login,))
     tick = c.fetchone()
-    
     if tick:
         c.close()
         conn.close()
         return 0
+    
+    c.execute('SELECT * FROM users WHERE email=?', (email,))
+    tick = c.fetchone()
+    if tick:
+        c.close()
+        conn.close()
+        return 1
     
     c.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (login, pswd, name, email, phone, age, gender, 0, 0, 0))
     conn.commit()
