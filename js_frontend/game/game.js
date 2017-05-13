@@ -1,10 +1,10 @@
 // Отредактировал.
 
-var ipAddr = '37.139.2.176';
+var ipAddr = '0.0.0.0';
 var portRoomInfo = 5678;
 
 var portWebsockets = 8765;
-var portHttp = 8080;
+var portHttp = 80;
 
 // Сокет для общения с сервером.
 var webSocket;
