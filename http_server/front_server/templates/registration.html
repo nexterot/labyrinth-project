@@ -50,56 +50,63 @@
             <div class="col-sm-1">
                 <a href="/" type="submit" class="btn btn-primary btn-block"><i class="fa fa-reply" aria-hidden="true"></i></a>
             </div>
+            
             <h1>Регистрация</h1>
         </div>
-        <form class="form-horizontal" action="/sign_up" method="post">
+        <form class="form-horizontal" action="/sign_up" method="post" data-toggle="validator" id="form">
           <div class="form-group">
             <label class="control-label col-xs-3" for="Login">Логин:</label>
             <div class="col-xs-9">
               <input type="text" class="form-control" name="Login" placeholder="Введите логин" required autofocus>
             </div>
           </div>
+          
           <div class="form-group">
             <label class="control-label col-xs-3" for="Name">Имя:</label>
             <div class="col-xs-9">
               <input type="text" class="form-control" name="Name" placeholder="Введите имя" required>
             </div>
           </div>
+          
           <div class="form-group">
             <label class="control-label col-xs-3" for="inputEmail">Email:</label>
             <div class="col-xs-9">
               <input type="email" class="form-control" name="Email" id="inputEmail" placeholder="Введите E-mail" required>
             </div>
           </div>
+          
           <div class="form-group">
-            <label class="control-label col-xs-3" for="Password">Пароль:</label>
+            <label class="control-label col-xs-3" for="inputPassword">Пароль:</label>
             <div class="col-xs-9">
-              <input type="password" class="form-control" name="Password" placeholder="Введите пароль" required>
+                  <input type="password" data-toggle="validator" data-minlength="6" class="form-control" name="Password"  id="inputPassword" placeholder="Введите пароль" required>
+                  <span class="help-block">Минимум 6 значений</span>
+            </div>
+            <label for="inputPassword" class="control-label col-xs-3">Повторитe: </label>
+            <div class="col-xs-9">
+                  <input type="password" class="form-control" name="confirmPassword" id="inputPasswordConfirm" data-match="#inputPassword" data-match-error="Ошибка! Пароли не совпадают!" placeholder="Введите пароль ещё раз" required>
+                  <div class="help-block with-errors"></div>
             </div>
           </div>
-          <div class="form-group">
-            <label class="control-label col-xs-3" for="confirmPassword">Подтвердите пароль:</label>
-            <div class="col-xs-9">
-              <input type="password" class="form-control" name="confirmPassword" placeholder="Введите пароль ещё раз" required>
-            </div>
-          </div>
+          
           <div class="form-group">
             <label class="control-label col-xs-3" for="Phone">Телефон:</label>
             <div class="col-xs-9">
               <input type="tel" class="form-control" name="Phone" placeholder="Введите номер телефона" required>
             </div>
           </div>
+          
           <div class="form-group">
             <label class="control-label col-xs-3" for="Age">Возраст:</label>
             <div class="col-xs-9">
               <input type="text" class="form-control" name="Age" placeholder="Введите свой возраст" required>
             </div>
           </div>
+          
           <div class="form-group">
             <label class="control-label col-xs-3">Пол:</label>
             <div class="col-xs-2">
               <label class="radio-inline">
-                <input type="radio" name="genderRadios" value="male"> Мужской
+                <input type="radio" name="genderRadios" value="male" checked> Мужской
               </label>
             </div>
             <div class="col-xs-2">
@@ -108,6 +115,7 @@
               </label>
             </div>
           </div>
+          
           <div class="form-group">
             <div class="col-xs-offset-3 col-xs-9">
               <label class="checkbox-inline">
@@ -115,6 +123,7 @@
               </label>
             </div>
           </div>
+          
       <br />
       <div class="form-group">
         <div class="col-xs-offset-3 col-xs-9">
@@ -122,6 +131,7 @@
           <input type="reset" class="btn btn-info" value="Очистить форму">
         </div>
       </div>
+      
     </form>
      </main> <!-- /container -->
      
@@ -149,5 +159,6 @@
     <!-- Static JS  --> 
    <script src="{{ app.router.static.url(filename='js/jquery-1.12.4.min.js') }}"></script>
    <script src="{{ app.router.static.url(filename='js/bootstrap.js') }}"></script>
+   <script src="http://bootstraptema.ru/plugins/2016/validator/validator.min.js"></script>
       </body>
   </html>
