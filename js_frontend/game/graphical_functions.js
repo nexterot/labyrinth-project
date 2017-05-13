@@ -20,6 +20,7 @@ var buttonKnife;
 var buttonAid;
 var buttonBomb;
 var buttonConcrete;
+var buttonExit;
 
 // Переменные звуков.
 var bombBlastedSound;
@@ -34,17 +35,19 @@ var treasureSound;
 
 // Функция preload загружает в игру спрайты и звуки.
 function preload() {
-    var path = "http://37.139.2.176:8000/game/", path;
+    var path = "http://0.0.0.0:8000/game/", path;
     
     // Загрузка изображений.
     path1 = path + "sprites/interface/";
     game.load.image("background", path1 + "background.png");
     game.load.image("playerFace", path1 + "player_face.png");
-    game.load.image("buttonKnife", path1 + "knifeButton.png");
-    game.load.image("buttonBomb", path1 + "bombButton.png");
-    game.load.image("buttonAid", path1 + "aidButton.png");
-    game.load.image("buttonConcrete", path1 + "concreteButton.png");
-    game.load.image("scaleHealth", path1 + "scale_health.png");
+    game.load.image("buttonKnife", path1 + "buttons/knifeButton.png");
+    game.load.image("buttonBomb", path1 + "buttons/bombButton.png");
+    game.load.image("buttonAid", path1 + "buttons/aidButton.png");
+    game.load.image("buttonConcrete", path1 + "buttons/concreteButton.png");
+    game.load.image("scaleHealth", path1 + "health/health100.png");
+    game.load.image("panel", path1 + "panel.png");
+    game.load.image("buttonExit", path1 + "buttons/exitButton.png");
     
     path1 = path + "sprites/world/";
     game.load.image("fog", path1 + "fog.png");
@@ -89,13 +92,14 @@ function create(levelSizeX, levelSizeY, playerX, playerY) {
     /* Отрисовка интерфейса */
     land = game.add.sprite(0, 0, "background");
     land.sendToBack();
-    var playerFace = game.add.sprite(25, 25, "playerFace");
-    //var panel = game.add.sprite(25, 275, "panel");
-    var scaleHealth = game.add.sprite(30, 300, "scaleHealth");
-    buttonKnife = new buttonKnifeClass(30, 360);
-    buttonBomb = new buttonBombClass(145, 360);
-    buttonAid = new buttonAidClass(30, 465);
-    buttonConcrete = new buttonConcreteClass(145, 465);
+    var panel = game.add.sprite(25, 25, "panel");
+    var playerFace = game.add.sprite(37, 62, "playerFace");
+    var scaleHealth = game.add.sprite(37, 270, "scaleHealth");
+    buttonKnife = new buttonKnifeClass(37, 325);
+    buttonBomb = new buttonBombClass(141, 325);
+    buttonAid = new buttonAidClass(37, 430);
+    buttonConcrete = new buttonConcreteClass(141, 430);
+    buttonExit = new buttonExitClass(37, 534);
     
     /* Отрисовка карты */
     fields = [];
@@ -207,5 +211,22 @@ buttonAidClass.prototype.aid = function() {
     if (CURRENT_STATE == STATE_5__send_signal) {
         send_coordinates("aid", 0, 0);
         CURRENT_STATE = STATE_3__show_my_turn;        
+    }
+}
+
+// Кнопка выходи из игры:
+// её метод exit для выхода из игры
+function buttonExitClass(x, y) {
+    this.sprite = game.add.sprite(x, y, "buttonExit");
+    this.sprite.inputEnabled = true;
+    this.sprite.events.onInputDown.add(this.exit.bind(this), this);    
+}
+
+buttonExitClass.prototype.exit = function() {
+    touchSound.play();
+    alert("Выходя из игры, вы потеряете весь прогресс!");
+    var flag = confirm();
+    if (flag) {
+        alert("ДОСРОЧНЫЙ ВЫХОД!");
     }
 }
