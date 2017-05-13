@@ -6,7 +6,7 @@ import workwithbase
 
 
 ip_addr = '0.0.0.0'
-port = 8080
+port = 80
 
 
 @aiohttp_jinja2.template('index.html')
