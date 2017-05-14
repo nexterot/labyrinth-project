@@ -1,6 +1,10 @@
+// отредактировал.
+
+//var ipAddress = '192.168.43.210';
+//var webSocket;
 
 // Где стартует игра:
-var ipAddress = '37.139.2.176';
+var ipAddress = '0.0.0.0';
 var port = '8765';
 
 var my_name = getCookie("nickname");
@@ -24,7 +28,6 @@ var CURRENT_STATE = STATE_1__waiting_for_connection;
 // send_coordinates(type, x, y) - функция, отправляющая информацию
 // об очередном ходе игрока.
 function send_coordinates(type, x, y) {
-    console.log(JSON.stringify([type, x, y]));
     webSocket.send(JSON.stringify([type, x, y]));
 }
 

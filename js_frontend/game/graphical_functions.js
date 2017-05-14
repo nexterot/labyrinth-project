@@ -11,15 +11,31 @@ var spriteSize = 50;
 
 // Переменные, регулирующие 
 // игровой мир.
-var land;
-var fields = [];
 var player;
+
+var land;
 var levelSizeX;
 var levelSizeY;
+
+var fields = [];
+
+var healthScale;
+
+var styleKnife;
+var styleOther;
+
 var buttonKnife;
+var numberKnife;
+
 var buttonAid;
+var numberAid;
+
 var buttonBomb;
+var numberBomb;
+
 var buttonConcrete;
+var numberConcrete;
+
 var buttonExit;
 
 // Переменные звуков.
@@ -35,7 +51,7 @@ var treasureSound;
 
 // Функция preload загружает в игру спрайты и звуки.
 function preload() {
-    var path = "http://37.139.2.176:8000/game/", path;
+    var path = "http://0.0.0.0:8000/game/", path;
     
     // Загрузка изображений.
     path1 = path + "sprites/interface/";
@@ -45,7 +61,11 @@ function preload() {
     game.load.image("buttonBomb", path1 + "buttons/bombButton.png");
     game.load.image("buttonAid", path1 + "buttons/aidButton.png");
     game.load.image("buttonConcrete", path1 + "buttons/concreteButton.png");
-    game.load.image("scaleHealth", path1 + "health/health100.png");
+    game.load.image("health100", path1 + "health/health100.png");
+    game.load.image("health75", path1 + "health/health75.png");
+    game.load.image("health50", path1 + "health/health50.png");
+    game.load.image("health25", path1 + "health/health25.png");
+    game.load.image("health0", path1 + "health/health0.png");
     game.load.image("panel", path1 + "panel.png");
     game.load.image("buttonExit", path1 + "buttons/exitButton.png");
     
@@ -92,13 +112,25 @@ function create(levelSizeX, levelSizeY, playerX, playerY) {
     /* Отрисовка интерфейса */
     land = game.add.sprite(0, 0, "background");
     land.sendToBack();
+    
     var panel = game.add.sprite(25, 25, "panel");
     var playerFace = game.add.sprite(37, 62, "playerFace");
-    var scaleHealth = game.add.sprite(37, 270, "scaleHealth");
+    healthScale = new HealthScale(37, 270);
+    
+    styleKnife = { font: "32px"};
+    styleOther = { font: "20px"};
+    
     buttonKnife = new buttonKnifeClass(37, 325);
+    numberKnife = game.add.text(47, 320, "∞", styleKnife);
+    
     buttonBomb = new buttonBombClass(141, 325);
+    numberBomb = game.add.text(153, 329, " 0", styleOther);
+    
     buttonAid = new buttonAidClass(37, 430);
+    numberAid = game.add.text(49, 434, " 0", styleOther);
+    
     buttonConcrete = new buttonConcreteClass(141, 430);
+    numberConcrete = game.add.text(153, 434, " 0", styleOther);
     buttonExit = new buttonExitClass(37, 534);
     
     /* Отрисовка карты */
@@ -115,6 +147,12 @@ function create(levelSizeX, levelSizeY, playerX, playerY) {
 // Класс игрока.
 function Player(x, y) {
     this.sprite = game.add.sprite(x, y, "player_stay");
+}
+
+// Класс полоски здоровья
+function HealthScale(x, y) {
+    this.sprite = game.add.sprite(x, y, "health100");
+    this.isAlive = true;
 }
 
 // Класс поле:
@@ -158,6 +196,7 @@ Field.prototype.changeSprite = function(x, y, spriteName) {
 // её метод bomb для установки бомбы.
 function buttonBombClass(x, y) {
     this.sprite = game.add.sprite(x, y, "buttonBomb");
+    this.counter = 0;
     this.sprite.inputEnabled = true;
     this.sprite.events.onInputDown.add(this.bomb.bind(this), this);
 }
@@ -172,6 +211,7 @@ buttonBombClass.prototype.bomb = function() {
 // её метод concrete для установки стены.
 function buttonConcreteClass(x, y) {
     this.sprite = game.add.sprite(x, y, "buttonConcrete");
+    this.counter = 0;
     this.sprite.inputEnabled = true;
     this.sprite.events.onInputDown.add(this.concrete.bind(this), this);
 }
@@ -202,6 +242,7 @@ buttonKnifeClass.prototype.knife = function() {
 // её метод aid для использования аптечки.
 function buttonAidClass(x, y) {
     this.sprite = game.add.sprite(x, y, "buttonAid");
+    this.counter = 0;
     this.sprite.inputEnabled = true;
     this.sprite.events.onInputDown.add(this.aid.bind(this), this);
 }
@@ -224,9 +265,8 @@ function buttonExitClass(x, y) {
 
 buttonExitClass.prototype.exit = function() {
     touchSound.play();
-    alert("Выходя из игры, вы потеряете весь прогресс!");
-    var flag = confirm();
-    if (flag) {
+    if (confirm("Выходя из игры, вы потеряете весь прогресс!")) {
         alert("ДОСРОЧНЫЙ ВЫХОД!");
+        webSocket.send("Выход");
     }
 }

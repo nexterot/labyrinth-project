@@ -1,3 +1,4 @@
+// Отредактировал.
 
 // Функции, реализующие работу конечного автомата.
 function automate1(data) {
@@ -9,13 +10,13 @@ function automate1(data) {
         case STATE_2__waiting_for_game_start: {
             ws.close()
             document.body.innerHTML = '<div align="center" id="canvas"></div>';
-            levelSizeX = data.size[0];
-            levelSizeY = data.size[1];
-            game = new Phaser.Game(canvasSizeX, canvasSizeY, Phaser.CANVAS, 'canvas', { preload: preload,
-                create: function(){ create(levelSizeX, levelSizeY, data.place[0], data.place[1]); }});
+            game = new Phaser.Game(canvasSizeX, canvasSizeY, Phaser.CANVAS, 'canvas', { preload: preload });
             var str = "Список игроков:\n";
             for (var i = 0; i < data.list_of_players.length; i++)
                 str += ((i + 1) + ") " + data.list_of_players[i] + ";\n");
+            levelSizeX = data.size[0];
+            levelSizeY = data.size[1];
+            create(levelSizeX, levelSizeY, data.place[0], data.place[1]);
             alert(str);
             CURRENT_STATE = STATE_4__sleep;
             webSocket.send("map_build");
@@ -100,7 +101,7 @@ function STATE_3_func(data) {
     turn(data);
     CURRENT_STATE = STATE_4__sleep;
     console.log("ВЫ ВЫШЛИ ИЗ 3 СОСТОЯНИЯ!!!");
-    webSocket.send("turn_made");
+    webSocket.send("Ход отрисован!"); // turn_made
 }
 
 function STATE_4_func(data) {
@@ -110,16 +111,16 @@ function STATE_4_func(data) {
         if (data.name == my_name) {
             console.log("Мой ход");
             CURRENT_STATE = STATE_5__send_signal;
-            webSocket.send("мой ход!");
+            webSocket.send("Мой ход!");
         } else {
             console.log("Не мой ход");
             CURRENT_STATE = STATE_6_show_another_turn;
-            webSocket.send("не мой ход.");
+            webSocket.send("Не мой ход!");
         }
     }
     if (data.type == "final") {
         CURRENT_STATE = FINAL__somebody_win;
-        FINAL_func(data);
+        webSocket.send("Финал!");
     }
     console.log("ВЫ ВЫШЛИ ИЗ 4 СОСТОЯНИЯ!!!");
 }
@@ -129,11 +130,10 @@ function STATE_6_func(data) {
     another_turn(data);
     console.log("Вы ВЫШЛИ ИЗ 6 СОСТОЯНИЯ!!!");
     webSocket.send("Обработал чужой ход");
-    CURRENT_STATE = STATE_4__sleep;
 }
 
 function FINAL_func(data) {
-    alert("Победитель: " + data.statistics[0]);
+    alert("Победлитель: " + data.statistics[0]);
     alert("Приз: " + data.prize[0] + " бомб; " + data.prize[1] + " блоков цемента; " + data.prize[2] + " аптечек.");
     console.log("Результаты: ");
     for (var i = 0; i < data.statistics.length; i++) {
@@ -142,5 +142,4 @@ function FINAL_func(data) {
     // draw
     /* Выход из комнаты всех игроков */
     webSocket.send("Закончил игру");
-    webSocket.close();
 }

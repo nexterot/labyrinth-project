@@ -1,9 +1,10 @@
+// Отредактировал.
 
-var ipAddr = '37.139.2.176';
+var ipAddr = '0.0.0.0';
 var portRoomInfo = 5678;
 
 var portWebsockets = 8765;
-var portHttp = 80;
+//var portHttp = 8080;
 
 // Сокет для общения с сервером.
 var webSocket;
@@ -38,7 +39,7 @@ ws.onmessage = function(event) {
             setCookie("type", "join");
             setCookie("room_name", room);
             setCookie("equipment", "0_0_0");
-            if (!webSocketOpen) {
+            if (!websocketOpen) {
                 webSocket = new WebSocket('ws://' + ipAddr + ':' + portWebsockets);
                 webSocketOpen = true;
                 // Действия, выполняемые в начале общения сервера и клиента.
@@ -71,7 +72,7 @@ ws.onmessage = function(event) {
                         delCookie("room_name");
                         delCookie("type");
                         delCookie("equipment");
-                        setTimeout('location="http://' + ipAddr + ':' + portHttp + '/info"', 2000);
+                        setTimeout('location="http://' + ipAddr + ':' + portHttp + '"', 3000);
                     }
                 };
             }
@@ -121,7 +122,7 @@ create_button.onclick = function() {
                 delCookie("room_name");
                 delCookie("type");
                 delCookie("equipment");
-                setTimeout('location="http://' + ipAddr + ':' + portHttp + '/info"', 2000);
+                setTimeout('location="http://' + ipAddr + '"', 3000);
             }
         };
     }
