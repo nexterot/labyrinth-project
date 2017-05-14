@@ -223,7 +223,7 @@ class Player:
         elif isinstance(field, fields.Grass) and field.concrete:
             packet["wall_or_ground"] = [2, field.coordinates[0], field.coordinates[1]]
             # удалить бетон
-            field.obj = None
+            field.concrete = False
 
         else:
             packet["error"] = 2
