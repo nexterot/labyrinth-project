@@ -8,7 +8,8 @@ from game.constants import *
 
 
 class Player:
-    """ player for the game """
+    """ Класс, реализующий логику игрока """
+
     MAX_HEALTH = 4
 
     def __init__(self, game, name, websocket):
@@ -19,8 +20,12 @@ class Player:
         self.health = Player.MAX_HEALTH
         self.visible_fields = [False] * (len(game.level) * len(game.level[0]))
         self.inventory = [0, 0, 0]
-        self.has_treasure = True
+        self.has_treasure = False
         self.websocket = websocket
+
+    @property
+    def alive(self):
+        return self.health > 0
 
     def __vector_to(self, obj):
         """ calculates vector distance to object """
@@ -28,14 +33,11 @@ class Player:
         return shift_x, shift_y
 
     def go(self, field):
-        """ player movement logic """
+        """ логика передвижения игрока """
         save_location = self.location
 
-        # создаем пустой пакет для отправки клиенту
-        result = server_tools.create_packet_go()
-
-        # текущие координаты
-        result["coordinates"] = self.location.coordinates
+        result = server_tools.create_packet_go()           # создаем пустой пакет для отправки клиенту
+        result["coordinates"] = self.location.coordinates  # заполняем текущие координаты
 
         # если клетка не рядом
         if not self.can_go(field):
@@ -110,14 +112,17 @@ class Player:
 
             # если мина
             if field.obj == "mine":
-                self.get_damage(2)
-                if self.health == 0:
-                    result["mine"] = 1
-                elif self.health == 2:
-                    result["mine"] = 2
-                elif self.health == 1:
-                    result["mine"] = 3
-                field.delete_object()
+                if self.alive:
+                    self.get_damage(2)
+                    if self.health == 0:
+                        result["mine"] = 1
+                    elif self.health == 2:
+                        result["mine"] = 2
+                    elif self.health == 1:
+                        result["mine"] = 3
+                    field.delete_object()
+                else:
+                    result["mine"] = -1
 
             # сокровище :)
             if field.has_treasure:
@@ -125,8 +130,6 @@ class Player:
                     self.has_treasure = True
                     field.has_treasure = False
                     result["treasure"] = 1
-                    # todo уведомить остальных игроков, что клад найден мною
-                    print("Игрок {} нашел клад!".format(self.name))
 
             # если телепорт
             if field.obj in {"tp1", "tp2", "tp3"}:
@@ -134,7 +137,7 @@ class Player:
                 self.visible_fields[field.pair.id] = True
                 self.teleport_from(field)
 
-        # flow down (and left) the river
+        # плывем вниз и влево по реке
         if isinstance(field, fields.Water):
             river_info = [1, []]
             vector = self.vector
@@ -166,7 +169,7 @@ class Player:
         self.vector = self.__vector_to(field)
         self.location = field
 
-    def knife(self):
+    def stab_with_knife(self):
         packet = server_tools.create_packet_knife()
 
         if not self.alive:
@@ -187,7 +190,7 @@ class Player:
 
         return False, packet
 
-    def set_bomb(self, field):
+    def plant_bomb(self, field):
         packet = server_tools.create_packet_bomb()
 
         # если клетка не рядом
@@ -210,8 +213,8 @@ class Player:
             packet["wall_or_ground"] = [3, field.coordinates[0], field.coordinates[1]]
             field.obj = "mine"
 
-        # если же там стена, то взорвать стену
-        elif isinstance(field, fields.Wall):
+        # если же там обычная стена, то взорвать стену
+        elif isinstance(field, fields.Wall) and not field.indestructible:
             packet["wall_or_ground"] = [1, field.coordinates[0], field.coordinates[1]]
             # поменять тип объекта на пустой Grass
             self.game.fields.sprites[field.id] = fields.Grass(self.game, field.id, field.coordinates, None)
@@ -249,7 +252,7 @@ class Player:
             return packet, True
 
         # если пустой Grass
-        if isinstance(field, fields.Grass) and not field.obj and not field.has_treasure and not field.concrete:
+        if isinstance(field, fields.Grass) and not field.exit and not field.obj and not field.has_treasure and not field.concrete:
             for player in self.game.players:
                 if player.location == field:
                     packet["error"] = 2
@@ -291,20 +294,10 @@ class Player:
     def teleport_from(self, field):
         self.location = field.pair
 
-    def look(self, field):
-        if self.can_look(field):
-            self.visible_fields[field.id] = True
-            self.vector = (0, 0)
-
     def can_go(self, field):
         """ returns True if self.location is adjacent to field (excluding diagonals) """
         shift_x, shift_y = map((lambda x, y: x - y), field.coordinates, self.location.coordinates)
         return abs(shift_x) + abs(shift_y) == 1
-
-    def can_look(self, field):
-        """ returns True if self.location is adjacent to field (including diagonals) """
-        shift_x, shift_y = map((lambda x, y: x - y), field.coordinates, self.location.coordinates)
-        return abs(shift_x) | abs(shift_y) == 1
 
     def heal(self):
         self.health = Player.MAX_HEALTH
@@ -321,6 +314,14 @@ class Player:
     def get_pushed(self, from_obj):
         pass
 
-    @property
-    def alive(self):
-        return self.health > 0
+    """ DEPRECATED
+    def look(self, field):
+        if self.can_look(field):
+            self.visible_fields[field.id] = True
+            self.vector = (0, 0)
+
+    def can_look(self, field):
+        # returns True if self.location is adjacent to field (including diagonals)
+        shift_x, shift_y = map((lambda x, y: x - y), field.coordinates, self.location.coordinates)
+        return abs(shift_x) | abs(shift_y) == 1
+    """

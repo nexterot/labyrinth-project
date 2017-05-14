@@ -43,7 +43,7 @@ class Game:
 
         # если удар ножом
         elif turn[0] == "knife":
-            was_error, result = player.knife()
+            was_error, result = player.stab_with_knife()
             if not was_error:
                 self.next_player()
             return was_error, result
@@ -52,7 +52,7 @@ class Game:
         elif turn[0] == "bomb":
             field = self.fields.at((turn[1], turn[2]))
             if field:
-                result, was_error = player.set_bomb(field)
+                result, was_error = player.plant_bomb(field)
                 if not was_error:
                     self.next_player()
                 return was_error, result
@@ -133,8 +133,10 @@ class Game:
                     self.fields.add(fields.Grass(self, count_id, coordinates, None))
                 elif value == 1:
                     self.fields.add(fields.Wall(self, count_id, coordinates))
-                elif value == 11:  # todo 
-                    self.fields.add(fields.Wall(self, count_id, coordinates))
+                elif value == 11:
+                    wall = fields.Wall(self, count_id, coordinates)
+                    wall.indestructible = True
+                    self.fields.add(wall)
                 elif value == 2:
                     grass = fields.Grass(self, count_id, coordinates, None)
                     if num_player < self.num_players:

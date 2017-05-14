@@ -42,6 +42,7 @@ class Wall(Field):
     """ impassable field """
     def __init__(self, game, identity, coordinates):
         Field.__init__(self, game, identity, coordinates)
+        self.indestructible = False
 
 
 class FieldGroup:

@@ -331,8 +331,6 @@ async def server_handler(websocket, path):
                     if result["type_of_turn"] == "go" and result["exit"][1] == 1:
                         logging.info("Игрок {} выиграл!".format(player_name))
                         await inform_about_victory(game)
-                        # await game.end()
-                        # rooms.remove(player_room)
                         break
 
                 update_uptime(player_room, player_name)
