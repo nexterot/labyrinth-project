@@ -19,7 +19,7 @@ class Player:
         self.health = Player.MAX_HEALTH
         self.visible_fields = [False] * (len(game.level) * len(game.level[0]))
         self.inventory = [0, 0, 0]
-        self.has_treasure = False
+        self.has_treasure = True
         self.websocket = websocket
 
     def __vector_to(self, obj):

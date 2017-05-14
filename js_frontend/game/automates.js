@@ -119,6 +119,7 @@ function STATE_4_func(data) {
     }
     if (data.type == "final") {
         CURRENT_STATE = FINAL__somebody_win;
+        FINAL_func(data);
     }
     console.log("ВЫ ВЫШЛИ ИЗ 4 СОСТОЯНИЯ!!!");
 }
@@ -132,7 +133,7 @@ function STATE_6_func(data) {
 }
 
 function FINAL_func(data) {
-    alert("Победлитель: " + data.statistics[0]);
+    alert("Победитель: " + data.statistics[0]);
     alert("Приз: " + data.prize[0] + " бомб; " + data.prize[1] + " блоков цемента; " + data.prize[2] + " аптечек.");
     console.log("Результаты: ");
     for (var i = 0; i < data.statistics.length; i++) {
@@ -141,4 +142,5 @@ function FINAL_func(data) {
     // draw
     /* Выход из комнаты всех игроков */
     webSocket.send("Закончил игру");
+    webSocket.close();
 }

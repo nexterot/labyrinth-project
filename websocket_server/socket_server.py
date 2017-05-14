@@ -13,8 +13,8 @@ port_room_info = 5678
 port_websockets = 8765
 
 
-MIN_PLAYERS = 1
-MAX_PLAYERS = 1
+MIN_PLAYERS = 2
+MAX_PLAYERS = 2
 MAX_ROOMS = 5
 
 rooms = []
@@ -121,6 +121,16 @@ async def send_turn_to_enemies(player, packet):
             except websockets.ConnectionClosed:
                 logging.error("Игрок {} отвалился при получении информации о ходе {}".format(pl.name, player.name))
                 logging.critical("Реализовать удаление игрока из комнаты!")  # todo
+
+
+async def inform_about_victory(game):
+    for player in game.players:
+        stats = game.get_statistics(player)
+        try:
+            await player.websocket.send(stats)
+        except websockets.ConnectionClosed:
+            logging.error("Игрок {} отвалился при получении информации об итогах игры.".format(player.name))
+            logging.critical("Реализовать удаление игрока из комнаты!")  # todo
 
 
 async def server_handler(websocket, path):
@@ -317,13 +327,13 @@ async def server_handler(websocket, path):
                 if result["type"] == "turn":
                     await send_turn_to_enemies(player, result)
 
-                # если выиграл todo разослать всем игрокам, завершить игру
-                if result["type"] == "turn" and result["type_of_turn"] == "go" and result["exit"][1] == 1:
-                    final_result = game.get_statistics(player_name)
-                    logging.info("Игрок {} выиграл!".format(player_name))
-                    logging.info("Посылаем игроку {} {}".format(player_name, final_result))
-                    await websocket.send(json.dumps(final_result))
-                    break
+                    # если выиграл
+                    if result["type_of_turn"] == "go" and result["exit"][1] == 1:
+                        logging.info("Игрок {} выиграл!".format(player_name))
+                        await inform_about_victory(game)
+                        # await game.end()
+                        # rooms.remove(player_room)
+                        break
 
                 update_uptime(player_room, player_name)
 
@@ -333,7 +343,7 @@ async def server_handler(websocket, path):
                                                                                       game.active_player.name))
                 response = await websocket.recv()
                 logging.info("Игрок {} отрисовал ход врага: {}".format(player_name, response))
-                await asyncio.sleep(0.3)
+                await asyncio.sleep(0.2)
 
     except websockets.ConnectionClosed:
         logging.critical("Игрок {} отвалился".format(player_name))

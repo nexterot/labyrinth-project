@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import random
-import websockets
 import logging
-
+import websockets
 
 from game.bear import Bear
 from game.player import Player
-
 
 import server_tools
 from game import fields
@@ -84,7 +82,7 @@ class Game:
             return was_error, result
 
         else:
-            print("Unknown command to accept by game: {}".format(turn[0]))
+            logging.critical("Игра не может принять такую команду: {}".format(turn[0]))
 
     def next_player(self):  # todo работает только для двух игроков
         for player in self.players:
@@ -92,9 +90,13 @@ class Game:
                 self.active_player = player
                 break
 
-    def end(self, winner):
-        print("Игрок {} выиграл!!!".format(winner.name))
-        # todo закончить игру
+    async def end(self):
+        logging.info("Завершаю игру...")
+        for player in self.players:
+            try:
+                player.websocket.close()
+            except websockets.ConnectionClosed:
+                logging.error("Игрок {} уже отключен".format(player.name))
 
     @server_tools.to_json
     def get_init_data(self, player_name):
@@ -163,16 +165,15 @@ class Game:
                     self.fields.add(fields.Water(self, count_id, coordinates))
                 count_id += 1
 
-    def get_statistics(self, player_name):
+    @server_tools.to_json
+    def get_statistics(self, player):
         final_packet = {
             "type": "final",
             "statistics": [self.winner.name] + [player.name for player in self.players if player != self.winner],
-            "prize": None
+            "prize": [0] * 3
         }
-        if player_name == self.winner.name:
-            final_packet["prize"] = [random.randint(1, 5+1) for _ in range(3)]
-        else:
-            final_packet["prize"] = [0] * 3
+        if player.name == self.winner.name:
+            final_packet["prize"] = [random.randint(1, 6) for _ in range(3)]
 
         return final_packet
 
