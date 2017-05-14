@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    
+    <!-- Static CSS -->
+    <link href="{{ app.router.static.url(filename='css/bootstrap.css') }}" rel="stylesheet">
+    <link href="{{ app.router.static.url(filename='css/style.css') }}" rel="stylesheet">
+    <link href="{{ app.router.static.url(filename='css/font-awesome.css') }}" rel="stylesheet">
+    
+    <!-- Logo -->
+    <link rel="icon" href="{{app.router.static.url(filename='images/logo-small.ico')}}" type="image/x-icon">
+    
+    <title>Labyrinth</title>
+</head>
+
+    
+<body>
+<!-- MAIN -->
+    <main class="container">
+        <h1>
+            {{ text }}
+        </h1>
+    </main> <!--container-->
+    
+<!-- Static JS  --> 
+   <script src="{{ app.router.static.url(filename='js/jquery-1.12.4.min.js') }}"></script>
+   <script src="{{ app.router.static.url(filename='js/bootstrap.js') }}"></script>
+</body>    
+    
+</html>
