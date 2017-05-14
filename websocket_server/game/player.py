@@ -88,7 +88,7 @@ class Player:
                     self.move(save_location)
 
             # если на этой клетке лежит аптечка
-            if field.obj == "hospital":
+            elif field.obj == "hospital":
                 if self.health == 0:
                     result["aid"] = 1
                     self.heal()
@@ -100,7 +100,7 @@ class Player:
                     self.inventory[AID] += 1
 
             # если на этой клетке лежит вооружение
-            if field.obj == "ammo":
+            elif field.obj == "ammo":
                 if not self.alive:
                     result["arm"] = -1
                 if random.randrange(1, 3) == 1:  # +1 цемент
@@ -111,7 +111,7 @@ class Player:
                     result["arm"] = 2
 
             # если мина
-            if field.obj == "mine":
+            elif field.obj == "mine":
                 if self.alive:
                     self.get_damage(2)
                     if self.health == 0:
@@ -209,7 +209,8 @@ class Player:
             return packet, True
 
         # если клетка - трава и на ней ничего нет - просто установить бомбу
-        if isinstance(field, fields.Grass) and not field.obj and not field.has_treasure and not field.concrete:
+        if isinstance(field, fields.Grass) and not field.obj and not field.has_treasure \
+                            and not field.concrete and not field.exit:
             packet["wall_or_ground"] = [3, field.coordinates[0], field.coordinates[1]]
             field.obj = "mine"
 

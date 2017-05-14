@@ -10,13 +10,15 @@ function automate1(data) {
         case STATE_2__waiting_for_game_start: {
             ws.close()
             document.body.innerHTML = '<div align="center" id="canvas"></div>';
-            game = new Phaser.Game(canvasSizeX, canvasSizeY, Phaser.CANVAS, 'canvas', { preload: preload });
+            levelSizeX = data.size[0];
+            levelSizeY = data.size[1];
+
+            game = new Phaser.Game(canvasSizeX, canvasSizeY, Phaser.CANVAS, 'canvas', { preload: preload,
+                create: function(){ create(levelSizeX, levelSizeY, data.place[0], data.place[1]); }});
+
             var str = "Список игроков:\n";
             for (var i = 0; i < data.list_of_players.length; i++)
                 str += ((i + 1) + ") " + data.list_of_players[i] + ";\n");
-            levelSizeX = data.size[0];
-            levelSizeY = data.size[1];
-            create(levelSizeX, levelSizeY, data.place[0], data.place[1]);
             alert(str);
             CURRENT_STATE = STATE_4__sleep;
             webSocket.send("map_build");
@@ -130,6 +132,7 @@ function STATE_6_func(data) {
     another_turn(data);
     console.log("Вы ВЫШЛИ ИЗ 6 СОСТОЯНИЯ!!!");
     webSocket.send("Обработал чужой ход");
+    CURRENT_STATE = STATE_4__sleep;
 }
 
 function FINAL_func(data) {

@@ -150,7 +150,7 @@ function drawGo(data) {
                 setTimeout(function(){alert("Вы выиграли!");}, 1000);
                 CURRENT_STATE = FINAL__somebody_win; return;
             } else {
-                drawHelper(data, data.coordinates[0], data.coordinates[1], "sand", playerSprite);                
+                drawHelper(data, data.coordinates[0], data.coordinates[1], "sand", "-");
                 alert("У вас нет клада!\n Вам сюда нельзя!")
             }
             flag = true;
