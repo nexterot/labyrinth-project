@@ -13,8 +13,8 @@ port_room_info = 5678
 port_websockets = 8765
 
 
-MIN_PLAYERS = 2
-MAX_PLAYERS = 2
+MIN_PLAYERS = 1
+MAX_PLAYERS = 1
 MAX_ROOMS = 5
 
 rooms = []

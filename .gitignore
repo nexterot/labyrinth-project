@@ -11,3 +11,4 @@ websocket_server/log.txt
 websocket_server/server.log
 
 http_server/labyrinthdb.db
+.idea/

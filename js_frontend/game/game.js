@@ -71,7 +71,7 @@ ws.onmessage = function(event) {
                         delCookie("room_name");
                         delCookie("type");
                         delCookie("equipment");
-                        setTimeout('location="http://' + ipAddr + ':' + portHttp + '"', 3000);
+                        setTimeout('location="http://' + ipAddr + ':' + portHttp + '/info"', 2000);
                     }
                 };
             }
