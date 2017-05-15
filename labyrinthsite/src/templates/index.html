@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    
+    {% load staticfiles %}
+    <!-- Static CSS -->
+    <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
+    <link href="{% static 'css/font-awesome.css' %}" rel="stylesheet">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    
+    <!-- Logo -->
+    <link rel="icon" href="{% static 'images/logo-small.ico' %}" type="image/x-icon">
+    
+    <title>Labyrinth</title>
+</head> 
+
+    
+<body>
+<!-- NAVBAR -->
+    <div class="menu">
+    <div class="navbar navbar-inverse" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">     
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div><!--navbar-header-->
+            <div class="navbar-collapse collapse">
+                <ul class="nav nav-justified">
+                <li><a href="#">Об игре</a></li>
+                <li><a href="#">FAQ</a></li>
+                <li><a href="#">Рейтинги</a></li>
+                <li><a href="#">Арты</a></li>
+                <li><a href="#">Вопросы</a></li>
+                </ul>
+            </div><!--navbar-collapse -->
+        </div><!--container-fluid -->
+    </div><!--navbar -->
+    </div>
+    
+<!-- MAIN -->
+    <main class="container">
+           {% block main %}
+            <div class="col-sm-10">
+                <img src="{% static 'images/lab.png' %}" alt="">
+            </div>
+            
+            <div class="col-sm-2">
+              {% block loginblock %}
+               {% if not user.is_authenticated %}
+               <div class="col-sm-12 text-center">
+                {% for error in form.non_field_errors %}
+                <div class="allert alert-danger">
+                    <p>{{ error }}</p>
+                </div>
+                {% endfor %}
+                <form enctype="multipart/form-data" action="{% url 'index' %}" method="post" role="form" class="form-signin">
+                     {% csrf_token %}
+                     {% for item in form %}
+                      <input type="{{ item.field.widget.input_type }}" id="{{ item.id_for_label }}" class="form-control" name="{{ item.name }}" placeholder="{{ item.label }}" value="{% if item.value != None %}{{ item.value }}{% endif %}" required autofocus> 
+                        {% if item.errors %}
+                            {% for error in item.errors %}<span class="help-block">{{ error }}</span>{% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                      <button class="btn btn-info btn-block" type="submit">Войти</button>
+                
+                </form>     
+                <a href="{% url 'registration' %}" class="btn btn-primary btn-block">Регистрация</a>
+                {% endif %}
+
+               {% if user.is_authenticated %}
+                <div class="blog-header">
+                    <h3>{{ user.username }}</h3>
+                </div>  
+                <a href="{% url 'info' %}" type="submit" class="btn btn-info btn-block">Играть!</a>
+                <a href="{% url 'logout' %}" type="submit" class="btn btn-primary btn-block">Выйти</a>
+                {% endif %}
+            </div>
+            {% endblock %}
+        </div>
+        
+        <div class="col-sm-12">
+            <div class="blog-header">
+                <h1 class="blog-title">Последние новости</h1>
+            </div>
+            <div class="newscontainer">
+                <p>Ура, игра готова!</p>
+            </div>
+            <div class="newscontainer">
+                <p>У нас появился сайт!</p>
+            </div>
+            <div class="newscontainer">
+                <p>Новая версия сайта!</p>
+            </div>
+            <div class="newscontainer">
+                <p>Странно, но почти все работает!</p>
+            </div>
+            
+            <div class="pagerow">
+                <ul class="pagination">
+                    <li class="disabled"><a href="#">&laquo;</a></li>
+                    <li><a href="#">1 <span class="sr-only">(current)</span></a></li>
+                    <li><a href="#">2 <span class="sr-only">(current)</span></a></li>
+                    <li><a href="#">3 <span class="sr-only">(current)</span></a></li>
+                    <li class="disabled"><a href="#">&raquo;</a></li>
+                </ul>  
+            </div>
+        </div><!--col-sm-12-->
+        {% endblock %}
+        
+        </main> <!--container-->
+    
+<!-- FOOTER -->
+    <footer class="container-fluid">
+        <div class="row footer-top">
+             <div class="col-xs-4">
+                 <a href="#"><i class="fa fa-vk" aria-hidden="true">&nbsp;Вконтакте</i></a>
+             </div>
+             <div class="col-xs-4">
+                 <a href="https://github.com/Nexterot/labyrinth-project/"><i class="fa fa-github" aria-hidden="true">&nbsp;GitHub</i></a>
+             </div>
+             <div class="col-xs-4">
+                 <a href="https://vk.com"><i class="fa fa-cogs" aria-hidden="true">&nbsp;Поддержка</i></a>
+             </div>
+        </div><!--footer-top-->
+        <div class="row footer-bottom">
+            <p><i class="fa fa-copyright" aria-hidden="true"></i> Labyrinth, 2017</p>
+        </div><!--footer-bottom-->
+    </footer>  
+    
+<!-- Static JS  --> 
+   <script src="{% static 'js/jquery-1.12.4.min.js' %}"></script>
+   <script src="{% static 'js/bootstrap.js' %}"></script>
+    
+</body>    
+    
+</html>
