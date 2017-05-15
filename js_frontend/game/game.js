@@ -87,7 +87,13 @@ ws.onmessage = function(event) {
 var create_button = document.getElementById("create_room");
 create_button.onclick = function() {
     setCookie("type", "create");
-    setCookie("room_name", document.getElementById("room_name").value);
+    var value = document.getElementById("room_name").value;
+    if (! isAlphaNumeric(value)) {
+        setTimeout(function() {alert("В названии комнаты используйте только латинские буквы и цифры!");}, 1)
+        setTimeout('location="http://' + ipAddr + ':' + portHttp + '/info"', 1000);
+        return;
+    }
+    setCookie("room_name", value);
     setCookie("equipment", "0_0_0");
     if (!webSocketOpen) {
         webSocket = new WebSocket('ws://' + ipAddr + ':' + portWebsockets);
@@ -126,4 +132,20 @@ create_button.onclick = function() {
             }
         };
     }
+};
+
+
+/* является ли строка буквенно-численной? */
+function isAlphaNumeric(str) {
+  var code, i, len;
+
+  for (i = 0, len = str.length; i < len; i++) {
+    code = str.charCodeAt(i);
+    if (!(code > 47 && code < 58) && // numeric (0-9)
+        !(code > 64 && code < 91) && // upper alpha (A-Z)
+        !(code > 96 && code < 123)) { // lower alpha (a-z)
+      return false;
+    }
+  }
+  return true;
 };
