@@ -15,7 +15,7 @@ ws.onmessage = function(event) {
     data = JSON.parse(event.data);
     var table = document.getElementById("rooms");
     var row;
-    table.innerHTML = "<tr><td>Название комнаты</td><td>Список игроков</td><td>Присоединиться</td></tr>";
+    table.innerHTML = "<tr><td>Название комнаты</td><td>Список игроков</td><td>Макс. игроков</td><td>Присоединиться</td></tr>";
     for (var room in data) {
         row = document.createElement("TR");
 
@@ -26,10 +26,15 @@ ws.onmessage = function(event) {
 
         // Список игроков.
         var colListOfPlayers = document.createElement("TD");
-        for (var i = 0; i < data[room].length; i++) {
-            colListOfPlayers.innerHTML += data[room] + " ";
+        for (var i = 1; i < data[room].length; i++) {
+            colListOfPlayers.innerHTML += data[room][i] + " ";
         }
         row.appendChild(colListOfPlayers);
+
+        // Максимум игроков
+        var maxPlayers = document.createElement("TD");
+        maxPlayers.innerHTML = data[room][0];
+        row.appendChild(maxPlayers);
 
         // Кнопка "присоединиться".
         var buttonJoin = document.createElement("TD");
@@ -88,6 +93,8 @@ create_button.onclick = function() {
     setCookie("type", "create");
     setCookie("room_name", document.getElementById("room_name").value);
     setCookie("equipment", "0_0_0");
+    var num_players = document.getElementById("num_players").value;
+    setCookie("num_players", num_players);
     if (!webSocketOpen) {
         webSocket = new WebSocket('ws://' + ipAddr + ':' + portWebsockets);
         webSocketOpen = true;
@@ -99,7 +106,8 @@ create_button.onclick = function() {
             webSocket.send(JSON.stringify({
                 "type": getCookie("type"),
                 "name": getCookie("room_name"),
-                "equipment": equipment
+                "equipment": equipment,
+                "num_players": getCookie("num_players")
             }));
         };
 

@@ -63,12 +63,21 @@
             <div class="col-sm-2">
                 <input class="form-control" id="room_name" type="text" placeholder="Название комнаты"\> 
             </div>
-           
-            <div class="col-sm-2"> 
+
+            <div class="col-sm-3">
+                <select size="1" id="num_players">
+                    <option disabled selected> Кол-во: </option>
+                    <option value="1"> 1 </option>
+                    <option value="2"> 2 </option>
+                    <option value="3"> 3 </option>
+                    <option value="4"> 4 </option>
+                    <option value="5"> 5 </option>
+                </select>
+            </div>
+
+            <div class="col-sm-3">
                 <button class="btn btn-info btn-block" id="create_room"> Создать комнату </button>
-           </div>
-  
-            
+            </div>
             
             <script src="http://37.139.2.176:8000/game/automates.js"></script>
             <script src="http://37.139.2.176:8000/game/game.js"></script>

@@ -13,7 +13,8 @@ port_room_info = 5678
 port_websockets = 8765
 
 
-MIN_PLAYERS = MAX_PLAYERS = 2
+MIN_PLAYERS = 1
+MAX_PLAYERS = 5
 MAX_ROOMS = 5
 
 rooms = []
@@ -25,6 +26,8 @@ class Room:
         self.name = name
         self.players = {}
         self.game = None
+        self.max_players = None
+        self.min_players = None
 
     def __len__(self):
         """ перегрузка метода __len__: получение количества игроков в комнате"""
@@ -70,7 +73,6 @@ class Client:
             logging.error("")
             self.disconnect()
 
-
     def disconnect(self):
         if self.player is not None:
             ...
@@ -82,7 +84,7 @@ async def rooms_info_handler(websocket, path):
     global rooms
     try:
         while True:
-            dict_view = {room.name: list(room.players.keys()) for room in rooms}
+            dict_view = {room.name: [room.max_players] + list(room.players.keys()) for room in rooms}
             result = json.dumps(dict_view)
             await websocket.send(result)
             # logging.info("Информация о комнатах отправлена: {}".format(result))
@@ -197,8 +199,23 @@ async def server_handler(websocket, path):
                     logging.error(
                         "Игрок {} не смог создать комнату {}: она уже существует".format(player_name, request["name"]))
                     await close_reason(websocket, ROOM_ALREADY_EXISTS)
+
+            if int(request["num_players"]) < MIN_PLAYERS:
+                logging.critical("Заданное количество игроков ({}) меньше допустимого: {}".format(request["num_players"],
+                                                                                                  MIN_PLAYERS))
+                await close_reason(websocket, "too small players number")
+
+            elif int(request["num_players"]) > MAX_PLAYERS:
+                logging.critical(
+                    "Заданное количество игроков ({}) больше допустимого: {}".format(request["num_players"],
+                                                                                     MIN_PLAYERS))
+                await close_reason(websocket, "too big players number")
+
             # иначе все хорошо; создаем комнату
             new_room = Room(request["name"])
+
+            new_room.max_players = int(request["num_players"])
+
             # добавить в rooms пару {имя_игрока:вебсокет}
             new_room.add(player_name, websocket)
             player_room = new_room
@@ -209,7 +226,7 @@ async def server_handler(websocket, path):
         elif request["type"] == "join":
             for room in rooms:
                 if room.name == request["name"]:  # находим комнату с нужным именем
-                    if len(room) == MAX_PLAYERS:  # упс, она уже заполнена :(
+                    if len(room) == room.max_players:  # упс, она уже заполнена :(
                         logging.error(
                             "Игрок {} не смог присоединиться к комнате {}: она уже заполнена".format(player_name,
                                                                                                      room.name))
@@ -241,13 +258,13 @@ async def server_handler(websocket, path):
             if player_room.game:  # если игра уже началась
                 logging.info("Игрок {}({}): игра уже началась, вхожу".format(player_name, player_room.name))
                 break
-            elif len(player_room) == MAX_PLAYERS:  # если количество игроков достигло максимума, создаем игру
+            elif len(player_room) == player_room.max_players:  # если количество игроков достигло максимума создаем игру
                 player_room.start_game()
                 logging.info("Игрок {}({}): создал игру".format(player_name, player_room.name))
                 break
             # в будущем - активировать таймер при минимальном количестве игроков
             # todo: timer
-            # elif len(my_room) >= MIN_PLAYERS:
+            # elif len(my_room) >= room.min_players:
             #     pass
             else:  # иначе ждать начала игры
                 logging.info("Игрок {}({}): жду начала игры".format(player_name, player_room.name))
