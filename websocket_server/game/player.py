@@ -155,6 +155,8 @@ class Player:
                     self.has_treasure = True
                     field.has_treasure = False
                     result["treasure"] = 1
+                else:
+                    result["treasure"] = 2
 
             # если телепорт
             if field.obj in {"tp1", "tp2", "tp3"}:

@@ -22,6 +22,7 @@ class Game:
         self.active_player = self.players[0]
         self.bear = Bear(self)
         self.winner = None
+        self.ended = False
 
     @property
     def num_players(self):
@@ -119,6 +120,8 @@ class Game:
         num_player = 0
         count_id = 0
         self.fields.dim = levels.SIZE
+        player_start_positions = []  # для рандомного расставления игроков
+
         for row in range(levels.SIZE):
             for col in range(levels.SIZE):
                 coordinates = (row, col)
@@ -137,11 +140,7 @@ class Game:
                     self.fields.add(wall)
                 elif value == 2:
                     grass = fields.Grass(self, count_id, coordinates, None)
-                    if num_player < self.num_players:
-                        player = self.players[num_player]
-                        player.visible_fields[count_id] = True
-                        player.location = grass
-                        num_player += 1
+                    player_start_positions.append(count_id)
                     self.fields.add(grass)
                 elif value == 3:
                     self.fields.add(fields.Grass(self, count_id, coordinates, "ammo"))
@@ -164,6 +163,13 @@ class Game:
                 elif value == 9:
                     self.fields.add(fields.Water(self, count_id, coordinates))
                 count_id += 1
+
+        random.shuffle(player_start_positions)
+        for i in range(self.num_players):
+            pos = player_start_positions[i]
+            player = self.players[i]
+            player.visible_fields[pos] = True
+            player.location = self.fields.by_id(pos)
 
     @server_tools.to_json
     def get_statistics(self, player):

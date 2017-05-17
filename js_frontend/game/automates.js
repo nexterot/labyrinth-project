@@ -133,17 +133,13 @@ function STATE_6_func(data) {
     anotherTurn(data);
     console.log("Вы ВЫШЛИ ИЗ 6 СОСТОЯНИЯ!!!");
     webSocket.send("Обработал чужой ход");
-    //CURRENT_STATE = STATE_4__sleep;
 }
 
 function FINAL_func(data) {
-    alert("Победлитель: " + data.statistics[0]);
-    alert("Приз: " + data.prize[0] + " бомб; " + data.prize[1] + " блоков цемента; " + data.prize[2] + " аптечек.");
-    console.log("Результаты: ");
-    for (var i = 0; i < data.statistics.length; i++) {
-        console.log((i + 1) + " место: " + data.statistics[i]);
+    alert("kek!");
+    if (data.statistics[0] == my_name) {
+        alert("Вы победили!");
+    } else {
+        alert("Победитель: " + data.statistics[0]);
     }
-    // draw
-    /* Выход из комнаты всех игроков */
-    webSocket.send("Закончил игру");
 }

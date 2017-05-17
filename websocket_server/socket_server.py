@@ -59,14 +59,19 @@ class Client:
             if msg == "exit":
                 raise websockets.ConnectionClosed
         except websockets.ConnectionClosed:
-            self.delete_player()
+            self.disconnect()
             data = None
         return data
 
     async def send(self, data):
-        await self.ws.send(data)
+        try:
+            await self.ws.send(data)
+        except websockets.ConnectionClosed:
+            logging.error("")
+            self.disconnect()
 
-    def delete_player(self):
+
+    def disconnect(self):
         if self.player is not None:
             ...
             # todo delete player form room
@@ -152,6 +157,7 @@ async def inform_about_victory(game):
         stats = game.get_statistics(player)
         try:
             await player.websocket.send(stats)
+            logging.info("Игроку {} отправлен пакет: {}".format(player.name, stats))
         except websockets.ConnectionClosed:
             logging.error("Игрок {} отвалился при получении информации об итогах игры.".format(player.name))
             logging.critical("Реализовать удаление игрока из комнаты!")  # todo
@@ -284,7 +290,7 @@ async def server_handler(websocket, path):
         Основной игровой цикл
 
         """
-        while True:
+        while not game.ended:
             # рассылаем имя игрока, который ходит
             response = json.dumps({"type": "whose_turn", "name": game.active_player.name})
 
@@ -354,6 +360,7 @@ async def server_handler(websocket, path):
                     # если выиграл
                     if result["type_of_turn"] == "go" and result["exit"][1] == 1:
                         logging.info("Игрок {} выиграл!".format(player_name))
+                        game.ended = True
                         await inform_about_victory(game)
                         break
 

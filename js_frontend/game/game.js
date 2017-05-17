@@ -68,7 +68,6 @@ ws.onmessage = function(event) {
                     } else {
                         console.log("Игра успешно завершилась");
                         console.log("КОНЕЦ ЗАКРЫТИЯ!!!");
-                        alert("Игра завершена!");
                         delCookie("room_name");
                         delCookie("type");
                         delCookie("equipment");

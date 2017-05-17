@@ -129,12 +129,17 @@ function drawGo(data) {
             }
             flag = true;
         }
-        if (data.treasure == 1) {
-            treasureSound.play();
-            drawHelper(data, data.coordinates[0], data.coordinates[1], "treasure", playerSprite);
-            setTimeout(drawHelper, 300, data, data.coordinates[0], data.coordinates[1], "treasure", "player_use_aid");
-            setTimeout(drawHelper, 700, data, data.coordinates[0], data.coordinates[1], "sand", playerSprite);
-            setTimeout(function(){alert("Вы нашли клад!");}, 1000); 
+        if ((data.treasure == 1) || (data.treasure == 2)) {
+            if (data.treasure == 1) {
+                treasureSound.play();
+                drawHelper(data, data.coordinates[0], data.coordinates[1], "treasure", playerSprite);
+                setTimeout(drawHelper, 300, data, data.coordinates[0], data.coordinates[1], "treasure", "player_use_aid");
+                setTimeout(drawHelper, 700, data, data.coordinates[0], data.coordinates[1], "sand", playerSprite);
+                setTimeout(function(){alert("Вы нашли клад!");}, 1000);
+            } else if (data.treasure == 2) {
+                drawHelper(data, data.coordinates[0], data.coordinates[1], "treasure", playerSprite);
+            }
+
             flag = true;
         }
         if (data.metro[0] == 1) {
