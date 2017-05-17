@@ -16,6 +16,7 @@ class Player:
         self.game = game
         self.name = name
         self.location = None
+        self.prev_location = None
         self.vector = (0, 0)
         self.health = Player.MAX_HEALTH
         self.visible_fields = [False] * (len(game.level) * len(game.level[0]))
@@ -34,7 +35,7 @@ class Player:
 
     def go(self, field):
         """ логика передвижения игрока """
-        save_location = self.location
+        self.prev_location = self.location
 
         result = server_tools.create_packet_go()           # создаем пустой пакет для отправки клиенту
         result["coordinates"] = self.location.coordinates  # заполняем текущие координаты
@@ -55,6 +56,30 @@ class Player:
         elif isinstance(field, fields.Grass) and field.concrete:
             result["wall"] = [2, field.coordinates[0], field.coordinates[1]]
             return result, False
+
+        for pl in self.game.players:
+            if self.location == pl.location and self != pl:
+                if not pl.alive:
+                    result["is_here_enemy"] = 1
+                else:
+                    result["is_here_enemy"] = 2
+
+        if isinstance(self.location, fields.Water):
+            result["from_sprite"] = "water"
+        elif self.location.has_treasure:
+            result["from_sprite"] = "treasure"
+        elif self.location.obj == "hospital":
+            result["from_sprite"] = "aid"
+        elif self.location.obj == "ammo":
+            result["from_sprite"] = "arm"
+        elif self.location.obj == "mine":
+            result["from_sprite"] = "bomb"
+        elif self.location.obj in {"tp1", "tp2", "tp3"}:
+            result["from_sprite"] = "metro"
+        else:
+            result["from_sprite"] = "sand"
+
+        result["from_coordinates"] = self.location.coordinates
 
         # помещаем коориданты клетки, на которую перейдем
         result["coordinates"] = field.coordinates
@@ -85,7 +110,7 @@ class Player:
                 else:
                     result["exit"][1] = 0  # нужно откинуть
                     # передвинуть игрока
-                    self.move(save_location)
+                    self.move(self.prev_location)
 
             # если на этой клетке лежит аптечка
             elif field.obj == "hospital":
@@ -103,7 +128,7 @@ class Player:
             elif field.obj == "ammo":
                 if not self.alive:
                     result["arm"] = -1
-                if random.randrange(1, 3) == 1:  # +1 цемент
+                elif random.randrange(1, 3) == 1:  # +1 цемент
                     self.inventory[CONCRETE] += 1
                     result["arm"] = 1
                 else:  # +1 бомба
@@ -170,6 +195,8 @@ class Player:
         self.location = field
 
     def stab_with_knife(self):
+        self.prev_location = self.location
+
         packet = server_tools.create_packet_knife()
 
         if not self.alive:
@@ -179,7 +206,7 @@ class Player:
         packet["coordinates"] = self.location.coordinates
 
         for player in self.game.players:
-            if player.location == self.location and player != self:
+            if player.location == self.location and player.alive and player != self:
                 packet["name_of_victim"] = player.name
                 player.get_damage(1)
                 if not player.alive:
@@ -188,9 +215,26 @@ class Player:
                     packet["is_here_enemy"] = 2
                 break
 
+        if isinstance(self.location, fields.Water):
+            packet["from_sprite"] = "water"
+        elif self.location.has_treasure:
+            packet["from_sprite"] = "treasure"
+        elif self.location.obj == "hospital":
+            packet["from_sprite"] = "aid"
+        elif self.location.obj == "ammo":
+            packet["from_sprite"] = "arm"
+        elif self.location.obj == "mine":
+            packet["from_sprite"] = "bomb"
+        elif self.location.obj in {"tp1", "tp2", "tp3"}:
+            packet["from_sprite"] = "metro"
+        else:
+            packet["from_sprite"] = "sand"
+
         return False, packet
 
     def plant_bomb(self, field):
+        self.prev_location = self.location
+
         packet = server_tools.create_packet_bomb()
 
         # если клетка не рядом
@@ -208,9 +252,17 @@ class Player:
             packet["error"] = 3
             return packet, True
 
+        # нельзя ставить на игрока
+        for player in self.game.players:
+            if player.location == field:
+                packet["error"] = 2
+                return packet, True
+
+        self.visible_fields[field.id] = True
+
         # если клетка - трава и на ней ничего нет - просто установить бомбу
         if isinstance(field, fields.Grass) and not field.obj and not field.has_treasure \
-                            and not field.concrete and not field.exit:
+                and not field.concrete and not field.exit:
             packet["wall_or_ground"] = [3, field.coordinates[0], field.coordinates[1]]
             field.obj = "mine"
 
@@ -232,9 +284,12 @@ class Player:
 
         self.inventory[BOMB] -= 1
 
+
         return packet, False
 
     def set_concrete(self, field):
+        self.prev_location = self.location
+
         packet = server_tools.create_packet_concrete()
 
         # если клетка не рядом
@@ -243,14 +298,22 @@ class Player:
             return packet, True
 
         # если игрок мертв
-        elif not self.alive:
+        if not self.alive:
             packet["error"] = 1
             return packet, True
 
         # если у игрока нет цемента
-        elif self.inventory[CONCRETE] == 0:
+        if self.inventory[CONCRETE] == 0:
             packet["error"] = 3
             return packet, True
+
+        # нельзя ставить на игрока
+        for player in self.game.players:
+            if player.location == field:
+                packet["error"] = 2
+                return packet, True
+
+        self.visible_fields[field.id] = True
 
         # если пустой Grass
         if isinstance(field, fields.Grass) and not field.exit and not field.obj and not field.has_treasure and not field.concrete:
@@ -267,6 +330,7 @@ class Player:
             return packet, True
 
     def use_aid(self):
+        self.prev_location = self.location
         packet = server_tools.create_packet_aid()
 
         # если игрок мертв
@@ -314,15 +378,3 @@ class Player:
 
     def get_pushed(self, from_obj):
         pass
-
-    """ DEPRECATED
-    def look(self, field):
-        if self.can_look(field):
-            self.visible_fields[field.id] = True
-            self.vector = (0, 0)
-
-    def can_look(self, field):
-        # returns True if self.location is adjacent to field (including diagonals)
-        shift_x, shift_y = map((lambda x, y: x - y), field.coordinates, self.location.coordinates)
-        return abs(shift_x) | abs(shift_y) == 1
-    """

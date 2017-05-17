@@ -60,9 +60,30 @@ function turn(data) {
 
 // another_turn(data) - функция, отвечающая за отрисовку хода
 // другого игрока.
-function another_turn(data) {
+function anotherTurn(data) {
     console.log("Ходит игрок с ником " + data.name);
-
+    switch (data.type_of_turn) {
+        case "go": {
+            drawAnotherGo(data);
+            break;
+        }
+        case "knife": {
+            drawAnotherKnife(data);
+            break;
+        }
+        case "bomb": {
+            drawAnotherBomb(data);
+            break;
+        }
+        case "concrete": {
+            drawAnotherConcrete(data);
+            break;
+        }
+        case "aid": {
+            drawAnotherAid(data);
+            break;
+        }
+    }
 }
 
 // Установка куки.

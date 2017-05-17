@@ -84,11 +84,9 @@ class Game:
         else:
             logging.critical("Игра не может принять такую команду: {}".format(turn[0]))
 
-    def next_player(self):  # todo работает только для двух игроков
-        for player in self.players:
-            if self.active_player != player:
-                self.active_player = player
-                break
+    def next_player(self):  # todo при отключении игрока обработать исключение
+        pos = self.players.index(self.active_player)
+        self.active_player = self.players[(pos+1) % len(self.players)]
 
     async def end(self):
         logging.info("Завершаю игру...")
@@ -175,7 +173,7 @@ class Game:
             "prize": [0] * 3
         }
         if player.name == self.winner.name:
-            final_packet["prize"] = [random.randint(1, 6) for _ in range(3)]
+            final_packet["prize"] = [random.randint(1, 5) for _ in range(3)]
 
         return final_packet
 

@@ -101,9 +101,9 @@ function STATE_1_func(data) {
 function STATE_3_func(data) {
     console.log("ВЫ В 3 СОСТОЯНИИ!!!");
     turn(data);
-    CURRENT_STATE = STATE_4__sleep;
+    playerFace = game.add.sprite(37, 62, "playerFaceWait");
     console.log("ВЫ ВЫШЛИ ИЗ 3 СОСТОЯНИЯ!!!");
-    webSocket.send("Ход отрисован!"); // turn_made
+    webSocket.send("Ход отрисован!");
 }
 
 function STATE_4_func(data) {
@@ -111,6 +111,7 @@ function STATE_4_func(data) {
     console.log(data);
     if (data.type == "whose_turn") {
         if (data.name == my_name) {
+            playerFace = game.add.sprite(37, 62, "playerFaceGo");
             console.log("Мой ход");
             CURRENT_STATE = STATE_5__send_signal;
             webSocket.send("Мой ход!");
@@ -129,10 +130,10 @@ function STATE_4_func(data) {
 
 function STATE_6_func(data) {
     console.log("Вы В 6 СОСТОЯНИИ!!!");
-    another_turn(data);
+    anotherTurn(data);
     console.log("Вы ВЫШЛИ ИЗ 6 СОСТОЯНИЯ!!!");
     webSocket.send("Обработал чужой ход");
-    CURRENT_STATE = STATE_4__sleep;
+    //CURRENT_STATE = STATE_4__sleep;
 }
 
 function FINAL_func(data) {

@@ -13,8 +13,7 @@ port_room_info = 5678
 port_websockets = 8765
 
 
-MIN_PLAYERS = 1
-MAX_PLAYERS = 1
+MIN_PLAYERS = MAX_PLAYERS = 2
 MAX_ROOMS = 5
 
 rooms = []
@@ -46,6 +45,31 @@ class Room:
         """ начинает игру """
         self.game = Game(self.players)
         self.game.initialize_level()
+
+
+class Client:
+    def __init__(self, websocket):
+        self.ws = websocket
+        self.player = None
+
+    async def recv(self):
+        try:
+            data = await self.ws.recv()
+            msg = parse_json(data)
+            if msg == "exit":
+                raise websockets.ConnectionClosed
+        except websockets.ConnectionClosed:
+            self.delete_player()
+            data = None
+        return data
+
+    async def send(self, data):
+        await self.ws.send(data)
+
+    def delete_player(self):
+        if self.player is not None:
+            ...
+            # todo delete player form room
 
 
 async def rooms_info_handler(websocket, path):
@@ -86,7 +110,7 @@ async def get_client_info(websocket):
     result = await websocket.recv()
     try:
         player_name, key = result.split("=")
-    except ValueError:  # не установлены куки!
+    except ValueError:
         logging.critical("Неопознанный игрок (не установлены куки)")
         await websocket.close()
         return False

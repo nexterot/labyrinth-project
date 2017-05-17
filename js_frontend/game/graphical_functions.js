@@ -12,6 +12,7 @@ var spriteSize = 50;
 // Переменные, регулирующие 
 // игровой мир.
 var player;
+var playerAnother;
 
 var land;
 var levelSizeX;
@@ -56,7 +57,8 @@ function preload() {
     // Загрузка изображений.
     path1 = path + "sprites/interface/";
     game.load.image("background", path1 + "background.png");
-    game.load.image("playerFace", path1 + "player_face.png");
+    game.load.image("playerFaceWait", path1 + "player_face_wait.png");
+    game.load.image("playerFaceGo", path1 + "player_face_go.png");
     game.load.image("buttonKnife", path1 + "buttons/knifeButton.png");
     game.load.image("buttonBomb", path1 + "buttons/bombButton.png");
     game.load.image("buttonAid", path1 + "buttons/aidButton.png");
@@ -95,16 +97,17 @@ function preload() {
     game.load.image("player_ghost", path1 + "player_ghost.png");
     
     // Загрузка звуков.
-    path1 = path + "sounds/"
-    bombBlastedSound = new Audio(path1 + "bomb_blasted.mp3");
-    bombPlantedSound = new Audio(path1 + "bomb_planted.mp3");
-    concreteSound = new Audio(path1 + "concrete.mp3");
-    intoWallSound = new Audio(path1 + "intoTheWall.mp3");
-    knifeSound = new Audio(path1 + "knife.mp3");
-    metroSound = new Audio(path1 + "metro.mp3");
-    touchSound = new Audio(path1 + "touch.mp3");
-    waterSound = new Audio(path1 + "water.mp3");
-    treasureSound = new Audio(path1 + "treasure.mp3");
+    path1 = path + "sounds/ogg/";
+    var type = ".ogg"
+    bombBlastedSound = new Audio(path1 + "bomb_blasted" + type);
+    bombPlantedSound = new Audio(path1 + "bomb_planted" + type);
+    concreteSound = new Audio(path1 + "concrete" + type);
+    intoWallSound = new Audio(path1 + "intoTheWall" + type);
+    knifeSound = new Audio(path1 + "knife" + type);
+    metroSound = new Audio(path1 + "metro" + type);
+    touchSound = new Audio(path1 + "touch" + type);
+    waterSound = new Audio(path1 + "water" + type);
+    treasureSound = new Audio(path1 + "treasure" + type);
 }
 
 // Функция create инициализирует игру: отрисовывает интерфейс и карту.
@@ -114,7 +117,7 @@ function create(levelSizeX, levelSizeY, playerX, playerY) {
     land.sendToBack();
     
     var panel = game.add.sprite(25, 25, "panel");
-    var playerFace = game.add.sprite(37, 62, "playerFace");
+    var playerFace = game.add.sprite(37, 62, "playerFaceWait");
     healthScale = new HealthScale(37, 270);
     
     styleKnife = { font: "32px"};
@@ -142,11 +145,18 @@ function create(levelSizeX, levelSizeY, playerX, playerY) {
             fields[row].push(new Field(275 + col * spriteSize, 25 + row * spriteSize, [row, col]));
     fields[playerX][playerY].changeSprite(275 + playerY * spriteSize, 25 + playerX * spriteSize, "sand");
     player = new Player(275 + playerY * spriteSize, 25 + playerX * spriteSize);
+    playerAnother = new PlayerAnother();
 }
 
 // Класс игрока.
 function Player(x, y) {
     this.sprite = game.add.sprite(x, y, "player_stay");
+    this.haveTreasure = false;
+}
+
+// Клвсс другого игрока
+function PlayerAnother() {
+    this.sprite = null;
 }
 
 // Класс полоски здоровья

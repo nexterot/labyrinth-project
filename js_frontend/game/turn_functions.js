@@ -4,14 +4,17 @@
 function drawGo(data) {
     if (data.error == 1) {
         alert("Сюда идти нельзя!\n Повторите попытку!");
-        CURRENT_STATE = STATE_5__send_signal;
     } else {
         var playeSprite;
         if (healthScale.isAlive)
             playerSprite = "player_stay";
         else
-            playerSprite = "player_ghost"
+            playerSprite = "player_ghost";
         var flag = false;
+        if (data.is_here_enemy == 1)
+            drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "player_ghost");
+        if (data.is_here_enemy == 2)
+            drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "player_stay");
         if ((data.wall[0] == 1) || (data.wall[0] == 2)) {
             intoWallSound.play();
             switch (data.wall[0]) {
@@ -24,7 +27,7 @@ function drawGo(data) {
                     break;
                 }
             }
-            flag = true;
+            flag = true;    
         }
         if ((data.mine == 1) || (data.mine == 2) || (data.mine == 3)) {
             bombBlastedSound.play()
@@ -158,8 +161,8 @@ function drawGo(data) {
         if (! flag) {
             drawHelper(data, data.coordinates[0], data.coordinates[1], "sand", playerSprite);
         }
-        CURRENT_STATE = STATE_4__sleep;
     }
+    CURRENT_STATE = STATE_4__sleep;
 }
 
 // Нож.
@@ -169,9 +172,9 @@ function drawKnife(data) {
         CURRENT_STATE = STATE_5__send_signal;
     } else {
         knifeSound.play();
-        drawHelper(data, data.coordinates[0], data.coordinates[1], "sand", playerSprite);
-        setTimeout(drawHelper, 300, data, data.coordinates[0], data.coordinates[1], "sand", "player_use_knife");
-        setTimeout(drawHelper, 700, data, data.coordinates[0], data.coordinates[1], "sand", playerSprite);
+        drawHelper(data, data.coordinates[0], data.coordinates[1], data.from_sprite, "player_stay");
+        setTimeout(drawHelper, 300, data, data.coordinates[0], data.coordinates[1], data.from_sprite, "player_use_knife");
+        setTimeout(drawHelper, 700, data, data.coordinates[0], data.coordinates[1], data.from_sprite, "player_stay");
         switch (data.is_here_enemy) {
             case 0: {
                 setTimeout(function(){alert("Вы промахнулись!");}, 1000);
@@ -186,8 +189,8 @@ function drawKnife(data) {
                 break;
             }
         }
-        CURRENT_STATE = STATE_4__sleep;
     }
+    CURRENT_STATE = STATE_4__sleep;
 }
 
 // Бомба.
@@ -241,8 +244,8 @@ function drawBomb(data) {
                 }
             }, 1000);        
         }
-        CURRENT_STATE = STATE_4__sleep;
     }   
+    CURRENT_STATE = STATE_4__sleep;
 }
 
 
@@ -263,7 +266,6 @@ function drawConcrete(data) {
                 break; 
             }                                
         }
-        CURRENT_STATE = STATE_5__send_signal;
     } else {
         concreteSound.play();
         drawHelper(data, data.coordinates[0], data.coordinates[1], "concrete", "-");
@@ -277,8 +279,8 @@ function drawConcrete(data) {
                 numberConcrete = game.add.text(153, 434, buttonConcrete.counter.toString(), styleOther);
             }
         }, 1000);
-        CURRENT_STATE = STATE_4__sleep;     
-    }     
+    }   
+    CURRENT_STATE = STATE_4__sleep;   
 }
 
 // Аптечка.
@@ -297,8 +299,7 @@ function drawAid(data) {
                 alert("У вас и так 100% здоровье!\n      Повторите поптыку!");
                 break;
             }                        
-        }
-        CURRENT_STATE = STATE_5__send_signal;                                   
+        }                                
     } else {
         drawHelper(data, data.coordinates[0], data.coordinates[1], "sand", playerSprite);
         setTimeout(drawHelper, 300, data, data.coordinates[0], data.coordinates[1], "sand", "player_use_aid");
@@ -322,8 +323,8 @@ function drawAid(data) {
         if (data.now_health == 3) {
             setTimeout(function(){healthScale.sprite = game.add.sprite(37, 270, "health100");}, 1000);
         }
-        CURRENT_STATE = STATE_4__sleep;
     } 
+    CURRENT_STATE = STATE_4__sleep;
 }
 
 // Функция отрисовки.
