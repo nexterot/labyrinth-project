@@ -12,7 +12,9 @@ var spriteSize = 50;
 // Переменные, регулирующие 
 // игровой мир.
 var player;
-var playerAnother;
+var playerAnother = new Object();
+
+var playerFace;
 
 var land;
 var levelSizeX;
@@ -111,13 +113,14 @@ function preload() {
 }
 
 // Функция create инициализирует игру: отрисовывает интерфейс и карту.
-function create(levelSizeX, levelSizeY, playerX, playerY) {
+function create(levelSizeX, levelSizeY, playerX, playerY, list_of_players) {
+    alert(list_of_players);
     /* Отрисовка интерфейса */
     land = game.add.sprite(0, 0, "background");
     land.sendToBack();
     
     var panel = game.add.sprite(25, 25, "panel");
-    var playerFace = game.add.sprite(37, 62, "playerFaceWait");
+    playerFace = game.add.sprite(37, 62, "playerFaceWait");
     healthScale = new HealthScale(37, 270);
     
     styleKnife = { font: "32px"};
@@ -145,7 +148,9 @@ function create(levelSizeX, levelSizeY, playerX, playerY) {
             fields[row].push(new Field(275 + col * spriteSize, 25 + row * spriteSize, [row, col]));
     fields[playerX][playerY].changeSprite(275 + playerY * spriteSize, 25 + playerX * spriteSize, "sand");
     player = new Player(275 + playerY * spriteSize, 25 + playerX * spriteSize);
-    playerAnother = new PlayerAnother();
+    //playerAnother = new PlayerAnother();
+    for (var i = 0; i < list_of_players.length; i++)
+        playerAnother[list_of_players[i]] = new PlayerAnother(list_of_players[i]);
 }
 
 // Класс игрока.
@@ -155,8 +160,9 @@ function Player(x, y) {
 }
 
 // Клвсс другого игрока
-function PlayerAnother() {
+function PlayerAnother(name) {
     this.sprite = null;
+    this.name = name;
 }
 
 // Класс полоски здоровья

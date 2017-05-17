@@ -33,22 +33,22 @@ function drawAnotherGo(data) {
             }
             /* else if (data.enemy_left == 1) */
             else 
-                drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "-");
+                drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "-", data.name);
             /* ----------------------------------------------------------------------------------------------------------------------------------- */
         }
         if (data.is_visible_to == 1) {
             bombBlastedSound.play();
-            drawAnotherHelper(data, data.to_coordinates[0], data.to_coordinates[1], "bomb", "player_stay");
-            setTimeout(drawAnotherHelper, 300, data, data.to_coordinates[0], data.to_coordinates[1], "sand", "player_bang");
+            drawAnotherHelper(data, data.to_coordinates[0], data.to_coordinates[1], "bomb", "player_stay", data.name);
+            setTimeout(drawAnotherHelper, 300, data, data.to_coordinates[0], data.to_coordinates[1], "sand", "player_bang", data.name);
             switch (data.mine) {
                 case 1: {
-                    setTimeout(drawAnotherHelper, 600, data, data.to_coordinates[0], data.to_coordinates[1], "sand", "player_died");
-                    setTimeout(drawAnotherHelper, 900, data, data.to_coordinates[0], data.to_coordinates[1], "sand", "player_ghost");
+                    setTimeout(drawAnotherHelper, 600, data, data.to_coordinates[0], data.to_coordinates[1], "sand", "player_died", data.name);
+                    setTimeout(drawAnotherHelper, 900, data, data.to_coordinates[0], data.to_coordinates[1], "sand", "player_ghost", data.name);
                     break;                
                 }
                 case 2: {
-                    setTimeout(drawAnotherHelper, 600, data, data.to_coordinates[0], data.to_coordinates[1], "sand", "player_injured");
-                    setTimeout(drawAnotherHelper, 900, data, data.to_coordinates[0], data.to_coordinates[1], "sand", "player_stay");
+                    setTimeout(drawAnotherHelper, 600, data, data.to_coordinates[0], data.to_coordinates[1], "sand", "player_injured", data.name);
+                    setTimeout(drawAnotherHelper, 900, data, data.to_coordinates[0], data.to_coordinates[1], "sand", "player_stay", data.name);
                     break;
                 }
             }
@@ -66,14 +66,14 @@ function drawAnotherGo(data) {
             }
             /* else if (data.enemy_left == 1) */
             else 
-                drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "-");
+                drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "-", data.name);
             /* ----------------------------------------------------------------------------------------------------------------------------------- */
         }
         if (data.is_visible_to == 1) {
             waterSound.play();
-            drawAnotherHelper(data, data.to_coordinates[0], data.to_coordinates[1], "water", playerSprite);
+            drawAnotherHelper(data, data.to_coordinates[0], data.to_coordinates[1], "water", playerSprite, data.name);
             for (var i = 0; i < data.river[1].length; i++)
-                setTimeout(drawAnotherHelper, (1000 / data.river[1].length) * (i + 1), data, data.river[1][i][0], data.river[1][i][1], "water", playerSprite);
+                setTimeout(drawAnotherHelper, (1000 / data.river[1].length) * (i + 1), data, data.river[1][i][0], data.river[1][i][1], "water", playerSprite, data.name);
         }
         flag = true;
     }
@@ -88,13 +88,13 @@ function drawAnotherGo(data) {
             }
             /* else if (data.enemy_left == 1) */
             else 
-                drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "-");
+                drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "-", data.name);
             /* ----------------------------------------------------------------------------------------------------------------------------------- */
         }
         if (data.is_visible_to == 1) {
-            drawAnotherHelper(data, data.to_coordinates[0], data.to_coordinates[1], "aid", playerSprite);
-            setTimeout(drawAnotherHelper, 300, data, data.to_coordinates[0], data.to_coordinates[1], "aid", "player_use_aid");
-            setTimeout(drawAnotherHelper, 700, data, data.to_coordinates[0], data.to_coordinates[1], "aid", "player_stay");
+            drawAnotherHelper(data, data.to_coordinates[0], data.to_coordinates[1], "aid", playerSprite, data.name);
+            setTimeout(drawAnotherHelper, 300, data, data.to_coordinates[0], data.to_coordinates[1], "aid", "player_use_aid", data.name);
+            setTimeout(drawAnotherHelper, 700, data, data.to_coordinates[0], data.to_coordinates[1], "aid", "player_stay", data.name);
         }
         flag = true;
     }
@@ -109,13 +109,13 @@ function drawAnotherGo(data) {
             }
             /* else if (data.enemy_left == 1) */
             else 
-                drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "-");
+                drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "-", data.name);
             /* ----------------------------------------------------------------------------------------------------------------------------------- */
         }
         if (data.is_visible_to == 1) {
             drawAnotherHelper(data, data.to_coordinates[0], data.to_coordinates[1], "arm", "player_stay");
-            setTimeout(drawAnotherHelper, 300, data, data.to_coordinates[0], data.to_coordinates[1], "arm", "player_use_aid");
-            setTimeout(drawAnotherHelper, 700, data, data.to_coordinates[0], data.to_coordinates[1], "arm", "player_stay");
+            setTimeout(drawAnotherHelper, 300, data, data.to_coordinates[0], data.to_coordinates[1], "arm", "player_use_aid", data.name);
+            setTimeout(drawAnotherHelper, 700, data, data.to_coordinates[0], data.to_coordinates[1], "arm", "player_stay", data.name);
         }
         flag = true;
     }       
@@ -130,13 +130,13 @@ function drawAnotherGo(data) {
             }
             /* else if (data.enemy_left == 1) */
             else 
-                drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "-");
+                drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "-", data.name);
             /* ----------------------------------------------------------------------------------------------------------------------------------- */
         }
         if (data.is_visible_to == 1) {
             treasureSound.play();
-            setTimeout(drawAnotherHelper, 300, data, data.to_coordinates[0], data.to_coordinates[1], "treasure", "player_use_aid");
-            setTimeout(drawAnotherHelper, 700, data, data.to_coordinates[0], data.to_coordinates[1], "sand", "player_stay");
+            setTimeout(drawAnotherHelper, 300, data, data.to_coordinates[0], data.to_coordinates[1], "treasure", "player_use_aid", data.name);
+            setTimeout(drawAnotherHelper, 700, data, data.to_coordinates[0], data.to_coordinates[1], "sand", "player_stay", data.name);
             setTimeout(alert("Игрок " + data.name + " нашёл клад!\n       Мочи его!"), 1000);
         }
         alert("Игрок " + data.name + " нашёл клад!\n       Мочи его!");
@@ -153,15 +153,15 @@ function drawAnotherGo(data) {
             }
             /* else if (data.enemy_left == 1) */
             else 
-                drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "-");
+                drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "-", data.name);
             /* ----------------------------------------------------------------------------------------------------------------------------------- */
         }
         if (data.is_visible_to == 1) {
             metroSound.play();
-            drawAnotherHelper(data, data.to_coordinates[0], data.to_coordinates[1], "metro", playerSprite);
-            setTimeout(drawAnotherHelper, 300, data, data.to_coordinates[0], data.to_coordinates[1], "metro", "player_use_aid");
-            setTimeout(drawAnotherHelper, 600, data, data.metro[1], data.metro[2], "metro", "player_use_aid");
-            setTimeout(drawAnotherHelper, 900, data, data.metro[1], data.metro[2], "metro", playerSprite);
+            drawAnotherHelper(data, data.to_coordinates[0], data.to_coordinates[1], "metro", playerSprite, data.name);
+            setTimeout(drawAnotherHelper, 300, data, data.to_coordinates[0], data.to_coordinates[1], "metro", "player_use_aid", data.name);
+            setTimeout(drawAnotherHelper, 600, data, data.metro[1], data.metro[2], "metro", "player_use_aid", data.name);
+            setTimeout(drawAnotherHelper, 900, data, data.metro[1], data.metro[2], "metro", playerSprite, data.name);
         } 
         flag = true;
     }
@@ -178,13 +178,13 @@ function drawAnotherGo(data) {
                 }
                 /* else if (data.enemy_left == 1) */
                 else 
-                    drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "-");
+                    drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "-", data.name);
                 /* ----------------------------------------------------------------------------------------------------------------------------------- */
             }
             if (data.is_visible_to == 1) {
-                drawAnotherHelper(data, data.to_coordinates[0], data.to_coordinates[1], "sand", playerSprite);
-                setTimeout(drawAnotherHelper, 300, data, data.to_coordinates[0], data.to_coordinates[1], "treasure", playerSprite);
-                setTimeout(drawHelper, 700, data, data.to_coordinates[0], data.to_coordinates[1], "sand", playerSprite);
+                drawAnotherHelper(data, data.to_coordinates[0], data.to_coordinates[1], "sand", playerSprite, data.name);
+                setTimeout(drawAnotherHelper, 300, data, data.to_coordinates[0], data.to_coordinates[1], "treasure", playerSprite, data.name);
+                setTimeout(drawAnotherHelper, 700, data, data.to_coordinates[0], data.to_coordinates[1], "sand", playerSprite, data.name); // СТРАННО
             }                
             CURRENT_STATE = FINAL__somebody_win; return;
         }
@@ -201,11 +201,11 @@ function drawAnotherGo(data) {
             }
             /* else if (data.enemy_left == 1) */
             else 
-                drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "-");
+                drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "-", data.name);
             /* ----------------------------------------------------------------------------------------------------------------------------------- */
         }
         if (data.is_visible_to == 1) {
-            drawAnotherHelper(data, data.to_coordinates[0], data.to_coordinates[1], "sand", playerSprite);
+            drawAnotherHelper(data, data.to_coordinates[0], data.to_coordinates[1], "sand", playerSprite, data.name);
         }
     }
     CURRENT_STATE = STATE_4__sleep;        
@@ -308,6 +308,8 @@ function drawAnotherKnife(data) {
                 break;
             }
         }
+    } else if ((data.is_here_enemy == 1) || (data.is_here_enemy == 2)) {
+        //
     }
     /*
     // Эта ветка сработает лишь при 3 игроках
@@ -368,25 +370,25 @@ function drawAnotherConcrete(data) {
 // Аптечка.
 function drawAnotherAid(data) {
     if (data.visible_aid == 1) {
-        drawAnotherHelper(data, data.coordinates[0], data.coordinates[1], data.from_sprite, "player_stay");
-        setTimeout(drawAnotherHelper, 300, data, data.coordinates[0], data.coordinates[1], data.from_sprite, "player_use_aid");
-        setTimeout(drawAnotherHelper, 700, data, data.coordinates[0], data.coordinates[1], data.from_sprite, "player_stay");
+        drawAnotherHelper(data, data.coordinates[0], data.coordinates[1], data.from_sprite, "player_stay", data.name);
+        setTimeout(drawAnotherHelper, 300, data, data.coordinates[0], data.coordinates[1], data.from_sprite, "player_use_aid", data.name);
+        setTimeout(drawAnotherHelper, 700, data, data.coordinates[0], data.coordinates[1], data.from_sprite, "player_stay", data.name);
     }
     CURRENT_STATE = STATE_4__sleep;
 } 
 
 
 // Функция отрисовки.
-function drawAnotherHelper(data, x, y, fieldImage, playerImage) {
+function drawAnotherHelper(data, x, y, fieldImage, playerImage, name) {
     fields[x][y].changeSprite(275 + y * spriteSize, 25 + x * spriteSize, fieldImage);
     if (playerImage != "-") {
-        if (playerAnother.sprite != null) {
-            playerAnother.sprite.kill();
+        if (playerAnother[name].sprite != null) {
+            playerAnother[name].sprite.kill();
         }
-        playerAnother.sprite = game.add.sprite(275 + y * spriteSize, 25 + x * spriteSize, playerImage);
+        playerAnother[name].sprite = game.add.sprite(275 + y * spriteSize, 25 + x * spriteSize, playerImage);
     } else {
-        if (playerAnother.sprite != null) {
-            playerAnother.sprite.kill();
+        if (playerAnother[name].sprite != null) {
+            playerAnother[name].sprite.kill();
         }
     }
 }

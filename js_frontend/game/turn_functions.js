@@ -12,9 +12,9 @@ function drawGo(data) {
             playerSprite = "player_ghost";
         var flag = false;
         if (data.is_here_enemy == 1)
-            drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "player_ghost");
+            drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "player_ghost", data.name); // Пройтись по массиву имен
         if (data.is_here_enemy == 2)
-            drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "player_stay");
+            drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "player_stay", data.name); // Пройтись по массиву имен
         if ((data.wall[0] == 1) || (data.wall[0] == 2)) {
             intoWallSound.play();
             switch (data.wall[0]) {

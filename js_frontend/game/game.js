@@ -91,10 +91,19 @@ ws.onmessage = function(event) {
 var create_button = document.getElementById("create_room");
 create_button.onclick = function() {
     setCookie("type", "create");
-    setCookie("room_name", document.getElementById("room_name").value);
+    var roomName = document.getElementById("room_name").value;
+    if (! (isAlphaNumeric(roomName) && assureLen(roomName, 4, 16))) {
+        alert("Имя комнаты должно состоять из латинских букв и цифр; длина от 4 до 16 символов.");
+        location.reload();
+    }
+    setCookie("room_name", roomName);
     setCookie("equipment", "0_0_0");
-    var num_players = document.getElementById("num_players").value;
-    setCookie("num_players", num_players);
+    var numPlayers = document.getElementById("num_players").value;
+    if (! (isNumeric(numPlayers))) {
+        alert("Выберите количество игроков в одной комнате");
+        location.reload();
+    }
+    setCookie("num_players", numPlayers);
     if (!webSocketOpen) {
         webSocket = new WebSocket('ws://' + ipAddr + ':' + portWebsockets);
         webSocketOpen = true;
@@ -130,3 +139,31 @@ create_button.onclick = function() {
         };
     }
 };
+
+
+function isAlphaNumeric(str) {
+  var code, i, len;
+
+  for (i = 0, len = str.length; i < len; i++) {
+    code = str.charCodeAt(i);
+    if (!(code > 47 && code < 58) && // numeric (0-9)
+        !(code > 64 && code < 91) && // upper alpha (A-Z)
+        !(code > 96 && code < 123)) { // lower alpha (a-z)
+      return false;
+    }
+  }
+  return true;
+};
+
+function isNumeric(str) {
+    for (var i = 0; i < str.length; i++) {
+        code = str.charCodeAt(i);
+        if (! (code > 47 && code < 58))
+            return false;
+    }
+    return true;
+}
+
+function assureLen(str, min, max) {
+    return (str.length >= min) && (str.length <= max)
+}

@@ -14,7 +14,7 @@ function automate1(data) {
             levelSizeY = data.size[1];
 
             game = new Phaser.Game(canvasSizeX, canvasSizeY, Phaser.CANVAS, 'canvas', { preload: preload,
-                create: function(){ create(levelSizeX, levelSizeY, data.place[0], data.place[1]); }});
+                create: function(){ create(levelSizeX, levelSizeY, data.place[0], data.place[1], data.list_of_players); }});
 
             var str = "Список игроков:\n";
             for (var i = 0; i < data.list_of_players.length; i++)
@@ -53,7 +53,8 @@ function automate2(data) {
             ws.close();
             document.body.innerHTML = '<div align="center" id="canvas"></div>';
             game = new Phaser.Game(canvasSizeX, canvasSizeY, Phaser.CANVAS, 'canvas', { preload: preload,
-                create: function() { create(levelSizeX, levelSizeY, data.place[0], data.place[1]); }});
+                create: function() { create(levelSizeX, levelSizeY, data.place[0], data.place[1], data.list_of_players);
+                }});
             var str = "Список игроков:\n";
             for (var i = 0; i < data.list_of_players.length; i++)
                 str += ((i + 1) + ") " + data.list_of_players[i] + ";\n");
