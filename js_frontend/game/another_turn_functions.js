@@ -29,7 +29,7 @@ function drawAnotherGo(data) {
         }    
         flag = true;
     }
-    if (((data.mine == 1) || (data.mine == 2)) && (data.is_alive)) {
+    if (((data.mine == 1) || (data.mine == 2)) && (data.is_alive) || (data.mine == -1)) {
         if (data.is_visible_from == 1) {
             /* ----------------------------------------------------------------------------------------------------------------------------------- */
             if (data.me_left == 1) {
@@ -49,6 +49,11 @@ function drawAnotherGo(data) {
             else 
                 drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "-", data.name);
             /* ----------------------------------------------------------------------------------------------------------------------------------- */
+        }
+        if ((data.is_visible_to == 1) && (data.mine == -1)) {
+            CURRENT_STATE = STATE_4__sleep;
+            drawAnotherHelper(data, data.to_coordinates[0], data.to_coordinates[1], "bomb", "player_ghost", data.name);
+            return;
         }
         if (data.is_visible_to == 1) {
             bombBlastedSound.play();
@@ -126,7 +131,7 @@ function drawAnotherGo(data) {
         }
         flag = true;
     }
-    if (((data.arm == 1) || (data.arm == 2)) && (data.is_alive == 1)) {
+    if (((data.arm == 1) || (data.arm == 2)) && (data.is_alive == 1) || (data.arm == -1)) {
         if (data.is_visible_from == 1) {
             /* ----------------------------------------------------------------------------------------------------------------------------------- */
             if (data.me_left == 1) {
@@ -146,6 +151,11 @@ function drawAnotherGo(data) {
             else 
                 drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "-", data.name);
             /* ----------------------------------------------------------------------------------------------------------------------------------- */
+        }
+        if ((data.is_visible_to == 1) && (data.arm == -1)) {
+            CURRENT_STATE = STATE_4__sleep;
+            drawAnotherHelper(data, data.to_coordinates[0], data.to_coordinates[1], "arm", "player_ghost", data.name);
+            return;
         }
         if (data.is_visible_to == 1) {
             drawAnotherHelper(data, data.to_coordinates[0], data.to_coordinates[1], "arm", "player_stay", data.name);

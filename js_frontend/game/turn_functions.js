@@ -56,6 +56,10 @@ function drawGo(data) {
             }
             flag = true;
         }
+        if (data.mine == -1) {
+            drawHelper(data, data.coordinates[0], data.coordinates[1], "bomb", "player_ghost");
+            flag = true;
+        }   
         if (data.river[0] == 1) {
             waterSound.play();
             setTimeout(drawHelper, 0, data, data.coordinates[0], data.coordinates[1], "water", playerSprite);
@@ -129,6 +133,10 @@ function drawGo(data) {
             }
             flag = true;
         }
+        if (data.arm == -1) {
+            drawHelper(data, data.coordinates[0], data.coordinates[1], "arm", "player_ghost");
+            flag = true;
+        }  
         if ((data.treasure == 1) || (data.treasure == 2)) {
             if (data.treasure == 1) {
                 treasureSound.play();

@@ -149,6 +149,8 @@ def analyze_go_turn(player, player_acted, packet):
         data["mine"] = 1
     elif packet["mine"] in {2, 3}:
         data["mine"] = 2
+    elif packet["mine"] == -1:
+        data["mine"] = -1
 
     # если аптечка
     if packet["aid"] == 1:

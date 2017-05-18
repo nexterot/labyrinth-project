@@ -1,10 +1,10 @@
 // отредактировал.
 
-//var ipAddress = '37.139.2.176';
+//var ipAddress = '192.168.43.85';
 //var webSocket;
 
 // Где стартует игра:
-var ipAddress = '37.139.2.176';
+var ipAddress = '192.168.43.85';
 var port = '8765';
 
 var my_name = getCookie("nickname");
