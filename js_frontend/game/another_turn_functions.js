@@ -17,7 +17,14 @@ function drawAnotherGo(data) {
                 else
                     drawHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "player_ghost");
             }
-            /* else if (data.enemy_left == 1) */
+            // KEK
+            else if (data.enemy_left == 1) {
+                if (data.enemy_alive == 1)
+                    drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "player_stay", data.enemy_name);
+                else 
+                    drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "player_ghost", data.enemy_name);
+            }
+            // KEK
             /* ----------------------------------------------------------------------------------------------------------------------------------- */
         }    
         flag = true;
@@ -31,7 +38,14 @@ function drawAnotherGo(data) {
                 else
                     drawHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "player_ghost");
             }
-            /* else if (data.enemy_left == 1) */
+            // KEK
+            else if (data.enemy_left == 1) {
+                if (data.enemy_alive == 1)
+                    drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "player_stay", data.enemy_name);
+                else 
+                    drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "player_ghost", data.enemy_name);
+            }
+            // KEK
             else 
                 drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "-", data.name);
             /* ----------------------------------------------------------------------------------------------------------------------------------- */
@@ -64,7 +78,14 @@ function drawAnotherGo(data) {
                 else
                     drawHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "player_ghost");
             }
-            /* else if (data.enemy_left == 1) */
+            // KEK
+            else if (data.enemy_left == 1) {
+                if (data.enemy_alive == 1)
+                    drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "player_stay", data.enemy_name);
+                else 
+                    drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "player_ghost", data.enemy_name);
+            }
+            // KEK
             else 
                 drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "-", data.name);
             /* ----------------------------------------------------------------------------------------------------------------------------------- */
@@ -86,7 +107,14 @@ function drawAnotherGo(data) {
                 else
                     drawHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "player_ghost");
             }
-            /* else if (data.enemy_left == 1) */
+            // KEK
+            else if (data.enemy_left == 1) {
+                if (data.enemy_alive == 1)
+                    drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "player_stay", data.enemy_name);
+                else 
+                    drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "player_ghost", data.enemy_name);
+            }
+            // KEK
             else 
                 drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "-", data.name);
             /* ----------------------------------------------------------------------------------------------------------------------------------- */
@@ -107,13 +135,20 @@ function drawAnotherGo(data) {
                 else
                     drawHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "player_ghost");
             }
-            /* else if (data.enemy_left == 1) */
+            // KEK
+            else if (data.enemy_left == 1) {
+                if (data.enemy_alive == 1)
+                    drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "player_stay", data.enemy_name);
+                else 
+                    drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "player_ghost", data.enemy_name);
+            }
+            // KEK
             else 
                 drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "-", data.name);
             /* ----------------------------------------------------------------------------------------------------------------------------------- */
         }
         if (data.is_visible_to == 1) {
-            drawAnotherHelper(data, data.to_coordinates[0], data.to_coordinates[1], "arm", "player_stay");
+            drawAnotherHelper(data, data.to_coordinates[0], data.to_coordinates[1], "arm", "player_stay", data.name);
             setTimeout(drawAnotherHelper, 300, data, data.to_coordinates[0], data.to_coordinates[1], "arm", "player_use_aid", data.name);
             setTimeout(drawAnotherHelper, 700, data, data.to_coordinates[0], data.to_coordinates[1], "arm", "player_stay", data.name);
         }
@@ -128,7 +163,14 @@ function drawAnotherGo(data) {
                 else
                     drawHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "player_ghost");
             }
-            /* else if (data.enemy_left == 1) */
+            // KEK
+            else if (data.enemy_left == 1) {
+                if (data.enemy_alive == 1)
+                    drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "player_stay", data.enemy_name);
+                else 
+                    drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "player_ghost", data.enemy_name);
+            }
+            // KEK
             else 
                 drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "-", data.name);
             /* ----------------------------------------------------------------------------------------------------------------------------------- */
@@ -151,7 +193,14 @@ function drawAnotherGo(data) {
                 else
                     drawHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "player_ghost");
             }
-            /* else if (data.enemy_left == 1) */
+            // KEK
+            else if (data.enemy_left == 1) {
+                if (data.enemy_alive == 1)
+                    drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "player_stay", data.enemy_name);
+                else 
+                    drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "player_ghost", data.enemy_name);
+            }
+            // KEK
             else 
                 drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "-", data.name);
             /* ----------------------------------------------------------------------------------------------------------------------------------- */
@@ -176,7 +225,14 @@ function drawAnotherGo(data) {
                     else
                         drawHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "player_ghost");
                 }
-                /* else if (data.enemy_left == 1) */
+                // KEK
+                else if (data.enemy_left == 1) {
+                    if (data.enemy_alive == 1)
+                        drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "player_stay", data.enemy_name);
+                    else 
+                        drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "player_ghost", data.enemy_name);
+                }
+                // KEK
                 else 
                     drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "-", data.name);
                 /* ----------------------------------------------------------------------------------------------------------------------------------- */
@@ -192,17 +248,22 @@ function drawAnotherGo(data) {
     }
     if (! flag) {
         if (data.is_visible_from == 1) {
-            /* ----------------------------------------------------------------------------------------------------------------------------------- */
             if (data.me_left == 1) {
                 if (healthScale.isAlive)
                     drawHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "player_stay");
                 else
                     drawHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "player_ghost");
+            } 
+            // KEK
+            else if (data.enemy_left == 1) {
+                if (data.enemy_alive == 1)
+                    drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "player_stay", data.enemy_name);
+                else 
+                    drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "player_ghost", data.enemy_name);
             }
-            /* else if (data.enemy_left == 1) */
-            else 
-                drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "-", data.name);
-            /* ----------------------------------------------------------------------------------------------------------------------------------- */
+            // KEK
+               else 
+            drawAnotherHelper(data, data.from_coordinates[0], data.from_coordinates[1], data.from_sprite, "-", data.name);
         }
         if (data.is_visible_to == 1) {
             drawAnotherHelper(data, data.to_coordinates[0], data.to_coordinates[1], "sand", playerSprite, data.name);
@@ -210,70 +271,6 @@ function drawAnotherGo(data) {
     }
     CURRENT_STATE = STATE_4__sleep;        
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // Нож.
 function drawAnotherKnife(data) {
@@ -308,10 +305,7 @@ function drawAnotherKnife(data) {
                 break;
             }
         }
-    } else if ((data.is_here_enemy == 1) || (data.is_here_enemy == 2)) {
-        //
     }
-    /*
     // Эта ветка сработает лишь при 3 игроках
     else if ((data.is_here_enemy == 1) || (data.is_here_enemy == 2)) {
         switch (data.is_here_enemy) {
@@ -327,13 +321,12 @@ function drawAnotherKnife(data) {
         if (data.is_visible_knife == 1) {
             // draw
         } 
-    } else if (data.is_here_enemy == 0) {
+    } else {
         alert("Игрок " + data.name + " ударил ножом, но никого не задел.");
         if (data.is_visible_knife == 1) {
             // draw
         } 
     }
-    */
     CURRENT_STATE = STATE_4__sleep;
 }
 

@@ -63,6 +63,8 @@ class Player:
                     result["is_here_enemy"] = 1
                 else:
                     result["is_here_enemy"] = 2
+                result["name"] = pl.name
+                result["enemy_alive"] = pl.alive
 
         if isinstance(self.location, fields.Water):
             result["from_sprite"] = "water"

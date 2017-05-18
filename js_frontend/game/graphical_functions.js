@@ -54,7 +54,7 @@ var treasureSound;
 
 // Функция preload загружает в игру спрайты и звуки.
 function preload() {
-    var path = "http://37.139.2.176:8000/game/", path;
+    var path = "http://0.0.0.0:8000/game/", path;
     
     // Загрузка изображений.
     path1 = path + "sprites/interface/";
@@ -114,7 +114,6 @@ function preload() {
 
 // Функция create инициализирует игру: отрисовывает интерфейс и карту.
 function create(levelSizeX, levelSizeY, playerX, playerY, list_of_players) {
-    alert(list_of_players);
     /* Отрисовка интерфейса */
     land = game.add.sprite(0, 0, "background");
     land.sendToBack();
@@ -148,7 +147,6 @@ function create(levelSizeX, levelSizeY, playerX, playerY, list_of_players) {
             fields[row].push(new Field(275 + col * spriteSize, 25 + row * spriteSize, [row, col]));
     fields[playerX][playerY].changeSprite(275 + playerY * spriteSize, 25 + playerX * spriteSize, "sand");
     player = new Player(275 + playerY * spriteSize, 25 + playerX * spriteSize);
-    //playerAnother = new PlayerAnother();
     for (var i = 0; i < list_of_players.length; i++)
         playerAnother[list_of_players[i]] = new PlayerAnother(list_of_players[i]);
 }

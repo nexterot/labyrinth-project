@@ -17,7 +17,9 @@ MIN_PLAYERS = 1
 MAX_PLAYERS = 5
 MAX_ROOMS = 5
 
-rooms = []
+
+waiting_rooms = []
+running_rooms = []
 
 
 class Room:
@@ -48,6 +50,8 @@ class Room:
         """ начинает игру """
         self.game = Game(self.players)
         self.game.initialize_level()
+        running_rooms.append(self)
+        waiting_rooms.remove(self)
 
 
 class Client:
@@ -81,10 +85,10 @@ class Client:
 
 async def rooms_info_handler(websocket, path):
     """ handler сервера на отдельном порту, который передает информацию о текущих комнатах """
-    global rooms
+    global waiting_rooms
     try:
         while True:
-            dict_view = {room.name: [room.max_players] + list(room.players.keys()) for room in rooms}
+            dict_view = {room.name: [room.max_players] + list(room.players.keys()) for room in waiting_rooms}
             result = json.dumps(dict_view)
             await websocket.send(result)
             # logging.info("Информация о комнатах отправлена: {}".format(result))
@@ -96,11 +100,11 @@ async def rooms_info_handler(websocket, path):
 
 async def remove_hung():
     """ корутина, отключающая игроков по тайм-ауту; так же используется для закрытия "мертвых" сокетов """
-    global rooms
+    global waiting_rooms
     time_out = 300  # тайм-аут
     while True:
         now = datetime.datetime.now()
-        for room in rooms:
+        for room in waiting_rooms + running_rooms:
             keys = list(room.players.keys())
             for player_name in keys:
                 if not room:
@@ -191,10 +195,10 @@ async def server_handler(websocket, path):
         # если пришел сигнал создать комнату
         # todo: возвращать ошибку, если игрок уже создал комнату
         if request["type"] == "create":
-            if len(rooms) >= MAX_ROOMS:  # ошибка: слишком много комнат!
+            if len(waiting_rooms + running_rooms) >= MAX_ROOMS:  # ошибка: слишком много комнат!
                 logging.error("Игрок {} не смог создать комнату: их слишком много".format(player_name))
                 await close_reason(websocket, TOO_MANY_ROOMS)
-            for room in rooms:
+            for room in waiting_rooms + running_rooms:
                 if room.name == request["name"]:  # ошибка: такая комната уже существует!
                     logging.error(
                         "Игрок {} не смог создать комнату {}: она уже существует".format(player_name, request["name"]))
@@ -219,12 +223,12 @@ async def server_handler(websocket, path):
             # добавить в rooms пару {имя_игрока:вебсокет}
             new_room.add(player_name, websocket)
             player_room = new_room
-            rooms.append(player_room)
+            waiting_rooms.append(player_room)
             logging.info("Игрок {} создал комнату {}".format(player_name, player_room.name))
 
         # если пришел сигнал присоединиться к существующей комнате
         elif request["type"] == "join":
-            for room in rooms:
+            for room in waiting_rooms:
                 if room.name == request["name"]:  # находим комнату с нужным именем
                     if len(room) == room.max_players:  # упс, она уже заполнена :(
                         logging.error(
@@ -397,14 +401,14 @@ async def server_handler(websocket, path):
             player_room.remove(player_name)
             if len(player_room) == 0:
                 logging.info("Не осталось игроков. Комната {} была удалена".format(player_room.name))
-                rooms.remove(player_room)
+                running_rooms.remove(player_room)
                 if game is not None:
                     game.next_player()
     else:
         player_room.remove(player_name)
         if len(player_room) == 0:
             logging.info("Не осталось игроков. Комната {} была удалена".format(player_room.name))
-            rooms.remove(player_room)
+            running_rooms.remove(player_room)
 
 
 def main():

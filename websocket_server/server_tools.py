@@ -56,6 +56,7 @@ def create_packet_go():
         "metro": [0] * 3,
         "exit": [0] * 2,
         "is_here_enemy": 0,
+        "name": None,
         "from_sprite": "-",
         "from_coordinates": None,
     }
@@ -122,6 +123,7 @@ def analyze_go_turn(player, player_acted, packet):
         "metro": [0],
         "exit": [0],
         "enemy_left": 0,
+        "enemy_alive": 0,
         "me_left": 0,
     }
 
@@ -155,8 +157,6 @@ def analyze_go_turn(player, player_acted, packet):
         data["aid"] = 2
 
     row, col = packet["coordinates"]
-
-
 
     # если видно куда пошел
     if player.visible_fields[row * player.game.fields.dim + col]:
@@ -203,9 +203,11 @@ def analyze_go_turn(player, player_acted, packet):
                 # если игрок - это наблюдающий
                 elif pl == player:
                     data["me_left"] = 1
-                # если какой-то другой игрок стоит н аэтой же клетке
+                # если какой-то другой игрок стоит на этой же клетке
                 else:
                     data["enemy_left"] = 1
+                    data["enemy_alive"] = int(pl.alive)
+                    data["enemy_name"] = pl.name
 
     return data
 
@@ -218,7 +220,7 @@ def analyze_knife_turn(player, player_acted, packet):
         "are_you_injured": 0,
         "is_alive": 0,
         "knife_coordinates": None,
-        # "is_here_enemy": packet["is_here_enemy"],
+        "is_here_enemy": packet["is_here_enemy"],
         "victim_name": packet["name_of_victim"],
         "is_visible_knife": 0,
     }
