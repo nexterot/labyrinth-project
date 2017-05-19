@@ -10899,3 +10899,134 @@ socket_server.py[LINE:399]# CRITICAL [2017-05-18 19:54:44,801]  Игрок mike 
 socket_server.py[LINE:114]# INFO     [2017-05-18 19:58:51,746]  Игрок sasha был отключен по тайм-ауту: 300 секунд
 socket_server.py[LINE:399]# CRITICAL [2017-05-18 19:58:51,878]  Игрок sasha отвалился
 socket_server.py[LINE:403]# INFO     [2017-05-18 19:58:51,879]  Не осталось игроков. Комната pidor была удалена
+socket_server.py[LINE:188]# INFO     [2017-05-18 20:38:36,230]  Подключился игрок kek[hash6456]
+socket_server.py[LINE:193]# INFO     [2017-05-18 20:38:36,231]  Игрок kek: {'type': 'create', 'name': 'rsvrstz', 'equipment': [0, 0, 0], 'num_players': '1'}
+socket_server.py[LINE:227]# INFO     [2017-05-18 20:38:36,232]  Игрок kek создал комнату rsvrstz
+socket_server.py[LINE:254]# INFO     [2017-05-18 20:38:36,232]  Игрок kek(rsvrstz): оповещаю клиент об успехе
+socket_server.py[LINE:258]# INFO     [2017-05-18 20:38:36,237]  Игрок kek прислал ready_to_start
+socket_server.py[LINE:267]# INFO     [2017-05-18 20:38:36,241]  Игрок kek(rsvrstz): создал игру
+socket_server.py[LINE:301]# INFO     [2017-05-18 20:38:36,242]  Игрок kek(rsvrstz) отправил клиенту данные: {"list_of_players": ["kek"], "size": [12, 12], "place": [8, 9], "equipment": [0, 0, 0]}
+socket_server.py[LINE:305]# INFO     [2017-05-18 20:38:37,525]  Игрок kek прислал map_build
+socket_server.py[LINE:321]# INFO     [2017-05-18 20:38:37,525]  Уведомляем игрока kek(rsvrstz), о том, что ходит игрок kek
+socket_server.py[LINE:327]# INFO     [2017-05-18 20:38:37,708]  Игрок kek прислал Мой ход!
+socket_server.py[LINE:335]# INFO     [2017-05-18 20:38:39,899]  Получен пакет от kek(rsvrstz): ['go', 7, 9]
+socket_server.py[LINE:370]# INFO     [2017-05-18 20:38:39,900]  успех; отправляю игроку kek(rsvrstz): {"type": "turn", "type_of_turn": "go", "error": 0, "coordinates": [8, 9], "wall": [1, 7, 9], "mine": 0, "river": [0, 0, 0], "aid": 0, "arm": 0, "bear": 0, "treasure": 0, "metro": [0, 0, 0], "exit": [0, 0], "is_here_enemy": 0, "name": null, "from_sprite": "-", "from_coordinates": null}
+socket_server.py[LINE:375]# INFO     [2017-05-18 20:38:39,911]  Игрок kek прислал Ход отрисован!
+socket_server.py[LINE:321]# INFO     [2017-05-18 20:38:39,912]  Уведомляем игрока kek(rsvrstz), о том, что ходит игрок kek
+socket_server.py[LINE:327]# INFO     [2017-05-18 20:38:39,928]  Игрок kek прислал Мой ход!
+socket_server.py[LINE:335]# INFO     [2017-05-18 20:38:41,257]  Получен пакет от kek(rsvrstz): ['go', 9, 9]
+socket_server.py[LINE:370]# INFO     [2017-05-18 20:38:41,257]  успех; отправляю игроку kek(rsvrstz): {"type": "turn", "type_of_turn": "go", "error": 0, "coordinates": [9, 9], "wall": 0, "mine": 0, "river": [0, 0, 0], "aid": 0, "arm": 0, "bear": 0, "treasure": 0, "metro": [0, 0, 0], "exit": [0, 0], "is_here_enemy": 0, "name": null, "from_sprite": "sand", "from_coordinates": [8, 9]}
+socket_server.py[LINE:375]# INFO     [2017-05-18 20:38:41,275]  Игрок kek прислал Ход отрисован!
+socket_server.py[LINE:321]# INFO     [2017-05-18 20:38:41,276]  Уведомляем игрока kek(rsvrstz), о том, что ходит игрок kek
+socket_server.py[LINE:327]# INFO     [2017-05-18 20:38:41,280]  Игрок kek прислал Мой ход!
+socket_server.py[LINE:335]# INFO     [2017-05-18 20:38:41,916]  Получен пакет от kek(rsvrstz): ['go', 10, 9]
+socket_server.py[LINE:370]# INFO     [2017-05-18 20:38:41,917]  успех; отправляю игроку kek(rsvrstz): {"type": "turn", "type_of_turn": "go", "error": 0, "coordinates": [10, 9], "wall": 0, "mine": 0, "river": [0, 0, 0], "aid": 0, "arm": 0, "bear": 0, "treasure": 0, "metro": [0, 0, 0], "exit": [0, 0], "is_here_enemy": 0, "name": null, "from_sprite": "sand", "from_coordinates": [9, 9]}
+socket_server.py[LINE:375]# INFO     [2017-05-18 20:38:41,921]  Игрок kek прислал Ход отрисован!
+socket_server.py[LINE:321]# INFO     [2017-05-18 20:38:41,922]  Уведомляем игрока kek(rsvrstz), о том, что ходит игрок kek
+socket_server.py[LINE:327]# INFO     [2017-05-18 20:38:41,925]  Игрок kek прислал Мой ход!
+socket_server.py[LINE:335]# INFO     [2017-05-18 20:38:42,511]  Получен пакет от kek(rsvrstz): ['go', 10, 10]
+socket_server.py[LINE:370]# INFO     [2017-05-18 20:38:42,512]  успех; отправляю игроку kek(rsvrstz): {"type": "turn", "type_of_turn": "go", "error": 0, "coordinates": [10, 10], "wall": 0, "mine": 0, "river": [0, 0, 0], "aid": 0, "arm": 0, "bear": 0, "treasure": 1, "metro": [0, 0, 0], "exit": [0, 0], "is_here_enemy": 0, "name": null, "from_sprite": "sand", "from_coordinates": [10, 9]}
+socket_server.py[LINE:375]# INFO     [2017-05-18 20:38:42,616]  Игрок kek прислал Ход отрисован!
+socket_server.py[LINE:321]# INFO     [2017-05-18 20:38:42,616]  Уведомляем игрока kek(rsvrstz), о том, что ходит игрок kek
+socket_server.py[LINE:327]# INFO     [2017-05-18 20:38:42,622]  Игрок kek прислал Мой ход!
+socket_server.py[LINE:335]# INFO     [2017-05-18 20:38:47,436]  Получен пакет от kek(rsvrstz): ['go', 10, 9]
+socket_server.py[LINE:370]# INFO     [2017-05-18 20:38:47,437]  успех; отправляю игроку kek(rsvrstz): {"type": "turn", "type_of_turn": "go", "error": 0, "coordinates": [10, 9], "wall": 0, "mine": 0, "river": [0, 0, 0], "aid": 0, "arm": 0, "bear": 0, "treasure": 0, "metro": [0, 0, 0], "exit": [0, 0], "is_here_enemy": 0, "name": null, "from_sprite": "sand", "from_coordinates": [10, 10]}
+socket_server.py[LINE:375]# INFO     [2017-05-18 20:38:47,454]  Игрок kek прислал Ход отрисован!
+socket_server.py[LINE:321]# INFO     [2017-05-18 20:38:47,455]  Уведомляем игрока kek(rsvrstz), о том, что ходит игрок kek
+socket_server.py[LINE:327]# INFO     [2017-05-18 20:38:47,467]  Игрок kek прислал Мой ход!
+socket_server.py[LINE:335]# INFO     [2017-05-18 20:38:48,605]  Получен пакет от kek(rsvrstz): ['go', 9, 9]
+socket_server.py[LINE:370]# INFO     [2017-05-18 20:38:48,605]  успех; отправляю игроку kek(rsvrstz): {"type": "turn", "type_of_turn": "go", "error": 0, "coordinates": [9, 9], "wall": 0, "mine": 0, "river": [0, 0, 0], "aid": 0, "arm": 0, "bear": 0, "treasure": 0, "metro": [0, 0, 0], "exit": [0, 0], "is_here_enemy": 0, "name": null, "from_sprite": "sand", "from_coordinates": [10, 9]}
+socket_server.py[LINE:375]# INFO     [2017-05-18 20:38:48,747]  Игрок kek прислал Ход отрисован!
+socket_server.py[LINE:321]# INFO     [2017-05-18 20:38:48,747]  Уведомляем игрока kek(rsvrstz), о том, что ходит игрок kek
+socket_server.py[LINE:327]# INFO     [2017-05-18 20:38:48,753]  Игрок kek прислал Мой ход!
+socket_server.py[LINE:335]# INFO     [2017-05-18 20:38:49,485]  Получен пакет от kek(rsvrstz): ['go', 8, 9]
+socket_server.py[LINE:370]# INFO     [2017-05-18 20:38:49,486]  успех; отправляю игроку kek(rsvrstz): {"type": "turn", "type_of_turn": "go", "error": 0, "coordinates": [8, 9], "wall": 0, "mine": 0, "river": [0, 0, 0], "aid": 0, "arm": 0, "bear": 0, "treasure": 0, "metro": [0, 0, 0], "exit": [0, 0], "is_here_enemy": 0, "name": null, "from_sprite": "sand", "from_coordinates": [9, 9]}
+socket_server.py[LINE:375]# INFO     [2017-05-18 20:38:49,499]  Игрок kek прислал Ход отрисован!
+socket_server.py[LINE:321]# INFO     [2017-05-18 20:38:49,500]  Уведомляем игрока kek(rsvrstz), о том, что ходит игрок kek
+socket_server.py[LINE:327]# INFO     [2017-05-18 20:38:49,504]  Игрок kek прислал Мой ход!
+socket_server.py[LINE:335]# INFO     [2017-05-18 20:38:49,920]  Получен пакет от kek(rsvrstz): ['go', 8, 8]
+socket_server.py[LINE:370]# INFO     [2017-05-18 20:38:49,921]  успех; отправляю игроку kek(rsvrstz): {"type": "turn", "type_of_turn": "go", "error": 0, "coordinates": [8, 8], "wall": 0, "mine": 0, "river": [0, 0, 0], "aid": 0, "arm": 0, "bear": 0, "treasure": 0, "metro": [1, 1, 9], "exit": [0, 0], "is_here_enemy": 0, "name": null, "from_sprite": "sand", "from_coordinates": [8, 9]}
+socket_server.py[LINE:375]# INFO     [2017-05-18 20:38:49,930]  Игрок kek прислал Ход отрисован!
+socket_server.py[LINE:321]# INFO     [2017-05-18 20:38:49,931]  Уведомляем игрока kek(rsvrstz), о том, что ходит игрок kek
+socket_server.py[LINE:327]# INFO     [2017-05-18 20:38:49,936]  Игрок kek прислал Мой ход!
+socket_server.py[LINE:335]# INFO     [2017-05-18 20:38:53,166]  Получен пакет от kek(rsvrstz): ['go', 1, 10]
+socket_server.py[LINE:370]# INFO     [2017-05-18 20:38:53,167]  успех; отправляю игроку kek(rsvrstz): {"type": "turn", "type_of_turn": "go", "error": 0, "coordinates": [1, 10], "wall": 0, "mine": 0, "river": [0, 0, 0], "aid": 0, "arm": 0, "bear": 0, "treasure": 0, "metro": [0, 0, 0], "exit": [0, 0], "is_here_enemy": 0, "name": null, "from_sprite": "metro", "from_coordinates": [1, 9]}
+socket_server.py[LINE:375]# INFO     [2017-05-18 20:38:53,182]  Игрок kek прислал Ход отрисован!
+socket_server.py[LINE:321]# INFO     [2017-05-18 20:38:53,183]  Уведомляем игрока kek(rsvrstz), о том, что ходит игрок kek
+socket_server.py[LINE:327]# INFO     [2017-05-18 20:38:53,186]  Игрок kek прислал Мой ход!
+socket_server.py[LINE:335]# INFO     [2017-05-18 20:38:53,801]  Получен пакет от kek(rsvrstz): ['go', 2, 10]
+socket_server.py[LINE:370]# INFO     [2017-05-18 20:38:53,801]  успех; отправляю игроку kek(rsvrstz): {"type": "turn", "type_of_turn": "go", "error": 0, "coordinates": [2, 10], "wall": 0, "mine": 0, "river": [0, 0, 0], "aid": 0, "arm": 0, "bear": 0, "treasure": 0, "metro": [1, 7, 2], "exit": [0, 0], "is_here_enemy": 0, "name": null, "from_sprite": "sand", "from_coordinates": [1, 10]}
+socket_server.py[LINE:375]# INFO     [2017-05-18 20:38:53,914]  Игрок kek прислал Ход отрисован!
+socket_server.py[LINE:321]# INFO     [2017-05-18 20:38:53,915]  Уведомляем игрока kek(rsvrstz), о том, что ходит игрок kek
+socket_server.py[LINE:327]# INFO     [2017-05-18 20:38:53,918]  Игрок kek прислал Мой ход!
+socket_server.py[LINE:335]# INFO     [2017-05-18 20:38:56,869]  Получен пакет от kek(rsvrstz): ['go', 7, 1]
+socket_server.py[LINE:370]# INFO     [2017-05-18 20:38:56,870]  успех; отправляю игроку kek(rsvrstz): {"type": "turn", "type_of_turn": "go", "error": 0, "coordinates": [7, 1], "wall": 0, "mine": 0, "river": [0, 0, 0], "aid": 0, "arm": 0, "bear": 0, "treasure": 0, "metro": [0, 0, 0], "exit": [0, 0], "is_here_enemy": 0, "name": null, "from_sprite": "metro", "from_coordinates": [7, 2]}
+socket_server.py[LINE:375]# INFO     [2017-05-18 20:38:56,875]  Игрок kek прислал Ход отрисован!
+socket_server.py[LINE:321]# INFO     [2017-05-18 20:38:56,876]  Уведомляем игрока kek(rsvrstz), о том, что ходит игрок kek
+socket_server.py[LINE:327]# INFO     [2017-05-18 20:38:56,879]  Игрок kek прислал Мой ход!
+socket_server.py[LINE:335]# INFO     [2017-05-18 20:38:57,454]  Получен пакет от kek(rsvrstz): ['go', 6, 1]
+socket_server.py[LINE:370]# INFO     [2017-05-18 20:38:57,454]  успех; отправляю игроку kek(rsvrstz): {"type": "turn", "type_of_turn": "go", "error": 0, "coordinates": [6, 1], "wall": 0, "mine": 0, "river": [0, 0, 0], "aid": 0, "arm": 0, "bear": 0, "treasure": 0, "metro": [0, 0, 0], "exit": [0, 0], "is_here_enemy": 0, "name": null, "from_sprite": "sand", "from_coordinates": [7, 1]}
+socket_server.py[LINE:375]# INFO     [2017-05-18 20:38:57,467]  Игрок kek прислал Ход отрисован!
+socket_server.py[LINE:321]# INFO     [2017-05-18 20:38:57,468]  Уведомляем игрока kek(rsvrstz), о том, что ходит игрок kek
+socket_server.py[LINE:327]# INFO     [2017-05-18 20:38:57,485]  Игрок kek прислал Мой ход!
+socket_server.py[LINE:335]# INFO     [2017-05-18 20:38:57,950]  Получен пакет от kek(rsvrstz): ['go', 5, 1]
+socket_server.py[LINE:370]# INFO     [2017-05-18 20:38:57,951]  успех; отправляю игроку kek(rsvrstz): {"type": "turn", "type_of_turn": "go", "error": 0, "coordinates": [5, 1], "wall": 0, "mine": 0, "river": [0, 0, 0], "aid": 0, "arm": 0, "bear": 0, "treasure": 0, "metro": [0, 0, 0], "exit": [0, 0], "is_here_enemy": 0, "name": null, "from_sprite": "sand", "from_coordinates": [6, 1]}
+socket_server.py[LINE:375]# INFO     [2017-05-18 20:38:57,968]  Игрок kek прислал Ход отрисован!
+socket_server.py[LINE:321]# INFO     [2017-05-18 20:38:57,969]  Уведомляем игрока kek(rsvrstz), о том, что ходит игрок kek
+socket_server.py[LINE:327]# INFO     [2017-05-18 20:38:57,995]  Игрок kek прислал Мой ход!
+socket_server.py[LINE:335]# INFO     [2017-05-18 20:38:58,653]  Получен пакет от kek(rsvrstz): ['go', 4, 1]
+socket_server.py[LINE:370]# INFO     [2017-05-18 20:38:58,654]  успех; отправляю игроку kek(rsvrstz): {"type": "turn", "type_of_turn": "go", "error": 0, "coordinates": [4, 1], "wall": 0, "mine": 0, "river": [0, 0, 0], "aid": 0, "arm": 0, "bear": 0, "treasure": 0, "metro": [0, 0, 0], "exit": [0, 0], "is_here_enemy": 0, "name": null, "from_sprite": "sand", "from_coordinates": [5, 1]}
+socket_server.py[LINE:375]# INFO     [2017-05-18 20:38:58,699]  Игрок kek прислал Ход отрисован!
+socket_server.py[LINE:321]# INFO     [2017-05-18 20:38:58,700]  Уведомляем игрока kek(rsvrstz), о том, что ходит игрок kek
+socket_server.py[LINE:327]# INFO     [2017-05-18 20:38:58,711]  Игрок kek прислал Мой ход!
+socket_server.py[LINE:335]# INFO     [2017-05-18 20:38:59,245]  Получен пакет от kek(rsvrstz): ['go', 4, 2]
+socket_server.py[LINE:370]# INFO     [2017-05-18 20:38:59,245]  успех; отправляю игроку kek(rsvrstz): {"type": "turn", "type_of_turn": "go", "error": 0, "coordinates": [4, 2], "wall": 0, "mine": 0, "river": [0, 0, 0], "aid": 0, "arm": 0, "bear": 0, "treasure": 0, "metro": [0, 0, 0], "exit": [0, 0], "is_here_enemy": 0, "name": null, "from_sprite": "sand", "from_coordinates": [4, 1]}
+socket_server.py[LINE:375]# INFO     [2017-05-18 20:38:59,249]  Игрок kek прислал Ход отрисован!
+socket_server.py[LINE:321]# INFO     [2017-05-18 20:38:59,249]  Уведомляем игрока kek(rsvrstz), о том, что ходит игрок kek
+socket_server.py[LINE:327]# INFO     [2017-05-18 20:38:59,263]  Игрок kek прислал Мой ход!
+socket_server.py[LINE:335]# INFO     [2017-05-18 20:38:59,809]  Получен пакет от kek(rsvrstz): ['go', 4, 3]
+socket_server.py[LINE:370]# INFO     [2017-05-18 20:38:59,810]  успех; отправляю игроку kek(rsvrstz): {"type": "turn", "type_of_turn": "go", "error": 0, "coordinates": [4, 3], "wall": 0, "mine": 0, "river": [0, 0, 0], "aid": 0, "arm": 0, "bear": 0, "treasure": 0, "metro": [0, 0, 0], "exit": [0, 0], "is_here_enemy": 0, "name": null, "from_sprite": "sand", "from_coordinates": [4, 2]}
+socket_server.py[LINE:375]# INFO     [2017-05-18 20:38:59,901]  Игрок kek прислал Ход отрисован!
+socket_server.py[LINE:321]# INFO     [2017-05-18 20:38:59,902]  Уведомляем игрока kek(rsvrstz), о том, что ходит игрок kek
+socket_server.py[LINE:327]# INFO     [2017-05-18 20:39:00,014]  Игрок kek прислал Мой ход!
+socket_server.py[LINE:335]# INFO     [2017-05-18 20:39:00,527]  Получен пакет от kek(rsvrstz): ['go', 4, 4]
+socket_server.py[LINE:370]# INFO     [2017-05-18 20:39:00,528]  успех; отправляю игроку kek(rsvrstz): {"type": "turn", "type_of_turn": "go", "error": 0, "coordinates": [4, 4], "wall": 0, "mine": 0, "river": [0, 0, 0], "aid": 0, "arm": 0, "bear": 0, "treasure": 0, "metro": [0, 0, 0], "exit": [0, 0], "is_here_enemy": 0, "name": null, "from_sprite": "sand", "from_coordinates": [4, 3]}
+socket_server.py[LINE:375]# INFO     [2017-05-18 20:39:00,533]  Игрок kek прислал Ход отрисован!
+socket_server.py[LINE:321]# INFO     [2017-05-18 20:39:00,533]  Уведомляем игрока kek(rsvrstz), о том, что ходит игрок kek
+socket_server.py[LINE:327]# INFO     [2017-05-18 20:39:00,553]  Игрок kek прислал Мой ход!
+socket_server.py[LINE:335]# INFO     [2017-05-18 20:39:01,017]  Получен пакет от kek(rsvrstz): ['go', 4, 5]
+socket_server.py[LINE:370]# INFO     [2017-05-18 20:39:01,018]  успех; отправляю игроку kek(rsvrstz): {"type": "turn", "type_of_turn": "go", "error": 0, "coordinates": [4, 5], "wall": 0, "mine": 0, "river": [0, 0, 0], "aid": 0, "arm": 0, "bear": 0, "treasure": 0, "metro": [0, 0, 0], "exit": [0, 0], "is_here_enemy": 0, "name": null, "from_sprite": "sand", "from_coordinates": [4, 4]}
+socket_server.py[LINE:375]# INFO     [2017-05-18 20:39:01,032]  Игрок kek прислал Ход отрисован!
+socket_server.py[LINE:321]# INFO     [2017-05-18 20:39:01,032]  Уведомляем игрока kek(rsvrstz), о том, что ходит игрок kek
+socket_server.py[LINE:327]# INFO     [2017-05-18 20:39:01,047]  Игрок kek прислал Мой ход!
+socket_server.py[LINE:335]# INFO     [2017-05-18 20:39:01,633]  Получен пакет от kek(rsvrstz): ['go', 4, 6]
+socket_server.py[LINE:370]# INFO     [2017-05-18 20:39:01,634]  успех; отправляю игроку kek(rsvrstz): {"type": "turn", "type_of_turn": "go", "error": 0, "coordinates": [4, 6], "wall": 0, "mine": 0, "river": [0, 0, 0], "aid": 0, "arm": 0, "bear": 0, "treasure": 0, "metro": [0, 0, 0], "exit": [0, 0], "is_here_enemy": 0, "name": null, "from_sprite": "sand", "from_coordinates": [4, 5]}
+socket_server.py[LINE:375]# INFO     [2017-05-18 20:39:01,647]  Игрок kek прислал Ход отрисован!
+socket_server.py[LINE:321]# INFO     [2017-05-18 20:39:01,648]  Уведомляем игрока kek(rsvrstz), о том, что ходит игрок kek
+socket_server.py[LINE:327]# INFO     [2017-05-18 20:39:01,651]  Игрок kek прислал Мой ход!
+socket_server.py[LINE:335]# INFO     [2017-05-18 20:39:02,195]  Получен пакет от kek(rsvrstz): ['go', 3, 6]
+socket_server.py[LINE:370]# INFO     [2017-05-18 20:39:02,196]  успех; отправляю игроку kek(rsvrstz): {"type": "turn", "type_of_turn": "go", "error": 0, "coordinates": [3, 6], "wall": 0, "mine": 0, "river": [0, 0, 0], "aid": 0, "arm": 0, "bear": 0, "treasure": 0, "metro": [0, 0, 0], "exit": [0, 0], "is_here_enemy": 0, "name": null, "from_sprite": "sand", "from_coordinates": [4, 6]}
+socket_server.py[LINE:375]# INFO     [2017-05-18 20:39:02,201]  Игрок kek прислал Ход отрисован!
+socket_server.py[LINE:321]# INFO     [2017-05-18 20:39:02,201]  Уведомляем игрока kek(rsvrstz), о том, что ходит игрок kek
+socket_server.py[LINE:327]# INFO     [2017-05-18 20:39:02,212]  Игрок kek прислал Мой ход!
+socket_server.py[LINE:335]# INFO     [2017-05-18 20:39:02,684]  Получен пакет от kek(rsvrstz): ['go', 2, 6]
+socket_server.py[LINE:370]# INFO     [2017-05-18 20:39:02,684]  успех; отправляю игроку kek(rsvrstz): {"type": "turn", "type_of_turn": "go", "error": 0, "coordinates": [2, 6], "wall": 0, "mine": 2, "river": [0, 0, 0], "aid": 0, "arm": 0, "bear": 0, "treasure": 0, "metro": [0, 0, 0], "exit": [0, 0], "is_here_enemy": 0, "name": null, "from_sprite": "sand", "from_coordinates": [3, 6]}
+socket_server.py[LINE:375]# INFO     [2017-05-18 20:39:02,700]  Игрок kek прислал Ход отрисован!
+socket_server.py[LINE:321]# INFO     [2017-05-18 20:39:02,701]  Уведомляем игрока kek(rsvrstz), о том, что ходит игрок kek
+socket_server.py[LINE:327]# INFO     [2017-05-18 20:39:02,712]  Игрок kek прислал Мой ход!
+socket_server.py[LINE:335]# INFO     [2017-05-18 20:39:04,501]  Получен пакет от kek(rsvrstz): ['go', 2, 7]
+socket_server.py[LINE:370]# INFO     [2017-05-18 20:39:04,502]  успех; отправляю игроку kek(rsvrstz): {"type": "turn", "type_of_turn": "go", "error": 0, "coordinates": [2, 7], "wall": 0, "mine": 0, "river": [0, 0, 0], "aid": 0, "arm": 0, "bear": 0, "treasure": 0, "metro": [0, 0, 0], "exit": [0, 0], "is_here_enemy": 0, "name": null, "from_sprite": "sand", "from_coordinates": [2, 6]}
+socket_server.py[LINE:375]# INFO     [2017-05-18 20:39:04,517]  Игрок kek прислал Ход отрисован!
+socket_server.py[LINE:321]# INFO     [2017-05-18 20:39:04,517]  Уведомляем игрока kek(rsvrstz), о том, что ходит игрок kek
+socket_server.py[LINE:327]# INFO     [2017-05-18 20:39:04,527]  Игрок kek прислал Мой ход!
+socket_server.py[LINE:335]# INFO     [2017-05-18 20:39:04,946]  Получен пакет от kek(rsvrstz): ['go', 1, 7]
+socket_server.py[LINE:370]# INFO     [2017-05-18 20:39:04,947]  успех; отправляю игроку kek(rsvrstz): {"type": "turn", "type_of_turn": "go", "error": 0, "coordinates": [1, 7], "wall": 0, "mine": 0, "river": [0, 0, 0], "aid": 0, "arm": 0, "bear": 0, "treasure": 0, "metro": [0, 0, 0], "exit": [0, 0], "is_here_enemy": 0, "name": null, "from_sprite": "sand", "from_coordinates": [2, 7]}
+socket_server.py[LINE:375]# INFO     [2017-05-18 20:39:04,961]  Игрок kek прислал Ход отрисован!
+socket_server.py[LINE:321]# INFO     [2017-05-18 20:39:04,962]  Уведомляем игрока kek(rsvrstz), о том, что ходит игрок kek
+socket_server.py[LINE:327]# INFO     [2017-05-18 20:39:04,965]  Игрок kek прислал Мой ход!
+socket_server.py[LINE:335]# INFO     [2017-05-18 20:39:05,542]  Получен пакет от kek(rsvrstz): ['go', 0, 7]
+socket_server.py[LINE:370]# INFO     [2017-05-18 20:39:05,542]  успех; отправляю игроку kek(rsvrstz): {"type": "turn", "type_of_turn": "go", "error": 0, "coordinates": [0, 7], "wall": 0, "mine": 0, "river": [0, 0, 0], "aid": 0, "arm": 0, "bear": 0, "treasure": 0, "metro": [0, 0, 0], "exit": [1, 1], "is_here_enemy": 0, "name": null, "from_sprite": "sand", "from_coordinates": [1, 7]}
+socket_server.py[LINE:375]# INFO     [2017-05-18 20:39:05,565]  Игрок kek прислал Ход отрисован!
+socket_server.py[LINE:383]# INFO     [2017-05-18 20:39:05,566]  Игрок kek выиграл!
+socket_server.py[LINE:166]# INFO     [2017-05-18 20:39:05,566]  Игроку kek отправлен пакет: {"type": "final", "statistics": ["kek"], "prize": [4, 3, 3]}
+socket_server.py[LINE:410]# INFO     [2017-05-18 20:39:05,567]  Не осталось игроков. Комната rsvrstz была удалена
