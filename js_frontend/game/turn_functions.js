@@ -327,7 +327,7 @@ function drawAid(data) {
                 numberAid = game.add.text(49, 434, buttonAid.counter.toString(), styleOther);
             }
         }, 1000); 
-        if (data.now_heatlh == 1) {
+        if (data.now_health == 1) {
             setTimeout(function(){healthScale.sprite = game.add.sprite(37, 270, "health50");}, 1000);
         }
         if (data.now_health == 2) {
