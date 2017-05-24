@@ -8,7 +8,11 @@ from game.constants import *
 
 
 class Player:
-    """ Класс, реализующий логику игрока """
+    """ 
+    
+    Класс, реализующий логику игрока 
+    
+    """
 
     MAX_HEALTH = 4
 

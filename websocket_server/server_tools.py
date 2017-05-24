@@ -1,5 +1,13 @@
 # -*- coding: utf-8 -*-
 
+"""
+
+модуль, содержащий вспомогательные функции для сервера
+и взаимодействия по сети
+
+"""
+
+
 import json
 import logging
 import datetime
@@ -17,11 +25,16 @@ SUCCESS = "111"
 
 
 async def close_reason(websocket, reason):
+    """ 
+    корутина, закрывающая веб-сокет после отправки сообщения reason
+    - причину закрытия
+    """
     await websocket.send(reason)
     await websocket.close()
 
 
 def parse_json(message):
+    """ функция, парсящая json """
     try:
         py_obj = json.loads(message)
     except (json.decoder.JSONDecodeError, TypeError):
@@ -31,6 +44,9 @@ def parse_json(message):
 
 
 def to_json(func):
+    """ 
+    функция, кодирующая результат функции func в json, если func вернет словарь
+    """
     @wraps(func)
     def inner(*args, **kwargs):
         result = func(*args, **kwargs)
@@ -41,6 +57,10 @@ def to_json(func):
 
 
 def create_packet_go():
+    """ 
+    функция, возвращающая пустой пакет с данными о ходе игрока
+    передвижение
+    """
     return {
         "type": "turn",
         "type_of_turn": "go",
@@ -63,6 +83,10 @@ def create_packet_go():
 
 
 def create_packet_knife():
+    """ 
+    функция, возвращающая пустой пакет с данными о ходе игрока
+    удар ножом
+    """
     return {
         "type": "turn",
         "type_of_turn": "knife",
@@ -75,6 +99,10 @@ def create_packet_knife():
 
 
 def create_packet_bomb():
+    """ 
+    функция, возвращающая пустой пакет с данными о ходе игрока
+    использование бомбы
+    """
     return {
         "type": "turn",
         "type_of_turn": "bomb",
@@ -84,6 +112,10 @@ def create_packet_bomb():
 
 
 def create_packet_concrete():
+    """ 
+    функция, возвращающая пустой пакет с данными о ходе игрока
+    использование бетона
+    """
     return {
         "type": "turn",
         "type_of_turn": "concrete",
@@ -93,6 +125,10 @@ def create_packet_concrete():
 
 
 def create_packet_aid():
+    """ 
+    функция, возвращающая пустой пакет с данными о ходе игрока
+    использование аптечки
+    """
     return {
         "type": "turn",
         "type_of_turn": "aid",
@@ -104,6 +140,11 @@ def create_packet_aid():
 
 @to_json
 def analyze_go_turn(player, player_acted, packet):
+    """ 
+    функция, возвращающая пакет для отрисовки изменений у игрока player
+    после хода игрока player_acted
+    передвижение
+    """
     data = {
         "name": player_acted.name,
         "type_of_turn": "go",
@@ -216,6 +257,11 @@ def analyze_go_turn(player, player_acted, packet):
 
 @to_json
 def analyze_knife_turn(player, player_acted, packet):
+    """ 
+    функция, возвращающая пакет для отрисовки изменений у игрока player
+    после хода игрока player_acted
+    удар ножом
+    """
     data = {
         "name": player_acted.name,
         "type_of_turn": "knife",
@@ -252,6 +298,11 @@ def analyze_knife_turn(player, player_acted, packet):
 
 @to_json
 def analyze_bomb_turn(player, player_acted, packet):
+    """ 
+    функция, возвращающая пакет для отрисовки изменений у игрока player
+    после хода игрока player_acted
+    использование бомбы
+    """
     data = {
         "name": player_acted.name,
         "type_of_turn": "bomb",
@@ -274,6 +325,11 @@ def analyze_bomb_turn(player, player_acted, packet):
 
 @to_json
 def analyze_concrete_turn(player, player_acted, packet):
+    """ 
+    функция, возвращающая пакет для отрисовки изменений у игрока player
+    после хода игрока player_acted
+    использование бетона
+    """
     data = {
         "name": player_acted.name,
         "type_of_turn": "concrete",
@@ -296,6 +352,11 @@ def analyze_concrete_turn(player, player_acted, packet):
 
 @to_json
 def analyze_aid_turn(player, player_acted, packet):
+    """ 
+    функция, возвращающая пакет для отрисовки изменений у игрока player
+    после хода игрока player_acted
+    использование аптечки
+    """
     data = {
         "name": player_acted.name,
         "type_of_turn": "aid",

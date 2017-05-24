@@ -30,20 +30,26 @@ class Game:
         return len(self.players)
 
     async def inform_whose_turn(self):
+        """ корутина, рассылающая имя игрока, который сейчас ходит"""
         for player in self.players:
-
             response = json.dumps({"type": "whose_turn", "name": self.active_player.name})
 
             logging.info("Уведомляем игрока {}, о том, что ходит игрок {}".format(
                 player.name,
                 self.active_player.name
             ))
+
             await player.websocket.send(response)
             # ждать, чтобы клиент успел отрисовать
             message = await player.websocket.recv()
             logging.info("Игрок {} прислал {}".format(player.name, message))
 
-    async def accept(self, player, turn):
+    def accept(self, player, turn):
+        """ 
+        Функция, которая принимает пакет с данными о ходе от клиента 
+        и возвращает кортеж (была_ошибка, изменения_в_отрисовке)
+        """
+
         # если передвижение по карте
         if turn[0] == "go":
             field = self.fields.at((turn[1], turn[2]))
@@ -90,11 +96,14 @@ class Game:
         else:
             logging.critical("Игра не может принять такую команду: {}".format(turn[0]))
 
-    def next_player(self):  # todo при отключении игрока обработать исключение
+    def next_player(self):
+        """ переключает активного игрока """
+        # todo при отключении игрока обработать исключение
         pos = self.players.index(self.active_player)
         self.active_player = self.players[(pos + 1) % len(self.players)]
 
     async def end(self):
+        """ завершение игры """
         logging.info("Завершаю игру...")
         for player in self.players:
             try:
@@ -104,13 +113,15 @@ class Game:
 
     @server_tools.to_json
     def get_init_data(self, player_name):
+        """ функция, возвращающая начальные игровые данные для игрока с именем player_name """
         player = None
         for p in self.players:
             if p.name == player_name:
                 player = p
                 break
         else:
-            print("Нет данных об игроке {}!".format(player_name))
+            logging.critical("Нет данных об игроке {}!".format(player_name))
+
         data = {
             "list_of_players": [player.name for player in self.players],
             "size": [levels.SIZE, levels.SIZE],
@@ -120,12 +131,11 @@ class Game:
         return data
 
     def initialize_level(self):
-        """ build game level from mask """
+        """ функция, выполняющая построение игрового уровня из двумерного списка-маски уровня """
         random.shuffle(self.players)
-        num_player = 0
         count_id = 0
         self.fields.dim = levels.SIZE
-        player_start_positions = []  # для рандомного расставления игроков
+        player_start_positions = []  # для рандомного расположения игроков
 
         for row in range(levels.SIZE):
             for col in range(levels.SIZE):
@@ -178,6 +188,7 @@ class Game:
 
     @server_tools.to_json
     def get_statistics(self, player):
+        """ функция, получающая финальные данные для игрока player"""
         final_packet = {
             "type": "final",
             "statistics": [self.winner.name] + [player.name for player in self.players if player != self.winner],

@@ -1,7 +1,17 @@
 # -*- coding: utf-8 -*-
 
 
+"""
+
+Модуль, содержащий классы, описывающие игровые клетки и поле
+
+"""
+
+
 class Field:
+    """ 
+    Класс, реализующий логику игровой клетки на поле
+    """
     def __init__(self, game, identity, coordinates):
         self.game = game
         self.obj = None
@@ -9,15 +19,15 @@ class Field:
         self.coordinates = coordinates
         self.has_treasure = False
 
-    def update(self):
-        pass
-
     def delete_object(self):
-        pass
+        self.obj = None
 
 
 class Grass(Field):
-    """ grass field; it can contain drop objects as well as hospitals etc. """
+    """ 
+    Класс, реализующий логику пустой игровой клетки.
+    На ней может располагаться клад
+    """
     def __init__(self, game, identity, coordinates, obj):
         Field.__init__(self, game, identity, coordinates)
         self.obj = obj
@@ -33,20 +43,27 @@ class Grass(Field):
 
 
 class Water(Field):
-    """ water field """
+    """ 
+    Класс, реализующий логику игровой клетки - части реки
+    """
     def __init__(self, game, identity, coordinates):
         Field.__init__(self, game, identity, coordinates)
 
 
 class Wall(Field):
-    """ impassable field """
+    """ 
+    Класс, реализующий логику игровой клетки - стены
+    Стена может быть нерушимой - поле indestructible
+    """
     def __init__(self, game, identity, coordinates):
         Field.__init__(self, game, identity, coordinates)
         self.indestructible = False
 
 
 class FieldGroup:
-    """ a container that represents the game battlefield """
+    """ 
+    Класс, реализующий логику контейнера игровых клеток - игрового поля
+    """
     def __init__(self):
         self.sprites = []
         self.dim = None
@@ -55,19 +72,24 @@ class FieldGroup:
         self.sprites.append(field)
 
     def at(self, coordinates):
-        """ find Field object with such coordinates """
+        """ 
+        Метод для получения объекта игровой клетки по ее координатам
+        coordinates - кортеж (x, y)
+        """
         return self.sprites[coordinates[0] * self.dim + coordinates[1]]
 
     def by_id(self, identity):
+        """ 
+        Метод для получения объекта игровой клетки с номером identity
+        Нумерация с 0 до Level.size**2
+        """
         return self.sprites[identity]
 
-    def update(self):
-        for field in self.sprites:
-            field.update()
-
     def add_teleport(self, tp_field) -> None:
-        """ method that finds pairs to teleports 1-3 while building level """
-
+        """ 
+        Метод для нахождения пары для телепорта 41-43
+        Вызывается при построении уровня в self.initialize_level()
+        """
         for field in self.sprites:
             if isinstance(field, Grass) and field.obj == tp_field.obj:
                 field.pair = tp_field
