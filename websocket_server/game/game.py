@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import json
 import random
 import logging
 import websockets
@@ -28,14 +29,26 @@ class Game:
     def num_players(self):
         return len(self.players)
 
+    async def inform_whose_turn(self):
+        for player in self.players:
+
+            response = json.dumps({"type": "whose_turn", "name": self.active_player.name})
+
+            logging.info("Уведомляем игрока {}, о том, что ходит игрок {}".format(
+                player.name,
+                self.active_player.name
+            ))
+            await player.websocket.send(response)
+            # ждать, чтобы клиент успел отрисовать
+            message = await player.websocket.recv()
+            logging.info("Игрок {} прислал {}".format(player.name, message))
+
     async def accept(self, player, turn):
         # если передвижение по карте
         if turn[0] == "go":
             field = self.fields.at((turn[1], turn[2]))
             if field:
                 result, was_error = player.go(field)
-                if not was_error:
-                    self.next_player()
                 return was_error, result
             else:
                 result = server_tools.create_packet_go()
@@ -45,8 +58,6 @@ class Game:
         # если удар ножом
         elif turn[0] == "knife":
             was_error, result = player.stab_with_knife()
-            if not was_error:
-                self.next_player()
             return was_error, result
 
         # если выбрана бомба
@@ -54,8 +65,6 @@ class Game:
             field = self.fields.at((turn[1], turn[2]))
             if field:
                 result, was_error = player.plant_bomb(field)
-                if not was_error:
-                    self.next_player()
                 return was_error, result
             else:
                 result = server_tools.create_packet_bomb()
@@ -67,8 +76,6 @@ class Game:
             field = self.fields.at((turn[1], turn[2]))
             if field:
                 result, was_error = player.set_concrete(field)
-                if not was_error:
-                    self.next_player()
                 return was_error, result
             else:
                 result = server_tools.create_packet_concrete()
@@ -78,8 +85,6 @@ class Game:
         # если использована аптечка
         elif turn[0] == "aid":
             was_error, result = player.use_aid()
-            if not was_error:
-                self.next_player()
             return was_error, result
 
         else:
@@ -87,7 +92,7 @@ class Game:
 
     def next_player(self):  # todo при отключении игрока обработать исключение
         pos = self.players.index(self.active_player)
-        self.active_player = self.players[(pos+1) % len(self.players)]
+        self.active_player = self.players[(pos + 1) % len(self.players)]
 
     async def end(self):
         logging.info("Завершаю игру...")
