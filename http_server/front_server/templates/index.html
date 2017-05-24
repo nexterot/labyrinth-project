@@ -50,9 +50,11 @@
             <div class="col-sm-2">
                 {% if not login %}
                 <form action="/login" method='post' role="form" class="form-signin">
-                      <input type="email" id="email" class="form-control" name="email" placeholder="E-mail" required autofocus> 
-                      <input type="password" id="email" class="form-control"  name="password" placeholder="Password" required>
-                    
+                      <input type="login" id="login" class="form-control" name="login" placeholder="Введите логин" required autofocus> 
+                      <input type="password" id="password" class="form-control"  name="password" placeholder="Введите пароль" required>
+                      {% if mistake_auth %}
+                      <label class="mistake">{{ mistake_auth }}</label>
+                      {% endif %}
                       <button class="btn btn-info btn-block" type="submit">Войти</button>
                 
                 </form>     

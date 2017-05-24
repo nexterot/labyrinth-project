@@ -4,7 +4,7 @@ def create_base():
     conn = sqlite3.connect('labyrinthdb.db')
     c = conn.cursor()
     
-    c.execute('''CREATE TABLE users (login text, password text, name text, email text, phone text, age text, gender text, bomb int, concrete int, aid int )''')
+    c.execute('''CREATE TABLE users (login text, password text, email text, phone text, age text, gender text, bomb int, concrete int, aid int )''')
     
     conn.commit()
     c.close()
@@ -21,7 +21,7 @@ def show_base():
     conn.close()
     return tick
     
-def add_user(login, pswd, name, email, phone, age, gender):
+def add_user(login, pswd, email, phone, age, gender):
     conn = sqlite3.connect('labyrinthdb.db')
     c = conn.cursor()
     
@@ -39,21 +39,21 @@ def add_user(login, pswd, name, email, phone, age, gender):
         conn.close()
         return 1
     
-    c.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (login, pswd, name, email, phone, age, gender, 0, 0, 0))
+    c.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", (login, pswd, email, phone, age, gender, 0, 0, 0))
     conn.commit()
     
-    c.execute('SELECT * FROM users WHERE email=? and password=?', (email, pswd))
+    c.execute('SELECT * FROM users WHERE login=? and password=?', (login, pswd))
     tick = c.fetchone()
     
     c.close()
     conn.close()
     return tick
 
-def auth_user(email, pswd):
+def auth_user(login, pswd):
     conn = sqlite3.connect('labyrinthdb.db')
     c = conn.cursor()
     
-    c.execute('SELECT * FROM users WHERE email=? and password=?', (email, pswd))
+    c.execute('SELECT * FROM users WHERE login=? and password=?', (login, pswd))
     tick = c.fetchone()
     
     if tick:

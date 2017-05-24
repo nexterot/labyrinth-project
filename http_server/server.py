@@ -23,39 +23,38 @@ async def handle_registration(request):
 @aiohttp_jinja2.template('info.html')
 async def handle_info(request):
     if request.cookies.get("nickname", "") == "":
-        return web.Response(text="You have to sign in first!")
+        return aiohttp_jinja2.render_template('mistake.html', request, {'text': "You have to sign in first!"})
     return {}
 
 
 async def handle_login(request):
     data = await request.post()
-    email = data['email']
+    login = data['login']
     password = data['password']
-    result = workwithbase.auth_user(email, password)
+    result = workwithbase.auth_user(login, password)
     if result:
         response = web.HTTPFound('/')
         response.set_cookie("nickname", result[0])
         response.set_cookie("hash", "hash6456")
         return response
-    return web.Response(text='invalid login')
+    return aiohttp_jinja2.render_template('index.html', request, {'mistake_auth': 'Неверные данные'})
 
 
 async def handle_signup(request):
     data = await request.post()
     
     login = data['Login']
-    name = data['Name']
     email = data['Email']
     password = data['Password']
     phone = data['Phone']
     age = data['Age']
     sex = data['genderRadios']
     
-    result = workwithbase.add_user(login, password, name, email, phone, age, sex)
+    result = workwithbase.add_user(login, password, email, phone, age, sex)
     if result == 0:
-        return aiohttp_jinja2.render_template('registration.html', request, {"phone": phone, "age": age, "name": name, "email": email, "mistake_login": "Этот логин занят"})
+        return aiohttp_jinja2.render_template('registration.html', request, {"phone": phone, "age": age, "email": email, "mistake_login": "Этот логин занят"})
     elif result == 1:
-        return aiohttp_jinja2.render_template('registration.html', request, {"phone": phone, "age": age, "name": name, "login": login, "mistake_email": "Этот e-mail занят"})
+        return aiohttp_jinja2.render_template('registration.html', request, {"phone": phone, "age": age, "login": login, "mistake_email": "Этот e-mail занят"})
     else:
         response = web.HTTPFound('/')
         response.set_cookie("nickname", result[0])
@@ -72,7 +71,7 @@ async def handle_logout(request):
 async def handle_404(request):
     name = request.match_info.get('tail', "kek")
     text = "404: " + name + " not found"
-    return web.Response(text=text)
+    return aiohttp_jinja2.render_template('mistake.html', request, {'text': text})
 
 
 app = web.Application()
