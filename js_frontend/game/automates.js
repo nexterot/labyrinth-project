@@ -137,10 +137,4 @@ function STATE_6_func(data) {
 }
 
 function FINAL_func(data) {
-    alert("kek!");
-    if (data.statistics[0] == my_name) {
-        alert("Вы победили!");
-    } else {
-        alert("Победитель: " + data.statistics[0]);
-    }
 }
