@@ -1,0 +1,57 @@
+ {% load tags %}
+
+    <div class="col-sm-8">
+        {% for error in form.non_field_errors %}
+            <div class="btn btn-danger btn-block disabled allert alert-danger">{{ error }}</div>
+        {% endfor %}
+
+        <form class="form-horizontal" action="{{ action_url }}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% for item in form %}
+                <div class="form-group {% if item.errors %}has-error{% endif %}">
+                    
+                   
+                        {% if item.field.widget.input_type == 'radio' %}
+                       
+                       <div class="form-group">
+                           <div class="row">
+                              <label class="control-label col-sm-4" for="{{ item.id_for_label }}">{{ item.label }}</label>
+                              <div class="col-xs-3">
+                                <label for="id_gender_0" class="radio-inline">
+                                <input type="radio" name="gender" value="male" checked id="id_gender_0" required> Мужской </label>
+                              </div>
+                              <div class="col-xs-3">
+                                <label for="id_gender_1" class="radio-inline">
+                                <input type="radio" name="gender" value="female" required id="id_gender_1"> Женский </label>
+                              </div>
+                           </div>
+                       </div>
+                       
+                       
+                        {% else %}
+                           
+                           <div class="form-group">
+                              <div class="row">
+                                <label class="control-label col-sm-4" for="{{ item.id_for_label }}">{{ item.label }}</label>
+                                <div class="col-sm-8">
+                                  <input type="{{ item.field.widget.input_type }}" id="{{ item.id_for_label }}" class="form-control" name="{{ item.name }}" placeholder=" {{ item.field.widget.attrs.placeholder }}" required autofocus value="{% if item.value != None %}{{ item.value }}{% endif %}">
+                                </div> 
+                              </div>
+                           </div>
+                        
+
+                        {% endif %}
+                    </div>
+                    {% if item.errors %}
+                        {% for error in item.errors %}<span class="help-block">{{ error }}</span>{% endfor %}
+                    {% endif %}
+
+            {% endfor %}
+            <div class="form-group">
+                <div class="col-xs-offset-3 col-sm-9">
+                    <button class="btn btn-primary" type="submit">{{ title }}</button>
+                    <button type="reset" class="btn btn-info">Очистить форму</button>
+                </div>
+            </div>
+        </form>
+    </div>

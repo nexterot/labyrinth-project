@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    
+    <!-- Static CSS -->
+    <link href="{{ app.router.static.url(filename='css/bootstrap.css') }}" rel="stylesheet">
+    <link href="{{ app.router.static.url(filename='css/style.css') }}" rel="stylesheet">
+    <link href="{{ app.router.static.url(filename='css/font-awesome.css') }}" rel="stylesheet">
+    
+    <!-- Logo -->
+    <link rel="icon" href="{{app.router.static.url(filename='images/logo-small.ico')}}" type="image/x-icon">
+    
+    <title>Labyrinth</title>
+</head>
+
+    
+<body>
+<!-- NAVBAR -->
+    <div class="menu">
+    <div class="navbar navbar-inverse" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">     
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div><!--navbar-header-->
+            <div class="navbar-collapse collapse">
+                <ul class="nav nav-justified">
+                <li><a href="#">Об игре</a></li>
+                <li><a href="#">FAQ</a></li>
+                <li><a href="#">Рейтинги</a></li>
+                <li><a href="#">Арты</a></li>
+                <li><a href="#">Вопросы</a></li>
+                </ul>
+            </div><!--navbar-collapse -->
+        </div><!--container-fluid -->
+    </div><!--navbar -->
+    </div>
+    
+<!-- MAIN -->
+    <main class="container">
+        <div class="col-md-1">
+                <a href="/" type="submit" class="btn btn-primary btn-block"><i class="fa fa-reply" aria-hidden="true"></i></a>
+        </div>
+        
+        <div class="blog-header">
+            <h3 class="blog-title">Доступные комнаты:</h3>
+        </div>  
+            
+        <table id="rooms">
+            <tr>
+                <th>Название комнаты</th>
+                <th>Список игроков</th> 
+                <th>Присоединиться</th>
+            </tr>
+        </table>
+            
+        <div class="rowinfo">
+            <div class="col-sm-2">
+                <input class="form-control" id="room_name" type="text" placeholder="Название комнаты"\> 
+            </div>
+
+            <div class="col-sm-3">
+                <select size="1" id="num_players">
+                    <option disabled selected> Кол-во: </option>
+                    <option value="1"> 1 </option>
+                    <option value="2"> 2 </option>
+                    <option value="3"> 3 </option>
+                    <option value="4"> 4 </option>
+                    <option value="5"> 5 </option>
+                </select>
+            </div>
+
+            <div class="col-sm-3">
+                <button class="btn btn-info btn-block" id="create_room"> Создать комнату </button>
+            </div>
+            
+            <script src="http://37.139.2.176:49537/game/automates.js"></script>
+            <script src="http://37.139.2.176:49537/game/game.js"></script>
+            <script src="http://37.139.2.176:49537/build/phaser.min.js"></script>
+            <script src="http://37.139.2.176:49537/game/graphical_functions.js"></script>
+            <script src="http://37.139.2.176:49537/game/turn_functions.js"></script>
+            <script src="http://37.139.2.176:49537/game/another_turn_functions.js"></script>
+            <script src="http://37.139.2.176:49537/game/client_mechanics_3.js"></script>
+
+        </div>
+            
+    </main> <!--container-->
+    
+<!-- FOOTER -->
+    <footer class="container-fluid">
+        <div class="row footer-top">
+             <div class="col-xs-4">
+                 <a href="#"><i class="fa fa-vk" aria-hidden="true">&nbsp;Вконтакте</i></a>
+             </div>
+             <div class="col-xs-4">
+                 <a href="https://github.com/Nexterot/labyrinth-project/"><i class="fa fa-github" aria-hidden="true">&nbsp;GitHub</i></a>
+             </div>
+             <div class="col-xs-4">
+                 <a href="https://vk.com"><i class="fa fa-cogs" aria-hidden="true">&nbsp;Поддержка</i></a>
+             </div>
+        </div><!--footer-top-->
+        <div class="row footer-bottom">
+            <p><i class="fa fa-copyright" aria-hidden="true"></i> Labyrinth, 2017</p>
+        </div><!--footer-bottom-->
+    </footer>  
+    
+<!-- Static JS  --> 
+   <script src="{{ app.router.static.url(filename='js/jquery-1.12.4.min.js') }}"></script>
+   <script src="{{ app.router.static.url(filename='js/bootstrap.js') }}"></script>
+</body>    
+    
+</html>

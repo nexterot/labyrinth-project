@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    
+    <!-- Static CSS -->
+    <link href="{{ app.router.static.url(filename='css/bootstrap.css') }}" rel="stylesheet">
+    <link href="{{ app.router.static.url(filename='css/style.css') }}" rel="stylesheet">
+    <link href="{{ app.router.static.url(filename='css/font-awesome.css') }}" rel="stylesheet">
+    
+    <!-- Logo -->
+    <link rel="icon" href="{{app.router.static.url(filename='images/logo-small.ico')}}" type="image/x-icon">
+    
+    <title>Registration</title>
+  </head>
+
+   
+<!-- NAVBAR -->
+ <body>
+
+      <!-- Static navbar -->
+     <div class="menu">
+      <div class="navbar navbar-inverse" role="navigation">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+          </div>
+          <div class="navbar-collapse collapse">
+            <ul class="nav nav-justified">
+              <li><a href="#">Об игре</a></li>
+              <li><a href="#">FAQ</a></li>
+              <li><a href="#">Рейтинги</a></li>
+              <li><a href="#">Арты</a></li>
+              <li><a href="#">Вопросы</a></li>
+            </ul>
+            
+          </div><!--/.nav-collapse -->
+        </div><!--/.container-fluid -->
+        </div>
+     </div>
+
+    <!-- MAIN -->
+     <main class="container">
+        <div class="blog-header">
+            <div class="col-sm-1">
+                <a href="/" type="submit" class="btn btn-primary btn-block"><i class="fa fa-reply" aria-hidden="true"></i></a>
+            </div>
+            
+            <h1>Регистрация</h1>
+        </div>
+        
+        <form class="form-horizontal" action="/sign_up" method="post" data-toggle="validator" id="form">
+         
+          <div class="form-group">
+           <div class="row">
+            <label class="control-label col-sm-3" for="Login">Логин:</label>
+            <div class="col-xs-6">
+              <input type="text" class="form-control" name="Login" placeholder="Введите логин" required autofocus value="{{ login }}">
+            </div>
+            <div class="col-xs-3">
+                <label class="mistake">{{ mistake_login }}</label>
+            </div>
+           </div>
+          </div>
+          
+          <div class="form-group">
+           <div class="row">
+            <label class="control-label col-sm-3" for="inputEmail">Email:</label>
+            <div class="col-xs-6">
+              <input type="email" class="form-control" name="Email" id="inputEmail" placeholder="Введите E-mail" required value="{{ email }}">
+            </div>
+            <div class="col-xs-3">
+                <label class="mistake">{{ mistake_email }}</label>
+            </div>
+           </div>
+          </div>
+          
+          <div class="form-group">
+           <div class="row">
+              <label class="control-label col-sm-3" for="inputPassword">Пароль:</label>
+            <div class="col-xs-6">
+                  <input type="password" data-toggle="validator" data-minlength="6" class="form-control" name="Password"  id="inputPassword" placeholder="Введите пароль" required>
+            </div>
+            <div class="col-xs-3">
+                <div class="help-block">Минимум 6 символов</div>
+            </div> 
+           </div>
+           <div class="row">
+               <label for="inputPassword" class="control-label col-sm-3">Повторитe:</label>
+                <div class="col-xs-6">
+                  <input type="password" class="form-control" name="confirmPassword" id="inputPasswordConfirm" data-match="#inputPassword" data-match-error="Пароли не совпадают" placeholder="Введите пароль ещё раз" required>
+                </div>
+                <div class="col-xs-3 help-block with-errors"></div>
+           </div>
+          </div>
+          
+          <div class="form-group">
+           <div class="row">
+            <label class="control-label col-sm-3" for="Phone">Телефон:</label>
+            <div class="col-xs-6">
+              <input type="tel" class="form-control" name="Phone" placeholder="Введите номер телефона" required value="{{ phone }}">
+            </div>
+           </div>
+          </div>
+          
+          <div class="form-group">
+           <div class="row">
+            <label class="control-label col-sm-3" for="Age">Возраст:</label>
+            <div class="col-xs-6">
+              <input type="text" class="form-control" name="Age" placeholder="Введите свой возраст" required value="{{ age }}">
+            </div>
+           </div>
+          </div>
+          
+          <div class="form-group">
+           <div class="row">
+            <label class="control-label col-sm-3">Пол:</label>
+            <div class="col-xs-2">
+              <label class="radio-inline">
+                <input type="radio" name="genderRadios" value="male" checked> Мужской
+              </label>
+            </div>
+            <div class="col-xs-2">
+              <label class="radio-inline">
+                <input type="radio" name="genderRadios" value="female"> Женский
+              </label>
+            </div>
+           </div>
+          </div>
+          
+          <div class="form-group">
+           <div class="row">
+            <div class="col-xs-offset-3 col-xs-9">
+              <label class="checkbox-inline">
+                <input type="checkbox" value="agree" name="Agree" required>  Я согласен с <a href="#">условиями</a>.
+              </label>
+            </div>
+           </div>
+          </div>
+          
+      <br />
+      <div class="form-group">
+        <div class="col-xs-offset-3 col-xs-9">
+          <input type="submit" class="btn btn-primary" value="Регистрация">
+          <input type="reset" class="btn btn-info" value="Очистить форму">
+        </div>
+      </div>
+      
+    </form>
+     </main> <!-- /container -->
+     
+     
+     <!-- FOOTER -->
+     <footer class="container-fluid">
+         <div class="row footer-top">
+             <div class="col-xs-4">
+                 <a href="#"><i class="fa fa-vk" aria-hidden="true">&nbsp;Вконтакте</i></a>
+             </div>
+             <div class="col-xs-4">
+                 <a href="https://github.com/Nexterot/labyrinth-project/"><i class="fa fa-github" aria-hidden="true">&nbsp;GitHub</i></a>
+             </div>
+             <div class="col-xs-4">
+                 <a href="https://vk.com"><i class="fa fa-cogs" aria-hidden="true">&nbsp;Поддержка</i></a>
+             </div>
+         </div>
+
+        <div class="row footer-bottom">
+            <p><i class="fa fa-copyright" aria-hidden="true"></i> Labyrinth, 2017</p>
+        </div>
+    </footer>
+    
+    
+    <!-- Static JS  --> 
+   <script src="{{ app.router.static.url(filename='js/jquery-1.12.4.min.js') }}"></script>
+   <script src="{{ app.router.static.url(filename='js/bootstrap.js') }}"></script>
+   <script src="http://bootstraptema.ru/plugins/2016/validator/validator.min.js"></script>
+      </body>
+  </html>

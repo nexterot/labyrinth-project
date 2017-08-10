@@ -1,0 +1,11 @@
+{% extends 'index.html' %}
+{% block main %}
+            <div class="col-sm-1">
+                <a href="/" type="submit" class="btn btn-primary btn-block"><i class="fa fa-reply" aria-hidden="true"></i></a>
+            </div>
+            <div class="blog-header col-sm-11">Регистрация</div>
+    <div class="col-lg-112 reg">
+        {% include 'base/forms.html' with form=form title='Регистрация' action_url='/registration/' %}
+    </div>
+{% endblock %}
+{% block loginblock %}{% endblock %}

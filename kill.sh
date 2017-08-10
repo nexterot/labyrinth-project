@@ -1,0 +1,1 @@
+pkill python3
