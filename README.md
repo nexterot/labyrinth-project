@@ -1,4 +1,13 @@
-# Labyrinth
+# Labyrinth 
+Многопользовательская кроссплатформенная онлайн-игра по мотивам одноименной настольной игры.
+
+Проектная работа открытого курса Python в Технопарке Mail.ru.
+
+# Состав нашей команды:
+
+- Масягин Михаил - <a href="https://github.com/masyagin1998">@masyagin1998</a><br>
+- Барлука Александр - <a href="https://github.com/Nexterot">@Nexterot</a><br>
+- Алесин Александр - <a href="https://github.com/sashaalesin">@sashaalesin</a><br>
 
 # Описание
 
